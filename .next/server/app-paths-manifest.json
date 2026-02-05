@@ -1,0 +1,15 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/alerts/page": "app/alerts/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/governance/receipts/page": "app/governance/receipts/page.js",
+  "/incident-mode/page": "app/incident-mode/page.js",
+  "/observability/traces/page": "app/observability/traces/page.js",
+  "/page": "app/page.js",
+  "/policies/page": "app/policies/page.js",
+  "/runtime/executions/page": "app/runtime/executions/page.js",
+  "/settings/page": "app/settings/page.js",
+  "/tenants/page": "app/tenants/page.js",
+  "/ui-demo/page": "app/ui-demo/page.js"
+}

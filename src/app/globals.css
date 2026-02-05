@@ -1,0 +1,279 @@
+@import "../styles/tokens.css";
+@import "../styles/glow.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  /* Font Families */
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --font-rajdhani: 'Rajdhani', system-ui, sans-serif;
+  --font-jetbrains-mono: 'JetBrains Mono', monospace;
+
+  /* KEON COMMAND CENTER COLOR PALETTE */
+  /* Core Surfaces */
+  --void: #0B0C10;
+  --gun-metal: #1F2833;
+  --tungsten: #384656;
+  --steel: #C5C6C7;
+  --flash: #EAEAEA;
+
+  /* Reactor Theme - Primary Actions */
+  --reactor-blue: #45A29E;
+  --reactor-glow: #66FCF1;
+
+  /* Status Ladder - 5-State Severity */
+  --safety-orange: #FF6B00;
+  --ballistic-red: #FF2E2E;
+
+  /* Legacy reactor colors for compatibility */
+  --reactor-blue-dim: #0099b3;
+  --reactor-blue-glow: rgba(69, 162, 158, 0.3);
+
+  /* Status Colors */
+  --status-healthy: var(--reactor-blue);
+  --status-warning: var(--safety-orange);
+  --status-critical: var(--ballistic-red);
+  --status-degraded: #FFB000;
+
+  /* Neutral Grays (legacy compatibility) */
+  --gray-950: #0a0a0a;
+  --gray-900: #111111;
+  --gray-800: #1a1a1a;
+  --gray-700: #2a2a2a;
+  --gray-600: #3a3a3a;
+  --gray-500: #6a6a6a;
+  --gray-400: #9a9a9a;
+  --gray-300: #cacaca;
+
+  /* Borders */
+  --border-width: 1px;
+  --border-radius: 4px;
+  --border-color: var(--tungsten);
+}
+
+* {
+  border-color: var(--border-color);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+.font-display {
+  font-family: var(--font-rajdhani), system-ui, sans-serif;
+}
+
+.font-mono {
+  font-family: var(--font-jetbrains-mono), monospace;
+}
+
+/* HUD Glow Effects */
+.glow-reactor {
+  box-shadow: 0 0 10px var(--reactor-blue-glow);
+}
+
+.glow-critical {
+  box-shadow: 0 0 10px rgba(255, 56, 56, 0.3);
+}
+
+.glow-warning {
+  box-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
+}
+
+/* Keon Visual Signature - Corner Notches */
+.keon-notch {
+  position: relative;
+}
+
+.keon-notch::before,
+.keon-notch::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--reactor-blue);
+  opacity: 0.3;
+}
+
+.keon-notch::before {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.keon-notch::after {
+  bottom: -1px;
+  right: -1px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-900);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gray-700);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--reactor-blue-dim);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   INCIDENT MODE — State of Being
+   When active, the UI stops being polite.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-incident-mode="active"] {
+  /* Compressed palette - only what matters */
+  --incident-bg: #080909;
+  --incident-surface: #12151a;
+  --incident-border: #2a3342;
+  --incident-text: #C5C6C7;
+  --incident-muted: #6b7280;
+
+  /* Override background - darken by 3-5% */
+  --void: var(--incident-bg);
+  --gun-metal: var(--incident-surface);
+  --tungsten: var(--incident-border);
+}
+
+/* Kill all animations in incident mode */
+[data-incident-mode="active"] * {
+  animation-duration: 0ms !important;
+  animation-delay: 0ms !important;
+  transition-duration: 0ms !important;
+  transition-delay: 0ms !important;
+}
+
+/* Ballistic Red is NEVER animated - it means finality */
+[data-incident-mode="active"] .incident-critical {
+  background-color: var(--ballistic-red);
+  color: #0B0C10;
+}
+
+/* Incident spine header */
+.incident-spine {
+  background: linear-gradient(180deg, #1a0808 0%, #0B0C10 100%);
+  border-bottom: 2px solid var(--ballistic-red);
+}
+
+/* Incident elapsed timer - monospace, ticking */
+.incident-timer {
+  font-family: var(--font-jetbrains-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+  color: var(--ballistic-red);
+}
+
+/* Tactical Command Rail */
+.tactical-rail {
+  background: var(--incident-surface);
+  border-left: 1px solid var(--incident-border);
+}
+
+.tactical-action {
+  border: 2px solid var(--tungsten);
+  background: var(--void);
+  color: var(--steel);
+  font-family: var(--font-jetbrains-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tactical-action:hover {
+  border-color: var(--reactor-glow);
+  color: var(--reactor-glow);
+}
+
+.tactical-action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: var(--tungsten);
+}
+
+/* Severity notches for timeline */
+.severity-notch {
+  width: 4px;
+  min-height: 100%;
+}
+
+.severity-notch-critical {
+  background: var(--ballistic-red);
+}
+
+.severity-notch-warning {
+  background: var(--safety-orange);
+}
+
+.severity-notch-info {
+  background: var(--reactor-blue);
+}
+
+/* Exit button - disabled until conditions met */
+.incident-exit-btn {
+  border: 2px solid var(--tungsten);
+  background: transparent;
+  color: var(--tungsten);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.incident-exit-btn[data-can-exit="true"] {
+  border-color: var(--reactor-glow);
+  color: var(--reactor-glow);
+  cursor: pointer;
+  opacity: 1;
+}
+
+/* Blast radius panel */
+.blast-radius-panel {
+  border: 1px solid var(--ballistic-red);
+  background: rgba(255, 46, 46, 0.03);
+}
+
+/* Evidence timeline - locked, no tricks */
+.evidence-timeline {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.evidence-timeline-entry {
+  display: grid;
+  grid-template-columns: 4px 1fr;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--incident-border);
+}
+
+/* Human-in-the-loop status */
+.hitl-acknowledged {
+  color: var(--reactor-glow);
+}
+
+.hitl-missing {
+  color: var(--safety-orange);
+}
+
+.hitl-sla-countdown {
+  font-family: var(--font-jetbrains-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ballistic-red);
+}

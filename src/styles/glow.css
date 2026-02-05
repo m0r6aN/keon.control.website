@@ -1,0 +1,420 @@
+/**
+ * ORBITAL BALLISTICS DESIGN SYSTEM
+ * LED Glow Effects - Behind-Panel Illumination
+ *
+ * These are not soft, friendly glows. These are cold LED backlights
+ * shining through precision-cut panels in a weapon system cockpit.
+ * Use sparingly for status indicators and critical alerts.
+ */
+
+/* ===========================================
+   PRIMARY GLOW UTILITIES - REACTOR BLUE
+   =========================================== */
+
+.glow-reactor {
+  box-shadow: 0 0 var(--glow-spread-md) rgba(102, 252, 241, var(--glow-intensity));
+}
+
+.glow-reactor-sm {
+  box-shadow: 0 0 var(--glow-spread-sm) rgba(102, 252, 241, var(--glow-intensity));
+}
+
+.glow-reactor-lg {
+  box-shadow: 0 0 var(--glow-spread-lg) rgba(102, 252, 241, var(--glow-intensity));
+}
+
+.glow-reactor-strong {
+  box-shadow: 0 0 var(--glow-spread-md) rgba(102, 252, 241, var(--glow-intensity-strong));
+}
+
+/* Inset glow - LED behind frosted panel */
+.glow-reactor-inset {
+  box-shadow: inset 0 0 var(--glow-spread-md) rgba(102, 252, 241, var(--glow-intensity));
+}
+
+/* Border glow - Outline emphasis */
+.glow-reactor-border {
+  box-shadow:
+    0 0 0 var(--border-1) var(--color-reactor-glow),
+    0 0 var(--glow-spread-sm) rgba(102, 252, 241, var(--glow-intensity));
+}
+
+/* ===========================================
+   DEGRADED GLOW - AMBER (Partial outage, quorum risk, policy drift)
+   =========================================== */
+
+.glow-degraded {
+  box-shadow: 0 0 var(--glow-spread-md) rgba(255, 176, 0, var(--glow-intensity));
+}
+
+.glow-degraded-sm {
+  box-shadow: 0 0 var(--glow-spread-sm) rgba(255, 176, 0, var(--glow-intensity));
+}
+
+.glow-degraded-lg {
+  box-shadow: 0 0 var(--glow-spread-lg) rgba(255, 176, 0, var(--glow-intensity));
+}
+
+.glow-degraded-strong {
+  box-shadow: 0 0 var(--glow-spread-md) rgba(255, 176, 0, var(--glow-intensity-strong));
+}
+
+.glow-degraded-inset {
+  box-shadow: inset 0 0 var(--glow-spread-md) rgba(255, 176, 0, var(--glow-intensity));
+}
+
+.glow-degraded-border {
+  box-shadow:
+    0 0 0 var(--border-1) var(--color-degraded-amber),
+    0 0 var(--glow-spread-sm) rgba(255, 176, 0, var(--glow-intensity));
+}
+
+/* ===========================================
+   WARNING GLOW - SAFETY ORANGE
+   =========================================== */
+
+.glow-warning {
+  box-shadow: 0 0 var(--glow-spread-md) rgba(255, 107, 0, var(--glow-intensity));
+}
+
+.glow-warning-sm {
+  box-shadow: 0 0 var(--glow-spread-sm) rgba(255, 107, 0, var(--glow-intensity));
+}
+
+.glow-warning-lg {
+  box-shadow: 0 0 var(--glow-spread-lg) rgba(255, 107, 0, var(--glow-intensity));
+}
+
+.glow-warning-strong {
+  box-shadow: 0 0 var(--glow-spread-md) rgba(255, 107, 0, var(--glow-intensity-strong));
+}
+
+.glow-warning-inset {
+  box-shadow: inset 0 0 var(--glow-spread-md) rgba(255, 107, 0, var(--glow-intensity));
+}
+
+.glow-warning-border {
+  box-shadow:
+    0 0 0 var(--border-1) var(--color-safety-orange),
+    0 0 var(--glow-spread-sm) rgba(255, 107, 0, var(--glow-intensity));
+}
+
+/* ===========================================
+   CRITICAL GLOW - BALLISTIC RED
+   =========================================== */
+
+.glow-critical {
+  box-shadow: 0 0 var(--glow-spread-md) rgba(255, 46, 46, var(--glow-intensity));
+}
+
+.glow-critical-sm {
+  box-shadow: 0 0 var(--glow-spread-sm) rgba(255, 46, 46, var(--glow-intensity));
+}
+
+.glow-critical-lg {
+  box-shadow: 0 0 var(--glow-spread-lg) rgba(255, 46, 46, var(--glow-intensity));
+}
+
+.glow-critical-strong {
+  box-shadow: 0 0 var(--glow-spread-md) rgba(255, 46, 46, var(--glow-intensity-strong));
+}
+
+.glow-critical-inset {
+  box-shadow: inset 0 0 var(--glow-spread-md) rgba(255, 46, 46, var(--glow-intensity));
+}
+
+.glow-critical-border {
+  box-shadow:
+    0 0 0 var(--border-1) var(--color-ballistic-red),
+    0 0 var(--glow-spread-sm) rgba(255, 46, 46, var(--glow-intensity));
+}
+
+/* ===========================================
+   SUCCESS GLOW - EMERALD GREEN
+   =========================================== */
+
+.glow-success {
+  box-shadow: 0 0 var(--glow-spread-md) rgba(0, 217, 163, var(--glow-intensity));
+}
+
+.glow-success-sm {
+  box-shadow: 0 0 var(--glow-spread-sm) rgba(0, 217, 163, var(--glow-intensity));
+}
+
+.glow-success-lg {
+  box-shadow: 0 0 var(--glow-spread-lg) rgba(0, 217, 163, var(--glow-intensity));
+}
+
+.glow-success-strong {
+  box-shadow: 0 0 var(--glow-spread-md) rgba(0, 217, 163, var(--glow-intensity-strong));
+}
+
+.glow-success-inset {
+  box-shadow: inset 0 0 var(--glow-spread-md) rgba(0, 217, 163, var(--glow-intensity));
+}
+
+.glow-success-border {
+  box-shadow:
+    0 0 0 var(--border-1) var(--color-success),
+    0 0 var(--glow-spread-sm) rgba(0, 217, 163, var(--glow-intensity));
+}
+
+/* ===========================================
+   NEUTRAL GLOW - STEEL (Minimal Use)
+   =========================================== */
+
+.glow-steel {
+  box-shadow: 0 0 var(--glow-spread-md) rgba(197, 198, 199, 0.2);
+}
+
+.glow-steel-sm {
+  box-shadow: 0 0 var(--glow-spread-sm) rgba(197, 198, 199, 0.2);
+}
+
+/* ===========================================
+   ANIMATED GLOW EFFECTS - PULSING ALERTS
+   =========================================== */
+
+@keyframes glow-pulse-reactor {
+  0%, 100% {
+    box-shadow: 0 0 var(--glow-spread-sm) rgba(102, 252, 241, var(--glow-intensity));
+  }
+  50% {
+    box-shadow: 0 0 var(--glow-spread-lg) rgba(102, 252, 241, var(--glow-intensity-strong));
+  }
+}
+
+@keyframes glow-pulse-degraded {
+  0%, 100% {
+    box-shadow: 0 0 var(--glow-spread-sm) rgba(255, 176, 0, var(--glow-intensity));
+  }
+  50% {
+    box-shadow: 0 0 var(--glow-spread-lg) rgba(255, 176, 0, var(--glow-intensity-strong));
+  }
+}
+
+@keyframes glow-pulse-warning {
+  0%, 100% {
+    box-shadow: 0 0 var(--glow-spread-sm) rgba(255, 107, 0, var(--glow-intensity));
+  }
+  50% {
+    box-shadow: 0 0 var(--glow-spread-lg) rgba(255, 107, 0, var(--glow-intensity-strong));
+  }
+}
+
+@keyframes glow-pulse-critical {
+  0%, 100% {
+    box-shadow: 0 0 var(--glow-spread-sm) rgba(255, 46, 46, var(--glow-intensity));
+  }
+  50% {
+    box-shadow: 0 0 var(--glow-spread-lg) rgba(255, 46, 46, var(--glow-intensity-strong));
+  }
+}
+
+.glow-pulse-reactor {
+  animation: glow-pulse-reactor 2s var(--ease-in-out) infinite;
+}
+
+.glow-pulse-degraded {
+  animation: glow-pulse-degraded 1.75s var(--ease-in-out) infinite;
+}
+
+.glow-pulse-warning {
+  animation: glow-pulse-warning 1.5s var(--ease-in-out) infinite;
+}
+
+.glow-pulse-critical {
+  animation: glow-pulse-critical 1s var(--ease-in-out) infinite;
+}
+
+/* Fast pulse for urgent states */
+.glow-pulse-reactor-fast {
+  animation: glow-pulse-reactor 1s var(--ease-in-out) infinite;
+}
+
+.glow-pulse-warning-fast {
+  animation: glow-pulse-warning 0.75s var(--ease-in-out) infinite;
+}
+
+.glow-pulse-critical-fast {
+  animation: glow-pulse-critical 0.5s var(--ease-in-out) infinite;
+}
+
+/* ===========================================
+   HOVER GLOW STATES - INTERACTIVE FEEDBACK
+   =========================================== */
+
+.glow-hover-reactor {
+  transition: box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.glow-hover-reactor:hover {
+  box-shadow: 0 0 var(--glow-spread-md) rgba(102, 252, 241, var(--glow-intensity-strong));
+}
+
+.glow-hover-warning {
+  transition: box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.glow-hover-warning:hover {
+  box-shadow: 0 0 var(--glow-spread-md) rgba(255, 107, 0, var(--glow-intensity-strong));
+}
+
+.glow-hover-critical {
+  transition: box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.glow-hover-critical:hover {
+  box-shadow: 0 0 var(--glow-spread-md) rgba(255, 46, 46, var(--glow-intensity-strong));
+}
+
+/* ===========================================
+   TEXT GLOW - GLOWING TYPOGRAPHY
+   =========================================== */
+
+.text-glow-reactor {
+  text-shadow: 0 0 var(--glow-spread-sm) rgba(102, 252, 241, var(--glow-intensity-strong));
+  color: var(--color-reactor-glow);
+}
+
+.text-glow-degraded {
+  text-shadow: 0 0 var(--glow-spread-sm) rgba(255, 176, 0, var(--glow-intensity-strong));
+  color: var(--color-degraded-amber);
+}
+
+.text-glow-warning {
+  text-shadow: 0 0 var(--glow-spread-sm) rgba(255, 107, 0, var(--glow-intensity-strong));
+  color: var(--color-safety-orange);
+}
+
+.text-glow-critical {
+  text-shadow: 0 0 var(--glow-spread-sm) rgba(255, 46, 46, var(--glow-intensity-strong));
+  color: var(--color-ballistic-red);
+}
+
+/* ===========================================
+   COMPOSITE EFFECTS - LAYERED GLOWS
+   =========================================== */
+
+/* Multi-layer glow for intense emphasis */
+.glow-reactor-intense {
+  box-shadow:
+    0 0 var(--glow-spread-sm) rgba(102, 252, 241, var(--glow-intensity-strong)),
+    0 0 var(--glow-spread-md) rgba(102, 252, 241, var(--glow-intensity)),
+    0 0 var(--glow-spread-lg) rgba(102, 252, 241, 0.2);
+}
+
+.glow-warning-intense {
+  box-shadow:
+    0 0 var(--glow-spread-sm) rgba(255, 107, 0, var(--glow-intensity-strong)),
+    0 0 var(--glow-spread-md) rgba(255, 107, 0, var(--glow-intensity)),
+    0 0 var(--glow-spread-lg) rgba(255, 107, 0, 0.2);
+}
+
+.glow-critical-intense {
+  box-shadow:
+    0 0 var(--glow-spread-sm) rgba(255, 46, 46, var(--glow-intensity-strong)),
+    0 0 var(--glow-spread-md) rgba(255, 46, 46, var(--glow-intensity)),
+    0 0 var(--glow-spread-lg) rgba(255, 46, 46, 0.2);
+}
+
+/* ===========================================
+   EDGE LIGHTING - STRIP LED EFFECTS
+   =========================================== */
+
+/* Top edge glow */
+.glow-edge-top-reactor {
+  box-shadow: 0 -2px var(--glow-spread-sm) rgba(102, 252, 241, var(--glow-intensity));
+}
+
+.glow-edge-top-warning {
+  box-shadow: 0 -2px var(--glow-spread-sm) rgba(255, 107, 0, var(--glow-intensity));
+}
+
+.glow-edge-top-critical {
+  box-shadow: 0 -2px var(--glow-spread-sm) rgba(255, 46, 46, var(--glow-intensity));
+}
+
+/* Bottom edge glow */
+.glow-edge-bottom-reactor {
+  box-shadow: 0 2px var(--glow-spread-sm) rgba(102, 252, 241, var(--glow-intensity));
+}
+
+.glow-edge-bottom-warning {
+  box-shadow: 0 2px var(--glow-spread-sm) rgba(255, 107, 0, var(--glow-intensity));
+}
+
+.glow-edge-bottom-critical {
+  box-shadow: 0 2px var(--glow-spread-sm) rgba(255, 46, 46, var(--glow-intensity));
+}
+
+/* Left edge glow */
+.glow-edge-left-reactor {
+  box-shadow: -2px 0 var(--glow-spread-sm) rgba(102, 252, 241, var(--glow-intensity));
+}
+
+.glow-edge-left-warning {
+  box-shadow: -2px 0 var(--glow-spread-sm) rgba(255, 107, 0, var(--glow-intensity));
+}
+
+.glow-edge-left-critical {
+  box-shadow: -2px 0 var(--glow-spread-sm) rgba(255, 46, 46, var(--glow-intensity));
+}
+
+/* Right edge glow */
+.glow-edge-right-reactor {
+  box-shadow: 2px 0 var(--glow-spread-sm) rgba(102, 252, 241, var(--glow-intensity));
+}
+
+.glow-edge-right-warning {
+  box-shadow: 2px 0 var(--glow-spread-sm) rgba(255, 107, 0, var(--glow-intensity));
+}
+
+.glow-edge-right-critical {
+  box-shadow: 2px 0 var(--glow-spread-sm) rgba(255, 46, 46, var(--glow-intensity));
+}
+
+/* ===========================================
+   REDUCED MOTION SUPPORT
+   =========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .glow-pulse-reactor,
+  .glow-pulse-warning,
+  .glow-pulse-critical,
+  .glow-pulse-reactor-fast,
+  .glow-pulse-warning-fast,
+  .glow-pulse-critical-fast {
+    animation: none;
+  }
+}
+
+/* ===========================================
+   ACCESSIBILITY - HIGH CONTRAST MODE
+   =========================================== */
+
+@media (prefers-contrast: high) {
+  .glow-reactor,
+  .glow-reactor-sm,
+  .glow-reactor-lg {
+    box-shadow:
+      0 0 0 var(--border-2) var(--color-reactor-glow),
+      0 0 var(--glow-spread-md) rgba(102, 252, 241, var(--glow-intensity-strong));
+  }
+
+  .glow-warning,
+  .glow-warning-sm,
+  .glow-warning-lg {
+    box-shadow:
+      0 0 0 var(--border-2) var(--color-safety-orange),
+      0 0 var(--glow-spread-md) rgba(255, 107, 0, var(--glow-intensity-strong));
+  }
+
+  .glow-critical,
+  .glow-critical-sm,
+  .glow-critical-lg {
+    box-shadow:
+      0 0 0 var(--border-2) var(--color-ballistic-red),
+      0 0 var(--glow-spread-md) rgba(255, 46, 46, var(--glow-intensity-strong));
+  }
+}
