@@ -1,0 +1,22 @@
+{
+  "entries": [
+    {
+      "rhid": "rhid:receipt:676242417334",
+      "sha256": "sha256:5b5e5ff573a164bd3c85a5b8215592234070c26ac35d2194689319f0547f5ada",
+      "content_type": "application/json",
+      "size_bytes": 282,
+      "storage_uri": "file://D:\\Repos\\keon.control.website\\public\\mock\\pt013\\gate_deny\\evidence\\receipts\\rhid_receipt_676242417334.json",
+      "created_by_actor_id": "service:fc",
+      "created_at": "2026-02-07T08:00:00.000Z"
+    },
+    {
+      "rhid": "rhid:receipt:fe5d91d34d39",
+      "sha256": "sha256:c18cfb19eebb5b13b26654138d3edc3144f263bb2130237b9b8b3e1e8df2a881",
+      "content_type": "application/json",
+      "size_bytes": 415,
+      "storage_uri": "file://D:\\Repos\\keon.control.website\\public\\mock\\pt013\\gate_deny\\evidence\\receipts\\rhid_receipt_fe5d91d34d39.json",
+      "created_by_actor_id": "service:fc",
+      "created_at": "2026-02-07T08:00:00.281Z"
+    }
+  ]
+}

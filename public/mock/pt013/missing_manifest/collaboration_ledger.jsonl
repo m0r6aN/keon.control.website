@@ -1,0 +1,1 @@
+{"seq":0,"step_id":"corrupt_step","actor_id":"titan:t3","actor_type":"Titan","action_type":"data.leak","timestamp":"2026-02-07T08:00:00.000Z","duration_ms":1662,"status":"success","inputs":[],"outputs":["rhid:artifact:phantom-123"],"receipt_rhid":"rhid:receipt:668205e646bf"}

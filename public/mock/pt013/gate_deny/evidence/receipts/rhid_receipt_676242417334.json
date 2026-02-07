@@ -1,0 +1,9 @@
+{
+  "receipt_id": "rcpt_696fe3fe88354912",
+  "run_id": "run-seed-2",
+  "action_type": "workflow.start",
+  "timestamp": "2026-02-07T08:00:00.000Z",
+  "evidence_rhids": [],
+  "hash": "sha256:5b5e5ff573a164bd3c85a5b8215592234070c26ac35d2194689319f0547f5ada",
+  "signature": "sig_c0df5b6fd48c21c80c6aee032c714566"
+}

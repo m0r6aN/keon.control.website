@@ -1,0 +1,11 @@
+{
+  "receipt_id": "rcpt_430a48f132279bc2",
+  "run_id": "run-seed-3",
+  "action_type": "data.leak",
+  "timestamp": "2026-02-07T08:00:00.000Z",
+  "evidence_rhids": [
+    "rhid:artifact:phantom-123"
+  ],
+  "hash": "sha256:79440af70eee0f59bc21537d0740279eb7d36aa9a061ea361ebedf0f8f04a4f5",
+  "signature": "sig_f95c90f5744466236b483e79fa970509"
+}

@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "rhid": "rhid:receipt:668205e646bf",
+      "sha256": "sha256:79440af70eee0f59bc21537d0740279eb7d36aa9a061ea361ebedf0f8f04a4f5",
+      "content_type": "application/json",
+      "size_bytes": 304,
+      "storage_uri": "file://D:\\Repos\\keon.control.website\\public\\mock\\pt013\\missing_manifest\\evidence\\receipts\\rhid_receipt_668205e646bf.json",
+      "created_by_actor_id": "service:fc",
+      "created_at": "2026-02-07T08:00:00.000Z"
+    }
+  ]
+}

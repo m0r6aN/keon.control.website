@@ -1,0 +1,11 @@
+{
+  "receipt_id": "rcpt_829d2d7849bad0aa",
+  "run_id": "run-seed-2",
+  "action_type": "gate.resolve",
+  "timestamp": "2026-02-07T08:00:00.281Z",
+  "policy_rhid": "rhid:policy:a85f7052d7d8",
+  "evidence_rhids": [],
+  "prev_receipt_hash": "sha256:5b5e5ff573a164bd3c85a5b8215592234070c26ac35d2194689319f0547f5ada",
+  "hash": "sha256:c18cfb19eebb5b13b26654138d3edc3144f263bb2130237b9b8b3e1e8df2a881",
+  "signature": "sig_d9f66de852d76f7c3775e475e6631135"
+}

@@ -1,0 +1,13 @@
+{
+  "receipt_id": "rcpt_8e174a7d6f8543b9",
+  "run_id": "run-seed-1",
+  "action_type": "task.plan",
+  "timestamp": "2026-02-07T08:00:00.184Z",
+  "evidence_rhids": [
+    "sha256:86cebe12fc1da1757973de1a56cd3f55e910c2771608a69c4515b18ee4263ecc",
+    "rhid:artifact:5730a36f4583"
+  ],
+  "prev_receipt_hash": "sha256:30a8b1aeb62bf79c16eb5af764d5794c445f22fa174783c28fc97c542181b785",
+  "hash": "sha256:f89ea279da35ff8fb6ebb16de287fc7d9e371cd9d035268c11683251c8f211f9",
+  "signature": "sig_8f9d225973df0a4d9f81d8c24897be46"
+}
