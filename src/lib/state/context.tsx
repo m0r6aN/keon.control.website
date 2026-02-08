@@ -15,6 +15,16 @@ export interface AppState {
   tenantId: string | null;
 
   /**
+   * Current actor ID (authenticated user)
+   */
+  actorId: string | null;
+
+  /**
+   * Display name for the current actor
+   */
+  actorDisplayName: string | null;
+
+  /**
    * System-wide metrics
    */
   systemMetrics: SystemMetrics | null;
