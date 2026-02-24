@@ -1,44 +1,53 @@
-import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 
 /**
- * Badge variants for Keon Command Center
- * Design: Status indicators with minimal fills, thin borders, tactical glow
+ * ForgePilot Badge Variants
+ * Design: Status indicators with semantic colors, thin borders
+ * Glow capped at 8% per Visual Language Guidance
  */
 const badgeVariants = cva(
   [
     "inline-flex items-center gap-1.5",
     "px-2 py-0.5",
-    "text-xs font-mono uppercase tracking-wide",
-    "border rounded-sm", // 2px max
-    "transition-all duration-75",
+    "text-xs font-medium uppercase tracking-wide",
+    "border rounded-sm", // max 4px radius per VLG
+    "transition-colors duration-75",
   ].join(" "),
   {
     variants: {
       variant: {
+        default: [
+          "bg-transparent text-muted-foreground",
+          "border-border",
+        ].join(" "),
         healthy: [
-          "bg-transparent text-[--reactor-blue]",
-          "border-[--reactor-blue]",
-          "shadow-[0_0_4px_rgba(69,162,158,0.3)]",
+          "bg-transparent text-primary",
+          "border-primary",
+          "dark:shadow-[0_0_4px_rgba(69,162,158,0.08)]",
         ].join(" "),
         warning: [
-          "bg-transparent text-[--safety-orange]",
-          "border-[--safety-orange]",
-          "shadow-[0_0_4px_rgba(255,107,0,0.3)]",
+          "bg-transparent text-amber-600 dark:text-amber-400",
+          "border-amber-600 dark:border-amber-400",
+          "dark:shadow-[0_0_4px_rgba(255,107,0,0.08)]",
         ].join(" "),
         critical: [
-          "bg-[--ballistic-red] text-[--flash]",
-          "border-[--ballistic-red]",
-          "shadow-[0_0_6px_rgba(255,46,46,0.4)]",
+          "bg-destructive text-destructive-foreground",
+          "border-destructive",
+          "dark:shadow-[0_0_4px_rgba(255,46,46,0.08)]",
         ].join(" "),
         neutral: [
-          "bg-transparent text-[--steel]",
-          "border-[--steel]",
+          "bg-transparent text-muted-foreground",
+          "border-border",
+        ].join(" "),
+        outline: [
+          "bg-transparent text-muted-foreground",
+          "border-border",
         ].join(" "),
         offline: [
-          "bg-transparent text-[--tungsten]",
-          "border-[--tungsten]",
+          "bg-transparent text-muted-foreground",
+          "border-border",
           "opacity-60",
         ].join(" "),
       },
@@ -54,18 +63,18 @@ export interface BadgeProps
     VariantProps<typeof badgeVariants> {}
 
 /**
- * Badge Component - Status Indicator
+ * ForgePilot Badge Component — Status Indicator
  *
  * Variants:
- * - healthy: Reactor blue, operational status
- * - warning: Safety orange, attention required
- * - critical: Ballistic red with fill, immediate action
- * - neutral: Steel gray, informational
- * - offline: Tungsten, inactive state
+ * - healthy: Primary color, operational status
+ * - warning: Amber, attention required
+ * - critical: Destructive fill, immediate action
+ * - neutral: Muted, informational
+ * - offline: Muted + reduced opacity, inactive state
  *
  * @example
- * <Badge variant="healthy">ONLINE</Badge>
- * <Badge variant="critical">ALERT</Badge>
+ * <Badge variant="healthy">Active</Badge>
+ * <Badge variant="critical">Alert</Badge>
  */
 const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
   ({ className, variant, ...props }, ref) => {

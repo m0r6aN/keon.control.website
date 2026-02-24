@@ -1,161 +1,148 @@
-"use client";
-
-import { ActivityFeed, SystemStatus as SystemStatusChart } from "@/components/charts";
-import {
-  CommandRail,
-  MetricsPanel,
-  QuickStats,
-  StatusBar,
-  type Subsystem as StatusBarSubsystem,
-} from "@/components/hud";
-import { Shell } from "@/components/layout";
-import { ExplainOverlay, Panel, PanelContent, PanelHeader } from "@/components/ui";
-import { useExplainMode } from "@/lib";
-import {
-  mockActivityEvents,
-  mockSubsystems,
-  mockSystemMetrics,
-  type SystemStatus,
-} from "@/lib/mock-data";
-
-const statusMap: Record<SystemStatus, StatusBarSubsystem["status"]> = {
-  healthy: "operational",
-  degraded: "degraded",
-  critical: "offline",
-};
-
-const statusBarSubsystems: StatusBarSubsystem[] = mockSubsystems.map((subsystem) => ({
-  id: subsystem.id,
-  name: subsystem.name,
-  status: statusMap[subsystem.status],
-}));
+import { MainLayout } from "@/components/layout/main-layout";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 /**
- * Keon Command Center - Main Dashboard
- * Mission Control Interface for Keon Governance System
+ * ForgePilot — Product Homepage
+ * Your AI Co-Founder for Launching Real Businesses
  *
- * Features:
- * - Glass Rule: Critical metrics visible without scrolling on 1440p
- * - Numerical Law: All auditable values use monospace
- * - Explain This Mode: Press "?" to see provenance overlay
+ * VLG compliant: semantic tokens, no gradients, no glow in light mode,
+ * max 4px border-radius, WCAG AA accessible.
  */
+
+const features = [
+  {
+    title: "Brand Identity",
+    description:
+      "AI-generated name, tagline, and visual identity tailored to your audience and market.",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
+      </svg>
+    ),
+  },
+  {
+    title: "Launch Blueprint",
+    description:
+      "A structured plan covering positioning, pricing, audience, and go-to-market — in under 10 minutes.",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" />
+      </svg>
+    ),
+  },
+  {
+    title: "Market Validation",
+    description:
+      "Competitive analysis and audience research so you launch with evidence, not assumptions.",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
+      </svg>
+    ),
+  },
+];
+
+const steps = [
+  { step: "1", title: "Describe your idea", description: "Tell us your concept in plain language." },
+  { step: "2", title: "AI generates your plan", description: "Brand, positioning, pricing, and audience — assembled in real time." },
+  { step: "3", title: "Review & launch", description: "Download your blueprint and start building with clarity." },
+];
+
 export default function Home() {
-  const { provenanceData, closeExplainMode } = useExplainMode();
-
-  // Convert system metrics to quick stats format
-  const quickStats = [
-    {
-      id: "active-executions",
-      label: "Active Ops",
-      value: mockSystemMetrics.activeExecutions,
-      status: "nominal" as const,
-    },
-    {
-      id: "pending-decisions",
-      label: "Pending",
-      value: mockSystemMetrics.pendingDecisions,
-      status: mockSystemMetrics.pendingDecisions > 5 ? ("warning" as const) : ("nominal" as const),
-    },
-    {
-      id: "compliance-score",
-      label: "Compliance",
-      value: `${mockSystemMetrics.complianceScore}%`,
-      status: mockSystemMetrics.complianceScore >= 95 ? ("nominal" as const) : ("warning" as const),
-    },
-    {
-      id: "receipts-24h",
-      label: "Receipts/24h",
-      value: mockSystemMetrics.recentReceipts24h,
-      status: "neutral" as const,
-    },
-  ];
-
   return (
-    <Shell>
-      {/* HUD - Always visible metrics (Glass Rule compliance) */}
-      <StatusBar subsystems={statusBarSubsystems} />
-
-      {/* Main Dashboard Grid - 3 Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 p-4">
-        {/* Left Column - System Health (3 cols) */}
-        <div className="lg:col-span-3 space-y-4">
-          <QuickStats stats={quickStats} variant="bordered" />
-
-          <Panel noise notch>
-            <PanelHeader>System Health</PanelHeader>
-            <PanelContent>
-              <SystemStatusChart
-                systems={mockSubsystems.map((s) => ({
-                  id: s.id,
-                  name: s.name,
-                  status: s.status,
-                  lastUpdate: s.lastCheck,
-                  load: s.load, // Pressure indicator
-                }))}
-              />
-            </PanelContent>
-          </Panel>
+    <MainLayout>
+      {/* ── Hero ── */}
+      <section className="py-20 md:py-28">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-tight">
+            Go from idea to validated launch plan
+            <span className="block text-primary mt-1">in under 10 minutes.</span>
+          </h1>
+          <p className="mt-6 text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
+            ForgePilot is your AI co-founder. Describe your business idea and get a
+            complete brand identity, market analysis, and launch blueprint — instantly.
+          </p>
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link href="/launch">
+              <Button size="lg">Start Your Launch Session</Button>
+            </Link>
+            <Link href="/pricing">
+              <Button variant="outline" size="lg">View Pricing</Button>
+            </Link>
+          </div>
         </div>
+      </section>
 
-        {/* Center Column - Activity Feed & Metrics (6 cols) */}
-        <div className="lg:col-span-6 space-y-4">
-          <Panel noise glow notch>
-            <PanelHeader>Live Activity</PanelHeader>
-            <PanelContent>
-              <ActivityFeed
-                events={mockActivityEvents.map(event => ({
-                  id: event.id,
-                  timestamp: event.timestamp,
-                  type: event.type === 'alert' ? (event.status === 'critical' ? 'error' : 'warning') :
-                        event.type === 'receipt' ? 'success' : 'info',
-                  title: event.description,
-                  signer: event.signer,
-                  policyRef: event.policyRef,
-                  hashPrefix: event.hashPrefix,
-                }))}
-              />
-            </PanelContent>
-          </Panel>
+      {/* ── Features ── */}
+      <section className="py-16 md:py-20 border-t border-border/40">
+        <div className="mx-auto max-w-5xl px-6">
+          <h2 className="text-2xl md:text-3xl font-semibold text-foreground text-center">
+            Everything you need to launch with confidence
+          </h2>
+          <p className="mt-3 text-muted-foreground text-center max-w-xl mx-auto">
+            No guesswork. No blank-page paralysis. Just clarity.
+          </p>
 
-          <MetricsPanel
-            metrics={[
-              {
-                id: "trust-score",
-                label: "Trust Score",
-                value: 98.7,
-                unit: "%",
-                status: "nominal",
-                trend: "up",
-                trendValue: "+0.3%",
-              },
-              {
-                id: "active-agents",
-                label: "Active Agents",
-                value: 12,
-                status: "nominal",
-              },
-              {
-                id: "avg-latency",
-                label: "Avg Latency",
-                value: 23,
-                unit: "ms",
-                status: "nominal",
-                trend: "down",
-                trendValue: "-5ms",
-              },
-            ]}
-            columns={3}
-          />
+          <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-8">
+            {features.map((feature) => (
+              <div
+                key={feature.title}
+                className="rounded-sm border border-border bg-card p-6"
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-muted text-primary">
+                  {feature.icon}
+                </div>
+                <h3 className="mt-4 text-base font-semibold text-foreground">
+                  {feature.title}
+                </h3>
+                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
+      </section>
 
-        {/* Right Column - Command Rail (3 cols) */}
-        <div className="lg:col-span-3">
-          <CommandRail />
+      {/* ── How It Works ── */}
+      <section className="py-16 md:py-20 border-t border-border/40 bg-muted/50">
+        <div className="mx-auto max-w-4xl px-6">
+          <h2 className="text-2xl md:text-3xl font-semibold text-foreground text-center">
+            Three steps. One blueprint.
+          </h2>
+
+          <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-8">
+            {steps.map((s) => (
+              <div key={s.step} className="text-center">
+                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-sm bg-primary text-primary-foreground text-sm font-semibold">
+                  {s.step}
+                </div>
+                <h3 className="mt-4 text-base font-semibold text-foreground">{s.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{s.description}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Explain This Mode Overlay - Hotkey: ? */}
-      <ExplainOverlay data={provenanceData} onClose={closeExplainMode} />
-    </Shell>
+      {/* ── Final CTA ── */}
+      <section className="py-20 md:py-24 border-t border-border/40">
+        <div className="mx-auto max-w-2xl px-6 text-center">
+          <h2 className="text-2xl md:text-3xl font-semibold text-foreground">
+            Ready to build something real?
+          </h2>
+          <p className="mt-4 text-muted-foreground">
+            Stop planning in circles. Start your launch session and get a validated
+            blueprint in minutes.
+          </p>
+          <div className="mt-8">
+            <Link href="/launch">
+              <Button size="lg">Launch Now</Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+    </MainLayout>
   );
 }

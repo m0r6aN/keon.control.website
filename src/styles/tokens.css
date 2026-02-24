@@ -196,14 +196,14 @@
   --blur-lg: 16px;
 
   /* ===========================================
-     GLOW INTENSITY - LED BACKLIGHT EFFECTS
+     GLOW INTENSITY — VLG Compliant (max 8%)
      =========================================== */
 
-  --glow-spread-sm: 6px;
-  --glow-spread-md: 10px;
-  --glow-spread-lg: 16px;
-  --glow-intensity: 0.4;
-  --glow-intensity-strong: 0.6;
+  --glow-spread-sm: 4px;
+  --glow-spread-md: 6px;
+  --glow-spread-lg: 10px;
+  --glow-intensity: 0.08;
+  --glow-intensity-strong: 0.08;
 
   /* ===========================================
      NOISE TEXTURE - MATTE STEEL FINISH

@@ -59,6 +59,7 @@ export interface ExecutionTraceEvent {
   stage: string;
   timestamp: string;
   details?: Record<string, unknown>;
+  spine?: SpineEvent;
 }
 
 /**

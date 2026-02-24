@@ -1,50 +1,50 @@
-import * as React from "react";
+import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/lib/utils";
+import * as React from "react";
 
 /**
- * Button variants for Keon Command Center
- * Design: Physical switch-like feedback, instant response, mechanical precision
- * No shadows, minimal borders, glow effects on active states
+ * ForgePilot Button Variants
+ * Design: Clean, functional, precision feedback
+ * Glow capped at 8% per Visual Language Guidance
  */
 const buttonVariants = cva(
   [
-    // Base styles - mechanical foundation
     "inline-flex items-center justify-center gap-2",
-    "text-sm font-medium font-mono uppercase tracking-wide",
-    "transition-all duration-75", // Instant snap feedback
+    "text-sm font-medium tracking-wide",
+    "rounded-sm", // max 4px radius per VLG
+    "transition-colors duration-75",
     "disabled:pointer-events-none disabled:opacity-50",
-    "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[--reactor-blue]",
-    "active:scale-[0.98]", // Physical switch depression
-    "border border-[--tungsten]",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+    "border",
   ].join(" "),
   {
     variants: {
       variant: {
         primary: [
-          "bg-[--reactor-blue] text-[--void]",
-          "hover:bg-[--reactor-glow] hover:shadow-[0_0_10px_rgba(102,252,241,0.4)]",
-          "border-[--reactor-blue]",
+          "bg-primary text-primary-foreground",
+          "hover:bg-primary/90",
+          "border-primary",
         ].join(" "),
         secondary: [
-          "bg-[--gun-metal] text-[--flash]",
-          "hover:bg-[--tungsten] hover:border-[--steel]",
+          "bg-secondary text-secondary-foreground",
+          "hover:bg-secondary/80",
+          "border-border",
         ].join(" "),
         ghost: [
-          "bg-transparent text-[--steel]",
-          "hover:bg-[--gun-metal] hover:text-[--flash]",
-          "border-transparent hover:border-[--tungsten]",
+          "bg-transparent text-muted-foreground",
+          "hover:bg-accent hover:text-accent-foreground",
+          "border-transparent",
         ].join(" "),
         destructive: [
-          "bg-[--ballistic-red] text-[--flash]",
-          "hover:shadow-[0_0_10px_rgba(255,46,46,0.4)]",
-          "border-[--ballistic-red]",
+          "bg-destructive text-destructive-foreground",
+          "hover:bg-destructive/90",
+          "border-destructive",
         ].join(" "),
         outline: [
-          "bg-transparent text-[--flash]",
-          "hover:bg-[--gun-metal]",
-          "border-[--tungsten] hover:border-[--reactor-blue]",
+          "bg-transparent text-foreground",
+          "hover:bg-accent hover:text-accent-foreground",
+          "border-border hover:border-primary",
         ].join(" "),
       },
       size: {
@@ -67,18 +67,18 @@ export interface ButtonProps
 }
 
 /**
- * Button Component - Mission Control Switch
+ * ForgePilot Button Component
  *
  * Variants:
- * - primary: Reactor blue with glow effect (default)
- * - secondary: Gun metal, tactical operations
- * - ghost: Transparent, minimal presence
- * - destructive: Ballistic red, critical actions
- * - outline: Bordered, secondary actions
+ * - primary: Primary action (default)
+ * - secondary: Secondary action
+ * - ghost: Minimal presence
+ * - destructive: Critical/danger actions
+ * - outline: Bordered, tertiary actions
  *
  * @example
- * <Button variant="primary" size="md">Launch Sequence</Button>
- * <Button variant="destructive">Abort Mission</Button>
+ * <Button variant="primary" size="md">Get Started</Button>
+ * <Button variant="outline">Learn More</Button>
  */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
@@ -95,3 +95,4 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 export { Button, buttonVariants };
+

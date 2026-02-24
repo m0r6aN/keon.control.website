@@ -5,34 +5,80 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   FORGEPILOT DESIGN TOKENS — Visual Language Guidance Compliant
+   Light mode (:root default) + Dark mode (.dark class)
+   Ref: docs/VISUAL_LANGUAGE_GUIDANCE.md
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  /* ── Semantic HSL Tokens (consumed by tailwind.config.ts) ── */
+
+  /* Foundation — Light Mode (#FFFFFF) */
+  --color-background: 0 0% 100%;
+  --color-foreground: 213 30% 6%;
+
+  /* Elevated Surfaces (#F8F9FA) */
+  --color-card: 210 17% 98%;
+  --color-card-foreground: 213 30% 6%;
+  --color-popover: 210 17% 98%;
+  --color-popover-foreground: 213 30% 6%;
+
+  /* Borders (#E5E7EB) */
+  --color-border: 218 11% 85%;
+  --color-input: 218 11% 85%;
+
+  /* Primary — Functional Blue */
+  --color-primary: 198 60% 45%;
+  --color-primary-foreground: 0 0% 100%;
+
+  /* Secondary — Light Slate */
+  --color-secondary: 210 17% 96%;
+  --color-secondary-foreground: 213 30% 6%;
+
+  /* Muted */
+  --color-muted: 210 17% 96%;
+  --color-muted-foreground: 215 16% 47%;
+
+  /* Accent — Cyan (OMEGA intelligence, subtle) */
+  --color-accent: 176 40% 50%;
+  --color-accent-foreground: 213 30% 6%;
+
+  /* Destructive */
+  --color-destructive: 0 72% 51%;
+  --color-destructive-foreground: 0 0% 100%;
+
+  /* Ring */
+  --color-ring: 198 60% 45%;
+
+  /* Radius — max 4px per VLG */
+  --radius: 4px;
+
+  /* Glow — DISABLED in light mode per VLG */
+  --glow-intensity: 0;
+  --glow-intensity-strong: 0;
+
+  /* ── Legacy Palette (backward compat, phasing out) ── */
+  --background: #ffffff;
+  --foreground: #0B0F14;
 
   /* Font Families */
   --font-inter: 'Inter', system-ui, sans-serif;
   --font-rajdhani: 'Rajdhani', system-ui, sans-serif;
   --font-jetbrains-mono: 'JetBrains Mono', monospace;
 
-  /* KEON COMMAND CENTER COLOR PALETTE */
-  /* Core Surfaces */
+  /* Keon palette (legacy — used by incident mode & existing components) */
   --void: #0B0C10;
   --gun-metal: #1F2833;
   --tungsten: #384656;
   --steel: #C5C6C7;
   --flash: #EAEAEA;
-
-  /* Reactor Theme - Primary Actions */
   --reactor-blue: #45A29E;
   --reactor-glow: #66FCF1;
-
-  /* Status Ladder - 5-State Severity */
   --safety-orange: #FF6B00;
   --ballistic-red: #FF2E2E;
-
-  /* Legacy reactor colors for compatibility */
   --reactor-blue-dim: #0099b3;
-  --reactor-blue-glow: rgba(69, 162, 158, 0.3);
+  --reactor-blue-glow: rgba(69, 162, 158, 0.08);
 
   /* Status Colors */
   --status-healthy: var(--reactor-blue);
@@ -53,7 +99,61 @@
   /* Borders */
   --border-width: 1px;
   --border-radius: 4px;
-  --border-color: var(--tungsten);
+  --border-color: #E5E7EB;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DARK MODE — True Black Foundation (#000000)
+   Applied via .dark class on <html> (next-themes attribute="class")
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.dark {
+  /* Foundation — True Black (#000000) */
+  --color-background: 0 0% 0%;
+  --color-foreground: 213 33% 97%;
+
+  /* Elevated Surfaces (#0E1116) */
+  --color-card: 215 24% 7%;
+  --color-card-foreground: 213 33% 97%;
+  --color-popover: 215 24% 7%;
+  --color-popover-foreground: 213 33% 97%;
+
+  /* Borders (#1C2128) */
+  --color-border: 213 18% 13%;
+  --color-input: 213 18% 13%;
+
+  /* Primary — Electric Blue */
+  --color-primary: 176 47% 50%;
+  --color-primary-foreground: 0 0% 0%;
+
+  /* Secondary */
+  --color-secondary: 215 24% 10%;
+  --color-secondary-foreground: 213 33% 97%;
+
+  /* Muted */
+  --color-muted: 215 24% 10%;
+  --color-muted-foreground: 215 16% 60%;
+
+  /* Accent — Cyan glow (subtle) */
+  --color-accent: 176 60% 50%;
+  --color-accent-foreground: 213 33% 97%;
+
+  /* Destructive */
+  --color-destructive: 0 72% 51%;
+  --color-destructive-foreground: 213 33% 97%;
+
+  /* Ring */
+  --color-ring: 176 47% 50%;
+
+  /* Glow — max 8% in dark mode per VLG */
+  --glow-intensity: 0.08;
+  --glow-intensity-strong: 0.08;
+
+  /* Legacy overrides for dark */
+  --background: #000000;
+  --foreground: #F5F7FA;
+  --border-color: #1C2128;
+  --reactor-blue-glow: rgba(69, 162, 158, 0.08);
 }
 
 * {
@@ -67,6 +167,14 @@ body {
   overflow-x: hidden;
 }
 
+/* ── Global Focus-Visible — VLG R11 ── */
+:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px hsl(var(--color-background)),
+    0 0 0 4px hsl(var(--color-ring));
+}
+
 .font-display {
   font-family: var(--font-rajdhani), system-ui, sans-serif;
 }
@@ -75,17 +183,17 @@ body {
   font-family: var(--font-jetbrains-mono), monospace;
 }
 
-/* HUD Glow Effects */
+/* HUD Glow Effects — dark-only via token (--glow-intensity: 0 in light) */
 .glow-reactor {
-  box-shadow: 0 0 10px var(--reactor-blue-glow);
+  box-shadow: 0 0 10px rgba(69, 162, 158, var(--glow-intensity));
 }
 
 .glow-critical {
-  box-shadow: 0 0 10px rgba(255, 56, 56, 0.3);
+  box-shadow: 0 0 10px rgba(255, 56, 56, var(--glow-intensity));
 }
 
 .glow-warning {
-  box-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
+  box-shadow: 0 0 10px rgba(255, 140, 0, var(--glow-intensity));
 }
 
 /* Keon Visual Signature - Corner Notches */

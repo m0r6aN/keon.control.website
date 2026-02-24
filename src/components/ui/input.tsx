@@ -1,26 +1,25 @@
-import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 
 /**
- * Input variants for Keon Command Center
- * Design: Dark inputs with tactical borders, monospace for data entry
- * No rounded corners, instant focus feedback with reactor glow
+ * ForgePilot Input Variants
+ * Design: Clean inputs with clear borders, functional focus states
+ * Glow capped at 8% per Visual Language Guidance
  */
 const inputVariants = cva(
   [
     "flex w-full",
     "px-3 py-2",
-    "bg-[--void] text-[--flash]",
-    "font-mono text-sm",
-    "border border-[--tungsten]",
-    "rounded-none", // No rounded corners
-    "transition-all duration-75",
-    "placeholder:text-[--steel] placeholder:opacity-50",
+    "bg-background text-foreground",
+    "text-sm",
+    "border border-input",
+    "rounded-sm", // max 4px radius per VLG
+    "transition-colors duration-75",
+    "placeholder:text-muted-foreground",
     "focus-visible:outline-none",
-    "focus-visible:border-[--reactor-blue]",
-    "focus-visible:shadow-[0_0_8px_rgba(69,162,158,0.3)]",
-    "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-[--gun-metal]",
+    "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+    "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted",
   ].join(" "),
   {
     variants: {
@@ -41,17 +40,16 @@ export interface InputProps
     VariantProps<typeof inputVariants> {}
 
 /**
- * Input Component - Data Entry Field
+ * ForgePilot Input Component
  *
  * Features:
- * - Monospace font for precise data entry
- * - Reactor blue glow on focus
- * - No rounded corners (mission control aesthetic)
- * - Tabular numerals for numeric data
+ * - Clean focus ring (no glow in light mode)
+ * - Consistent border radius (max 4px)
+ * - Semantic color tokens for theme support
  *
  * @example
- * <Input type="text" placeholder="Enter hash..." />
- * <Input type="number" inputSize="sm" placeholder="0x..." />
+ * <Input type="text" placeholder="Enter your idea..." />
+ * <Input type="email" inputSize="sm" placeholder="you@example.com" />
  */
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, inputSize, ...props }, ref) => {
@@ -68,3 +66,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 Input.displayName = "Input";
 
 export { Input, inputVariants };
+

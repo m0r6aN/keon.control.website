@@ -78,9 +78,20 @@ export async function fetchJson<TSchema extends z.ZodTypeAny>(
 }
 
 function joinUrl(baseUrl: string, path: string) {
-  const b = baseUrl.replace(/\/+$/, "");
+  if (/^https?:\/\//i.test(path)) {
+    return path;
+  }
+
+  const rawBase = baseUrl.replace(/\/+$/, "");
   const p = path.startsWith("/") ? path : `/${path}`;
-  return `${b}${p}`;
+
+  // FC root routes (e.g. /api/fc/*) must be resolved from federation root.
+  if (p.startsWith("/api/")) {
+    const federationRoot = rawBase.replace(/\/api\/v1$/i, "");
+    return `${federationRoot}${p}`;
+  }
+
+  return `${rawBase}${p}`;
 }
 
 function safeJsonParse(text: string): unknown {
@@ -90,4 +101,3 @@ function safeJsonParse(text: string): unknown {
     return { raw: text };
   }
 }
-
