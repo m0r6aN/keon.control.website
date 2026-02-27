@@ -1,0 +1,61 @@
+name: Control Website CI (pnpm-only + build + governance smoke)
+
+on:
+  pull_request:
+    branches: ["*"]
+    paths:
+      - "**"
+      - ".github/workflows/control-website-ci.yml"
+  push:
+    branches: ["recovery/2026-02-24-rescue", "main"]
+    paths:
+      - "**"
+      - ".github/workflows/control-website-ci.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: control-website-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  control-website:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node (Corepack + cache)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
+      - name: Show tool versions
+        run: |
+          node --version
+          pnpm --version
+
+      - name: Verify package manager policy
+        run: pnpm verify:pm
+
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Governance route smoke (no server)
+        run: pnpm smoke:governance
+
+      - name: Lint
+        run: pnpm lint
