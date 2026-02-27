@@ -1,9 +1,9 @@
 "use client";
 
-import * as React from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
 import { governanceClient } from "@/lib/api/governanceClient";
 import { SealStatus } from "@/ui-kit/components/SealStatus";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import * as React from "react";
 
 export function DecisionCaseClient({ caseId }: { caseId: string }) {
   const [rationale, setRationale] = React.useState("");
@@ -46,7 +46,7 @@ export function DecisionCaseClient({ caseId }: { caseId: string }) {
       <div>
         <h3 className="font-semibold text-gray-900 mb-3">Findings</h3>
         <ul className="list-disc pl-6 text-sm space-y-2">
-          {data.findings.map((f) => (
+          {data?.findings.map((f) => (
             <li key={f.findingId} className="text-gray-700">
               <strong>{f.category}</strong>: {f.message}
             </li>

@@ -48,7 +48,19 @@ interface LineChartProps {
   glowEffect?: boolean;
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface TooltipEntry {
+  color?: string;
+  name?: string | number;
+  value?: string | number;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipEntry[];
+  label?: string | number;
+}
+
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
       <div
@@ -58,7 +70,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         }}
       >
         <p className="mb-1 text-xs text-[#C5C6C7]">{label}</p>
-        {payload.map((entry: any, index: number) => (
+        {payload.map((entry, index: number) => (
           <p
             key={`item-${index}`}
             className="text-sm font-medium"

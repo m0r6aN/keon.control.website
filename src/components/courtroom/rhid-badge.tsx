@@ -3,7 +3,8 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { UIManifestEntry } from "@/lib/mappers";
 import { cn } from "@/lib/utils";
-import { AlertTriangle, Code, Database, FileText, HelpCircle, Key, Shield } from "lucide-react";
+import { AlertTriangle, Code, Database, FileText, HelpCircle, Key, Shield, type LucideProps } from "lucide-react";
+import type { ComponentType } from "react";
 
 interface RHIDBadgeProps {
   rhid: string;
@@ -14,7 +15,7 @@ interface RHIDBadgeProps {
 export function RHIDBadge({ rhid, entry, className }: RHIDBadgeProps) {
   const kind = rhid.split(":")[1] || "unknown";
   
-  const iconMap: Record<string, any> = {
+  const iconMap: Record<string, ComponentType<LucideProps>> = {
     receipt: Key,
     artifact: FileText,
     llm: Shield,

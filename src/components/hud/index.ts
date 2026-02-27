@@ -6,6 +6,7 @@
 export { AlertBanner } from "./alert-banner";
 export { Clock } from "./clock";
 export { CommandRail } from "./command-rail";
+export { GovernanceStatusPanel } from "./governance-status-panel";
 export { MetricsPanel } from "./metrics-panel";
 export { MiniChart } from "./mini-chart";
 export { QuickStats } from "./quick-stats";

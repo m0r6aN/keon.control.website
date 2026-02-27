@@ -4,7 +4,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Manifest } from "@/lib/contracts/pt013";
+import { Manifest, ManifestEntry } from "@/lib/contracts/pt013";
 import { UICollaborationLedgerEntry } from "@/lib/mappers";
 import { isRhidValid, resolveRhid } from "@/lib/rhid-resolver";
 import { useQuery } from "@tanstack/react-query";
@@ -170,7 +170,7 @@ export function ActionDetailPanel({ entry, manifest, runId, scenario }: ActionDe
                   Proof Manifest (Chain of Custody)
                 </h4>
                 <div className="space-y-2">
-                  {manifest?.entries.map((mEntry: any) => (
+                  {manifest?.entries.map((mEntry: ManifestEntry) => (
                     <div key={mEntry.rhid} className="p-2 rounded border border-[#384656] bg-[#1F2833]/20 flex flex-col gap-1">
                       <div className="flex items-center justify-between">
                         <span className="font-mono text-[11px] text-[#66FCF1]">{mEntry.rhid}</span>

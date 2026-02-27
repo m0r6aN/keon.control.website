@@ -30,6 +30,7 @@ interface MiniChartProps {
   width?: number;
   height?: number;
   color?: string;
+  showGrid?: boolean;
   showTrend?: boolean;
   className?: string;
   strokeWidth?: number;
@@ -125,6 +126,7 @@ export function MiniChart({
   width = 50,
   height = 20,
   color,
+  showGrid = false,
   showTrend = true,
   className,
   strokeWidth = 1.5,
@@ -165,6 +167,18 @@ export function MiniChart({
       role="img"
       aria-label={`Sparkline chart showing ${data.length} data points with ${trend} trend`}
     >
+      {showGrid && (
+        <line
+          x1={0}
+          y1={height - 1}
+          x2={width}
+          y2={height - 1}
+          stroke={HUD_COLORS.border.tungsten}
+          strokeWidth={1}
+          opacity={0.5}
+        />
+      )}
+
       {/* Area fill */}
       {showArea && (
         <path

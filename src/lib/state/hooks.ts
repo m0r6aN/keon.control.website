@@ -184,9 +184,10 @@ export function usePaginatedApi<T>(
 
   // Accumulate items
   React.useEffect(() => {
-    if (result.data?.items) {
-      setAllItems((prev) => [...prev, ...result.data.items]);
-      setPageToken(result.data.nextPageToken || null);
+    const page = result.data;
+    if (page?.items) {
+      setAllItems((prev) => [...prev, ...page.items]);
+      setPageToken(page.nextPageToken || null);
     }
   }, [result.data]);
 

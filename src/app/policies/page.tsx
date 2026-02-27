@@ -44,7 +44,7 @@ const mockPolicies = [
 const typeConfig = {
   budget: { variant: "healthy" as const, label: "Budget" },
   authority: { variant: "warning" as const, label: "Authority" },
-  compliance: { variant: "degraded" as const, label: "Compliance" },
+  compliance: { variant: "warning" as const, label: "Compliance" },
   custom: { variant: "default" as const, label: "Custom" },
 };
 
@@ -71,11 +71,7 @@ export default function PoliciesPage() {
             <Card key={policy.id} className="transition-colors hover:border-[#66FCF1]/30">
               <CardHeader
                 title={policy.name}
-                description={
-                  <span className="font-mono text-xs text-[#C5C6C7] opacity-60">
-                    {policy.id}
-                  </span>
-                }
+                description={policy.id}
                 actions={
                   <Badge
                     variant={policy.status === "active" ? "healthy" : "default"}
@@ -144,4 +140,3 @@ export default function PoliciesPage() {
     </PageContainer>
   );
 }
-

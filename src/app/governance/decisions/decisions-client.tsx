@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
 import { governanceClient } from "@/lib/api/governanceClient";
 import { RiskBadge } from "@/ui-kit/components/RiskBadge";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 
 const TENANT_ID = "tenant_123"; // replace later with real auth context
 
@@ -18,7 +18,7 @@ export function DecisionsClient() {
 
   return (
     <div className="p-6 space-y-4">
-      {data.items.map((d) => (
+      {data?.items.map((d) => (
         <Link
           key={d.caseId}
           href={`/governance/decisions/${d.caseId}`}

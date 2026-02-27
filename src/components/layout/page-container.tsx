@@ -55,8 +55,8 @@ export function PageContainer({
 }
 
 interface PageHeaderProps {
-  title: string;
-  description?: string;
+  title: React.ReactNode;
+  description?: React.ReactNode;
   actions?: React.ReactNode;
   className?: string;
 }
@@ -139,8 +139,8 @@ export function Card({ children, className, hover = false }: CardProps) {
 }
 
 interface CardHeaderProps {
-  title: string;
-  description?: string;
+  title: React.ReactNode;
+  description?: React.ReactNode;
   actions?: React.ReactNode;
   className?: string;
 }

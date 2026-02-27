@@ -18,6 +18,7 @@ export const ReceiptResponseSchema = z.object({
   payloadHash: Sha256Schema.optional(),
   prevReceiptHash: Sha256Schema.optional(),
   hash: Sha256Schema,
-  payload: z.record(z.any()).optional(),
-}).passthrough();
+  payload: z.record(z.string(), z.unknown()).optional(),
+});
 
+export type Receipt = z.infer<typeof ReceiptResponseSchema>;

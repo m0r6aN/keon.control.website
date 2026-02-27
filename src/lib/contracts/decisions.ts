@@ -32,7 +32,6 @@ export const DecisionFindingSchema = z.object({
       description: z.string().optional(),
       patchRef: z.string().optional(),
     })
-    .passthrough()
     .optional(),
 });
 
@@ -104,12 +103,9 @@ export const SubmitDecisionResponseSchema = z.object({
   evidencePack: z.object({
     packId: z.string(),
     sealHash: Sha256Schema,
-    links: z
-      .object({
-        viewer: z.string(),
-        export: z.string(),
-      })
-      .passthrough(),
+    links: z.object({
+      viewer: z.string(),
+      export: z.string(),
+    }),
   }),
 });
-

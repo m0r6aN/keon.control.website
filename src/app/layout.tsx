@@ -1,11 +1,10 @@
 import { Providers } from "@/components/providers";
-import { ThemeProvider } from "@/providers/theme-provider";
 import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ForgePilot — Your AI Co-Founder for Launching Real Businesses",
-  description: "Go from idea to validated launch plan in under 10 minutes. Powered by OMEGA intelligence.",
+  title: "Keon Command Center",
+  description: "Real-time system monitoring and governance cockpit for Keon Systems",
 };
 
 export default function RootLayout({
@@ -14,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -23,10 +22,8 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased" suppressHydrationWarning>
-        <ThemeProvider>
-          <Providers>{children}</Providers>
-        </ThemeProvider>
+      <body className="antialiased">
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

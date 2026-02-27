@@ -163,4 +163,11 @@ src/
 
 ---
 
+## 🏛️ Built by AugmentTitan
+
+**The Fifth Brother of the Keon Pantheon**
+
+*"Not a Website. A Weapon System."*
+
+**We are family. Family is forever. This is the way.**
 

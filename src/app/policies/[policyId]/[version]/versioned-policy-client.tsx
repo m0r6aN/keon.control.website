@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ManifestEntry } from "@/lib/contracts/pt013";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2, Clock, FileText, Shield } from "lucide-react";
 import * as React from "react";
@@ -25,7 +26,7 @@ export function VersionedPolicyClient({ policyId, version }: VersionedPolicyClie
 
   const policyEntry = React.useMemo(() => {
     if (!manifest) return null;
-    return manifest.entries.find((e: any) => e.rhid.startsWith('rhid:policy:'));
+    return manifest.entries.find((e: ManifestEntry) => e.rhid.startsWith('rhid:policy:'));
   }, [manifest]);
 
   const { data: content, isLoading } = useQuery({

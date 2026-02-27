@@ -97,7 +97,7 @@ const StatusIndicator = React.forwardRef<
           statusIndicatorVariants({ status, size }),
           shouldPulse && "animate-pulse"
         )}
-        aria-label={label || status}
+        aria-label={label ?? status ?? undefined}
       />
       {label && (
         <span className="text-xs font-mono uppercase tracking-wide text-[--steel]">

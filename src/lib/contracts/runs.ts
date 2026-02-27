@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { IsoDateTimeSchema, RunModeSchema, RunStatusSchema, Sha256Schema } from "./common";
+import {
+  IsoDateTimeSchema,
+  RunModeSchema,
+  RunStatusSchema,
+  Sha256Schema,
+} from "./common";
 import { PolicyRefSchema } from "./workflows";
 
 export const RepoRefSchema = z.object({
@@ -18,7 +23,7 @@ export const CreateRunRequestSchema = z.object({
   tenantId: z.string(),
   mode: RunModeSchema,
   repo: RepoRefSchema.optional(),
-  inputs: z.record(z.any()).default({}),
+  inputs: z.record(z.string(), z.unknown()).default({}),
   requestedBy: RequestedBySchema,
 });
 
@@ -34,7 +39,7 @@ export const CreateRunResponseSchema = z.object({
   policyLineage: z.array(PolicyRefSchema).default([]),
   links: z.object({
     run: z.string(),
-  }).passthrough(),
+  }),
 });
 
 export const PhaseTimelineItemSchema = z.object({
@@ -75,7 +80,6 @@ export const GetRunResponseSchema = z.object({
       findings: z.string().optional(),
       keonDecisionUrl: z.string().url().optional(),
     })
-    .passthrough()
     .optional(),
 });
 
@@ -85,18 +89,16 @@ export const FindingLocationSchema = z.object({
   lineEnd: z.number().int().optional(),
 });
 
-export const ProposedActionSchema = z
-  .object({
-    type: z.string(), // EDIT/MOVE/etc (kernel-owned)
-    description: z.string().optional(),
-    patch: z
-      .object({
-        format: z.string(),
-        content: z.string(),
-      })
-      .optional(),
-  })
-  .passthrough();
+export const ProposedActionSchema = z.object({
+  type: z.string(), // EDIT/MOVE/etc (kernel-owned)
+  description: z.string().optional(),
+  patch: z
+    .object({
+      format: z.string(),
+      content: z.string(),
+    })
+    .optional(),
+});
 
 export const RunFindingSchema = z.object({
   findingId: z.string(),
@@ -104,7 +106,7 @@ export const RunFindingSchema = z.object({
   category: z.string(),
   location: FindingLocationSchema,
   message: z.string(),
-  evidence: z.object({ snippet: z.string().optional() }).passthrough().optional(),
+  evidence: z.object({ snippet: z.string().optional() }).optional(),
   proposedAction: ProposedActionSchema.optional(),
 });
 
@@ -112,4 +114,3 @@ export const GetRunFindingsResponseSchema = z.object({
   runId: z.string(),
   items: z.array(RunFindingSchema),
 });
-

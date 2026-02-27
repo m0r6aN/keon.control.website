@@ -95,9 +95,11 @@ export function useKeyboardNavigation(
 
   const [selectedIndex, setSelectedIndex] = useStateRef(0)
 
-  const handleNavigation = useCallback(
-    (event: KeyboardEvent) => {
-      if (!enabled || itemCount === 0) return
+  useEffect(() => {
+    if (!enabled || typeof window === "undefined") return
+
+    const handleNavigation = (event: KeyboardEvent) => {
+      if (itemCount === 0) return
 
       const current = selectedIndex.current
 
@@ -131,16 +133,11 @@ export function useKeyboardNavigation(
           }
           break
       }
-    },
-    [enabled, itemCount, loop, onSelect, selectedIndex, setSelectedIndex]
-  )
-
-  useEffect(() => {
-    if (!enabled) return
+    }
 
     window.addEventListener("keydown", handleNavigation)
     return () => window.removeEventListener("keydown", handleNavigation)
-  }, [enabled, handleNavigation])
+  }, [enabled, itemCount, loop, onSelect, selectedIndex, setSelectedIndex])
 
   // Scroll selected item into view
   useEffect(() => {

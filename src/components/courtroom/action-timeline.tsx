@@ -56,7 +56,7 @@ export function ActionTimeline({ entries, selectedSeq, onSelect }: ActionTimelin
                 <div className="flex items-center gap-1.5">
                   <span className="text-xs text-[#C5C6C7] opacity-60">Actor:</span>
                   <span className="font-mono text-xs text-[#C5C6C7]">{entry.actorId}</span>
-                  <Badge variant="outline" className="text-[10px] h-4 px-1 opacity-50">
+                  <Badge variant="default" className="text-[10px] h-4 px-1 opacity-50">
                     {entry.actorType}
                   </Badge>
                 </div>

@@ -10,6 +10,7 @@ import {
     LayoutDashboard,
     Receipt,
     Settings,
+    ShieldCheck,
     Users
 } from "lucide-react";
 import Link from "next/link";
@@ -30,6 +31,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "Dashboard", href: "/", icon: LayoutDashboard },
+  { label: "Evidence", href: "/evidence", icon: ShieldCheck },
   { label: "Receipts", href: "/governance/receipts", icon: Receipt },
   { label: "Executions", href: "/runtime/executions", icon: Activity },
   { label: "Traces", href: "/observability/traces", icon: Eye },

@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { Sha256Schema } from "./common";
 
+export type EvidenceByRunResponse = z.infer<typeof EvidenceByRunResponseSchema>;
+
 export const EvidenceByRunResponseSchema = z.object({
   runId: z.string(),
   packId: z.string(),
@@ -16,11 +18,8 @@ export const EvidenceByRunResponseSchema = z.object({
       sizeBytes: z.number().int().nonnegative(),
     })
   ),
-  links: z
-    .object({
-      manifest: z.string(),
-      export: z.string(),
-    })
-    .passthrough(),
+  links: z.object({
+    manifest: z.string(),
+    export: z.string(),
+  }),
 });
-

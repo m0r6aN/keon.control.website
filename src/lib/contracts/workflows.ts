@@ -39,8 +39,8 @@ export const GetWorkflowVersionsResponseSchema = z.object({
 export const JsonSchemaSchema = z.object({
   type: z.string(),
   required: z.array(z.string()).optional(),
-  properties: z.record(z.any()).optional(),
-}).passthrough();
+  properties: z.record(z.string(), z.unknown()).optional(),
+});
 
 export const GetWorkflowVersionResponseSchema = z.object({
   workflowId: z.string(),
@@ -53,4 +53,3 @@ export const GetWorkflowVersionResponseSchema = z.object({
   policyRefs: z.array(PolicyRefSchema).default([]),
   requiredAuthorities: z.array(z.string()).default([]),
 });
-

@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ManifestEntry } from "@/lib/contracts/pt013";
 import { formatHash, formatTimestamp } from "@/lib/format";
 import { mapThinReceipt, UIThinReceipt } from "@/lib/mappers";
 import { PageHeader } from "@/ui-kit/components/PageHeader";
@@ -23,7 +24,7 @@ export default function GlobalReceiptsPage() {
         try {
           const res = await fetch(`/mock/pt013/${f}/evidence/manifest.json`);
           const manifest = await res.json();
-          const receiptEntries = manifest.entries.filter((e: any) => e.rhid.startsWith("rhid:receipt:"));
+          const receiptEntries = manifest.entries.filter((e: ManifestEntry) => e.rhid.startsWith("rhid:receipt:"));
           
           for (const entry of receiptEntries) {
             const safeRhid = entry.rhid.replace(/:/g, "_");
