@@ -43,10 +43,10 @@ test.describe("Governance Panel Smoke", () => {
   test.beforeAll(async () => {
     child = spawnNextStart(PORT);
 
-    child.stdout.on("data", (d) => {
+    child.stdout?.on("data", (d) => {
       logs += d.toString();
     });
-    child.stderr.on("data", (d) => {
+    child.stderr?.on("data", (d) => {
       logs += d.toString();
     });
 

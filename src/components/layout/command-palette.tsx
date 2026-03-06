@@ -6,15 +6,19 @@ import { cn } from "@/lib/utils";
 import { Command } from "cmdk";
 import { Dialog, DialogContent } from "@radix-ui/react-dialog";
 import {
-  Search,
+  DollarSign,
+  Gauge,
   LayoutDashboard,
-  Shield,
-  Zap,
-  Lock,
-  FileCheck,
+  Mail,
+  ScrollText,
+  Search,
+  Server,
   Settings,
-  FileText,
-  Activity,
+  ShieldAlert,
+  Siren,
+  Stethoscope,
+  Telescope,
+  Users,
 } from "lucide-react";
 
 interface CommandPaletteProps {
@@ -35,106 +39,137 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const router = useRouter();
   const [search, setSearch] = React.useState("");
 
-  // Navigation commands
+  const nav = (href: string) => {
+    router.push(href);
+    onOpenChange(false);
+  };
+
+  // Navigation commands — matches sidebar 12 items exactly
   const navigationCommands: CommandItem[] = [
     {
-      id: "dashboard",
-      label: "Dashboard",
-      description: "View system overview",
+      id: "fleet",
+      label: "Fleet",
+      description: "Operator command surface",
       icon: LayoutDashboard,
-      action: () => {
-        router.push("/");
-        onOpenChange(false);
-      },
+      action: () => nav("/"),
     },
     {
-      id: "governance",
-      label: "Governance",
-      description: "Manage key governance",
-      icon: Shield,
-      action: () => {
-        router.push("/governance");
-        onOpenChange(false);
-      },
+      id: "tenants",
+      label: "Tenants",
+      description: "Tenant workspace and health",
+      icon: Users,
+      action: () => nav("/tenants"),
     },
     {
-      id: "runtime",
-      label: "Runtime",
-      description: "Monitor runtime operations",
-      icon: Zap,
-      action: () => {
-        router.push("/runtime");
-        onOpenChange(false);
-      },
+      id: "incidents",
+      label: "Incidents",
+      description: "Active incident queue",
+      icon: Siren,
+      action: () => nav("/incidents"),
+    },
+    {
+      id: "observability",
+      label: "Observability",
+      description: "SLO, jobs, traces, delivery",
+      icon: Telescope,
+      action: () => nav("/observability"),
     },
     {
       id: "security",
       label: "Security",
-      description: "Security monitoring",
-      icon: Lock,
-      action: () => {
-        router.push("/security");
-        onOpenChange(false);
-      },
+      description: "Threats, auth anomalies, abuse signals",
+      icon: ShieldAlert,
+      action: () => nav("/security"),
     },
     {
-      id: "compliance",
-      label: "Compliance",
-      description: "Compliance reports",
-      icon: FileCheck,
-      action: () => {
-        router.push("/compliance");
-        onOpenChange(false);
-      },
+      id: "finance",
+      label: "Finance",
+      description: "Revenue, collections, Azure spend",
+      icon: DollarSign,
+      action: () => nav("/finance"),
+    },
+    {
+      id: "infrastructure",
+      label: "Infrastructure",
+      description: "Azure resources and health",
+      icon: Server,
+      action: () => nav("/infrastructure"),
+    },
+    {
+      id: "communications",
+      label: "Communications",
+      description: "Compose and send operator messages",
+      icon: Mail,
+      action: () => nav("/communications"),
+    },
+    {
+      id: "rollouts",
+      label: "Rollouts",
+      description: "Feature flags, deployments, maintenance",
+      icon: Gauge,
+      action: () => nav("/rollouts"),
+    },
+    {
+      id: "support",
+      label: "Support",
+      description: "Ticket queue and churn risk",
+      icon: Stethoscope,
+      action: () => nav("/support"),
+    },
+    {
+      id: "audit",
+      label: "Audit",
+      description: "Privileged action log",
+      icon: ScrollText,
+      action: () => nav("/audit"),
     },
     {
       id: "settings",
       label: "Settings",
-      description: "System configuration",
+      description: "Operators, roles, API keys",
       icon: Settings,
-      action: () => {
-        router.push("/settings");
-        onOpenChange(false);
-      },
+      action: () => nav("/settings"),
     },
   ];
 
   // Quick action commands
   const quickActions: CommandItem[] = [
     {
-      id: "search-receipts",
-      label: "Search Receipts",
-      description: "Find provenance receipts",
+      id: "declare-incident",
+      label: "Declare Incident",
+      description: "Open a new incident declaration",
+      icon: Siren,
+      action: () => nav("/incidents/new"),
+      keywords: ["new", "declare", "incident", "sev"],
+    },
+    {
+      id: "search-tenants",
+      label: "Search Tenants",
+      description: "Find a tenant by name or ID",
       icon: Search,
-      action: () => {
-        router.push("/receipts");
-        onOpenChange(false);
-      },
-      keywords: ["find", "receipt", "provenance"],
-    },
-    {
-      id: "view-logs",
-      label: "View Logs",
-      description: "System activity logs",
-      icon: FileText,
-      action: () => {
-        router.push("/logs");
-        onOpenChange(false);
-      },
-      keywords: ["logs", "activity", "audit"],
-    },
-    {
-      id: "quick-status",
-      label: "System Status",
-      description: "Check system health",
-      icon: Activity,
-      action: () => {
-        router.push("/status");
-        onOpenChange(false);
-      },
-      keywords: ["health", "status", "monitoring"],
+      action: () => nav("/tenants"),
+      keywords: ["find", "tenant", "search", "organization"],
     },
   ];
+
+  const allCommands = [...navigationCommands, ...quickActions];
+
+  const filteredNav = search
+    ? navigationCommands.filter(
+        (c) =>
+          c.label.toLowerCase().includes(search.toLowerCase()) ||
+          c.description?.toLowerCase().includes(search.toLowerCase())
+      )
+    : navigationCommands;
+
+  const filteredActions = search
+    ? quickActions.filter(
+        (c) =>
+          c.label.toLowerCase().includes(search.toLowerCase()) ||
+          c.description?.toLowerCase().includes(search.toLowerCase()) ||
+          c.keywords?.some((k) => k.toLowerCase().includes(search.toLowerCase()))
+      )
+    : quickActions;
 
   // Reset search when dialog closes
   React.useEffect(() => {
@@ -186,74 +221,78 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               </Command.Empty>
 
               {/* Navigation Section */}
-              <Command.Group
-                heading="Navigation"
-                className="mb-2 px-2 font-mono text-xs uppercase tracking-wider text-[#66FCF1]"
-              >
-                {navigationCommands.map((command) => {
-                  const Icon = command.icon;
-                  return (
-                    <Command.Item
-                      key={command.id}
-                      value={command.label}
-                      onSelect={command.action}
-                      className={cn(
-                        "group relative flex cursor-pointer items-center gap-3 rounded px-3 py-2.5",
-                        "text-[#C5C6C7] outline-none transition-colors",
-                        "hover:bg-[#384656] hover:text-[#66FCF1]",
-                        "data-[selected=true]:bg-[#384656] data-[selected=true]:text-[#66FCF1]"
-                      )}
-                    >
-                      <Icon className="h-4 w-4 shrink-0" />
-                      <div className="flex flex-1 flex-col">
-                        <span className="font-mono text-sm font-medium">
-                          {command.label}
-                        </span>
-                        {command.description && (
-                          <span className="font-mono text-xs opacity-50">
-                            {command.description}
-                          </span>
+              {filteredNav.length > 0 && (
+                <Command.Group
+                  heading="Navigation"
+                  className="mb-2 px-2 font-mono text-xs uppercase tracking-wider text-[#66FCF1]"
+                >
+                  {filteredNav.map((command) => {
+                    const Icon = command.icon;
+                    return (
+                      <Command.Item
+                        key={command.id}
+                        value={command.label}
+                        onSelect={command.action}
+                        className={cn(
+                          "group relative flex cursor-pointer items-center gap-3 rounded px-3 py-2.5",
+                          "text-[#C5C6C7] outline-none transition-colors",
+                          "hover:bg-[#384656] hover:text-[#66FCF1]",
+                          "data-[selected=true]:bg-[#384656] data-[selected=true]:text-[#66FCF1]"
                         )}
-                      </div>
-                    </Command.Item>
-                  );
-                })}
-              </Command.Group>
+                      >
+                        <Icon className="h-4 w-4 shrink-0" />
+                        <div className="flex flex-1 flex-col">
+                          <span className="font-mono text-sm font-medium">
+                            {command.label}
+                          </span>
+                          {command.description && (
+                            <span className="font-mono text-xs opacity-50">
+                              {command.description}
+                            </span>
+                          )}
+                        </div>
+                      </Command.Item>
+                    );
+                  })}
+                </Command.Group>
+              )}
 
               {/* Quick Actions Section */}
-              <Command.Group
-                heading="Quick Actions"
-                className="mb-2 mt-4 px-2 font-mono text-xs uppercase tracking-wider text-[#66FCF1]"
-              >
-                {quickActions.map((command) => {
-                  const Icon = command.icon;
-                  return (
-                    <Command.Item
-                      key={command.id}
-                      value={`${command.label} ${command.keywords?.join(" ") || ""}`}
-                      onSelect={command.action}
-                      className={cn(
-                        "group relative flex cursor-pointer items-center gap-3 rounded px-3 py-2.5",
-                        "text-[#C5C6C7] outline-none transition-colors",
-                        "hover:bg-[#384656] hover:text-[#66FCF1]",
-                        "data-[selected=true]:bg-[#384656] data-[selected=true]:text-[#66FCF1]"
-                      )}
-                    >
-                      <Icon className="h-4 w-4 shrink-0" />
-                      <div className="flex flex-1 flex-col">
-                        <span className="font-mono text-sm font-medium">
-                          {command.label}
-                        </span>
-                        {command.description && (
-                          <span className="font-mono text-xs opacity-50">
-                            {command.description}
-                          </span>
+              {filteredActions.length > 0 && (
+                <Command.Group
+                  heading="Quick Actions"
+                  className="mb-2 mt-4 px-2 font-mono text-xs uppercase tracking-wider text-[#66FCF1]"
+                >
+                  {filteredActions.map((command) => {
+                    const Icon = command.icon;
+                    return (
+                      <Command.Item
+                        key={command.id}
+                        value={`${command.label} ${command.keywords?.join(" ") || ""}`}
+                        onSelect={command.action}
+                        className={cn(
+                          "group relative flex cursor-pointer items-center gap-3 rounded px-3 py-2.5",
+                          "text-[#C5C6C7] outline-none transition-colors",
+                          "hover:bg-[#384656] hover:text-[#66FCF1]",
+                          "data-[selected=true]:bg-[#384656] data-[selected=true]:text-[#66FCF1]"
                         )}
-                      </div>
-                    </Command.Item>
-                  );
-                })}
-              </Command.Group>
+                      >
+                        <Icon className="h-4 w-4 shrink-0" />
+                        <div className="flex flex-1 flex-col">
+                          <span className="font-mono text-sm font-medium">
+                            {command.label}
+                          </span>
+                          {command.description && (
+                            <span className="font-mono text-xs opacity-50">
+                              {command.description}
+                            </span>
+                          )}
+                        </div>
+                      </Command.Item>
+                    );
+                  })}
+                </Command.Group>
+              )}
             </Command.List>
 
             {/* Footer */}
