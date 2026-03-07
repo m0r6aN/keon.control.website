@@ -2,16 +2,14 @@
 
 import { cn } from "@/lib/utils";
 import {
-    Activity,
-    Bell,
+    CreditCard,
     ChevronLeft,
-    Eye,
-    FileText,
+    KeyRound,
     LayoutDashboard,
-    Receipt,
     Settings,
-    ShieldCheck,
-    Users
+    Sparkles,
+    Users,
+    Waves
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -30,14 +28,12 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: "Dashboard", href: "/", icon: LayoutDashboard },
-  { label: "Evidence", href: "/evidence", icon: ShieldCheck },
-  { label: "Receipts", href: "/governance/receipts", icon: Receipt },
-  { label: "Executions", href: "/runtime/executions", icon: Activity },
-  { label: "Traces", href: "/observability/traces", icon: Eye },
-  { label: "Policies", href: "/policies", icon: FileText },
-  { label: "Tenants", href: "/tenants", icon: Users },
-  { label: "Alerts", href: "/alerts", icon: Bell },
+  { label: "Overview", href: "/", icon: LayoutDashboard },
+  { label: "Get Started", href: "/get-started", icon: Sparkles },
+  { label: "Usage", href: "/usage", icon: Waves },
+  { label: "API Keys", href: "/api-keys", icon: KeyRound },
+  { label: "Subscription", href: "/admin/subscription", icon: CreditCard },
+  { label: "Tenant", href: "/tenants", icon: Users },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
 

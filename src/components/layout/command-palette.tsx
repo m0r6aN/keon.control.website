@@ -6,15 +6,14 @@ import { cn } from "@/lib/utils";
 import { Command } from "cmdk";
 import { Dialog, DialogContent } from "@radix-ui/react-dialog";
 import {
+  CreditCard,
+  KeyRound,
+  Sparkles,
   Search,
   LayoutDashboard,
-  Shield,
-  Zap,
-  Lock,
-  FileCheck,
   Settings,
-  FileText,
-  Activity,
+  Users,
+  Waves,
 } from "lucide-react";
 
 interface CommandPaletteProps {
@@ -38,9 +37,9 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   // Navigation commands
   const navigationCommands: CommandItem[] = [
     {
-      id: "dashboard",
-      label: "Dashboard",
-      description: "View system overview",
+      id: "overview",
+      label: "Overview",
+      description: "Tenant overview, onboarding progress, and billing posture",
       icon: LayoutDashboard,
       action: () => {
         router.push("/");
@@ -48,42 +47,42 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       },
     },
     {
-      id: "governance",
-      label: "Governance",
-      description: "Manage key governance",
-      icon: Shield,
+      id: "get-started",
+      label: "Get Started",
+      description: "First-login onboarding and quickstart tasks",
+      icon: Sparkles,
       action: () => {
-        router.push("/governance");
+        router.push("/get-started");
         onOpenChange(false);
       },
     },
     {
-      id: "runtime",
-      label: "Runtime",
-      description: "Monitor runtime operations",
-      icon: Zap,
+      id: "usage",
+      label: "Usage",
+      description: "Billing-period usage and projected overage",
+      icon: Waves,
       action: () => {
-        router.push("/runtime");
+        router.push("/usage");
         onOpenChange(false);
       },
     },
     {
-      id: "security",
-      label: "Security",
-      description: "Security monitoring",
-      icon: Lock,
+      id: "api-keys",
+      label: "API Keys",
+      description: "Issue and review tenant credentials",
+      icon: KeyRound,
       action: () => {
-        router.push("/security");
+        router.push("/api-keys");
         onOpenChange(false);
       },
     },
     {
-      id: "compliance",
-      label: "Compliance",
-      description: "Compliance reports",
-      icon: FileCheck,
+      id: "subscription",
+      label: "Subscription",
+      description: "Plan changes, billing status, and payment entry points",
+      icon: CreditCard,
       action: () => {
-        router.push("/compliance");
+        router.push("/admin/subscription");
         onOpenChange(false);
       },
     },
@@ -97,42 +96,52 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         onOpenChange(false);
       },
     },
+    {
+      id: "tenant",
+      label: "Tenant",
+      description: "Tenant identity and account boundary details",
+      icon: Users,
+      action: () => {
+        router.push("/tenants");
+        onOpenChange(false);
+      },
+    },
   ];
 
   // Quick action commands
   const quickActions: CommandItem[] = [
     {
-      id: "search-receipts",
-      label: "Search Receipts",
-      description: "Find provenance receipts",
+      id: "subscription-actions",
+      label: "Open Subscription",
+      description: "Review upgrade, downgrade, and invoice actions",
+      icon: CreditCard,
+      action: () => {
+        router.push("/admin/subscription");
+        onOpenChange(false);
+      },
+      keywords: ["billing upgrade downgrade invoice payment portal"],
+    },
+    {
+      id: "first-login",
+      label: "First Login Guide",
+      description: "Open the guided onboarding landing page",
+      icon: Sparkles,
+      action: () => {
+        router.push("/get-started");
+        onOpenChange(false);
+      },
+      keywords: ["onboarding quickstart api key receipt first request"],
+    },
+    {
+      id: "review-usage",
+      label: "Review Usage",
+      description: "Inspect billing-period consumption and current exposure",
       icon: Search,
       action: () => {
-        router.push("/receipts");
+        router.push("/usage");
         onOpenChange(false);
       },
-      keywords: ["find", "receipt", "provenance"],
-    },
-    {
-      id: "view-logs",
-      label: "View Logs",
-      description: "System activity logs",
-      icon: FileText,
-      action: () => {
-        router.push("/logs");
-        onOpenChange(false);
-      },
-      keywords: ["logs", "activity", "audit"],
-    },
-    {
-      id: "quick-status",
-      label: "System Status",
-      description: "Check system health",
-      icon: Activity,
-      action: () => {
-        router.push("/status");
-        onOpenChange(false);
-      },
-      keywords: ["health", "status", "monitoring"],
+      keywords: ["usage overage quota billing period"],
     },
   ];
 
