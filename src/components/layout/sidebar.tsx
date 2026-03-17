@@ -2,14 +2,19 @@
 
 import { cn } from "@/lib/utils";
 import {
-    CreditCard,
-    ChevronLeft,
-    KeyRound,
-    LayoutDashboard,
-    Settings,
-    Sparkles,
-    Users,
-    Waves
+  ChevronLeft,
+  DollarSign,
+  Gauge,
+  LayoutDashboard,
+  Mail,
+  ScrollText,
+  Server,
+  Settings,
+  ShieldAlert,
+  Siren,
+  Stethoscope,
+  Telescope,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -28,12 +33,17 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: "Overview", href: "/", icon: LayoutDashboard },
-  { label: "Get Started", href: "/get-started", icon: Sparkles },
-  { label: "Usage", href: "/usage", icon: Waves },
-  { label: "API Keys", href: "/api-keys", icon: KeyRound },
-  { label: "Subscription", href: "/admin/subscription", icon: CreditCard },
-  { label: "Tenant", href: "/tenants", icon: Users },
+  { label: "Fleet", href: "/", icon: LayoutDashboard },
+  { label: "Tenants", href: "/tenants", icon: Users },
+  { label: "Incidents", href: "/incidents", icon: Siren },
+  { label: "Observability", href: "/observability", icon: Telescope },
+  { label: "Security", href: "/security", icon: ShieldAlert },
+  { label: "Finance", href: "/finance", icon: DollarSign },
+  { label: "Infrastructure", href: "/infrastructure", icon: Server },
+  { label: "Communications", href: "/communications", icon: Mail },
+  { label: "Rollouts", href: "/rollouts", icon: Gauge },
+  { label: "Support", href: "/support", icon: Stethoscope },
+  { label: "Audit", href: "/audit", icon: ScrollText },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
 
@@ -94,10 +104,10 @@ export function Sidebar({ collapsed = false, onCollapse, className }: SidebarPro
       )}
     >
       {/* Navigation Items */}
-      <nav className="flex-1 space-y-1 p-3">
+      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
         {navItems.map((item, index) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
           const isSelected = index === selectedIndex;
 
           return (
