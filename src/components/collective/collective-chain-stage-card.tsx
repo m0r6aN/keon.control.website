@@ -44,7 +44,7 @@ const TONE_ICON_COLOR: Record<PresentationTone, string> = {
   neutral: "text-[--tungsten]",
 };
 
-const TONE_BADGE_VARIANT: Record<PresentationTone, "healthy" | "warning" | "critical" | "neutral" | "offline"> = {
+export const TONE_BADGE_VARIANT: Record<PresentationTone, "healthy" | "warning" | "critical" | "neutral" | "offline"> = {
   success: "healthy",
   warning: "warning",
   danger: "critical",
