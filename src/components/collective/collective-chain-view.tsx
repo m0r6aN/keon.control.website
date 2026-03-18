@@ -50,23 +50,13 @@ function readGuidedTourDismissed(): boolean {
 
 export function CollectiveChainView({ detail, isLoading, fixtureName }: CollectiveChainViewProps) {
   const [focusedNodeId, setFocusedNodeId] = useState<string | null>(detail?.focusedNodeId ?? null);
-  const [showOnboarding, setShowOnboarding] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(() => !readOnboardingDismissed());
 
   // Guided tour state
   const [isGuidedMode, setIsGuidedMode] = useState(false);
   const [guidedStepIndex, setGuidedStepIndex] = useState(0);
-  const [dismissedGuidedMode, setDismissedGuidedMode] = useState(false);
+  const [dismissedGuidedMode, setDismissedGuidedMode] = useState(() => readGuidedTourDismissed());
   const stageCardRefs = useRef<Map<number, HTMLDivElement>>(new Map());
-
-  // Hydrate from localStorage after mount to avoid SSR mismatch
-  useEffect(() => {
-    if (readOnboardingDismissed()) {
-      setShowOnboarding(false);
-    }
-    if (readGuidedTourDismissed()) {
-      setDismissedGuidedMode(true);
-    }
-  }, []);
 
   // Keyboard support: arrow keys and Escape during guided mode
   useEffect(() => {
@@ -156,6 +146,7 @@ export function CollectiveChainView({ detail, isLoading, fixtureName }: Collecti
   const focusedNode = focusedNodeId
     ? view.nodes.find((n) => n.id === focusedNodeId) ?? null
     : null;
+  const preparedEffectNode = view.nodes.find((node) => node.stage === "preparedEffect" && node.isPresent) ?? null;
 
   const presentCount = view.completeness.presentStages.length;
 
@@ -285,6 +276,7 @@ export function CollectiveChainView({ detail, isLoading, fixtureName }: Collecti
             <CollectiveChainGuidedPanel
               stepIndex={guidedStepIndex}
               isStagePresentInChain={guidedStageIsPresent}
+              preparedEffectId={preparedEffectNode?.recordId ?? null}
               onNext={handleGuidedNext}
               onBack={handleGuidedBack}
               onExit={handleExitGuidedTour}
@@ -306,6 +298,7 @@ export function CollectiveChainView({ detail, isLoading, fixtureName }: Collecti
           <CollectiveChainGuidedPanel
             stepIndex={guidedStepIndex}
             isStagePresentInChain={guidedStageIsPresent}
+            preparedEffectId={preparedEffectNode?.recordId ?? null}
             onNext={handleGuidedNext}
             onBack={handleGuidedBack}
             onExit={handleExitGuidedTour}

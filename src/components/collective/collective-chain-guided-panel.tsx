@@ -1,7 +1,10 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import type { CollectiveChainStage } from "@/lib/collective/chain.dto";
 import { getCollectiveChainStageLabel } from "@/lib/collective/chain.normalization";
+import { collectiveObservabilityQueryKeys } from "@/lib/collective/queryKeys";
+import { createExecutionEligibilityRepository } from "@/lib/collective/repositories";
 import { Panel, PanelContent, PanelHeader, PanelTitle } from "@/components/ui/panel";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
@@ -99,6 +102,7 @@ const TOTAL_STEPS = GUIDED_CONTENT.length;
 interface CollectiveChainGuidedPanelProps {
   readonly stepIndex: number;
   readonly isStagePresentInChain: boolean;
+  readonly preparedEffectId?: string | null;
   readonly onNext: () => void;
   readonly onBack: () => void;
   readonly onExit: () => void;
@@ -111,11 +115,22 @@ interface CollectiveChainGuidedPanelProps {
 export function CollectiveChainGuidedPanel({
   stepIndex,
   isStagePresentInChain,
+  preparedEffectId,
   onNext,
   onBack,
   onExit,
 }: CollectiveChainGuidedPanelProps) {
   const content = GUIDED_CONTENT[stepIndex];
+  const showEligibility = content?.stage === "preparedEffect" && Boolean(preparedEffectId);
+  const eligibility = useQuery({
+    queryKey: preparedEffectId
+      ? collectiveObservabilityQueryKeys.executionEligibility.detail(preparedEffectId)
+      : ["collective", "execution-eligibility", "detail", "absent"] as const,
+    queryFn: () => createExecutionEligibilityRepository().evaluate(preparedEffectId!),
+    enabled: showEligibility,
+    staleTime: 0,
+  });
+
   if (!content) return null;
 
   const stageLabel = getCollectiveChainStageLabel(content.stage);
@@ -197,6 +212,17 @@ export function CollectiveChainGuidedPanel({
           <div className="rounded-sm border border-dashed border-[--safety-orange]/40 bg-[--safety-orange]/5 p-2">
             <p className="text-[10px] font-mono font-semibold text-[--safety-orange] leading-relaxed">
               {content.constitutionalNote}
+            </p>
+          </div>
+        )}
+
+        {showEligibility && eligibility.data && (
+          <div className="rounded-sm border border-[--tungsten]/30 p-2">
+            <p className="text-[10px] font-mono uppercase tracking-wider text-[--steel]">
+              Execution Eligibility
+            </p>
+            <p className="mt-1 text-xs font-mono text-[--flash]">
+              {eligibility.data.statusPresentation.label}
             </p>
           </div>
         )}
