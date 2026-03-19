@@ -5,9 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { DataValue } from "@/components/ui/data-value";
 import { Panel, PanelContent, PanelHeader, PanelTitle } from "@/components/ui/panel";
 import { ExecutionEligibilityPanel } from "@/components/collective/execution-eligibility-panel";
+import { InvocationPreviewPanel } from "@/components/collective/invocation-preview-panel";
 import type { CollectiveChainNode } from "@/lib/collective/chain.dto";
 import { collectiveObservabilityQueryKeys } from "@/lib/collective/queryKeys";
 import { createExecutionEligibilityRepository } from "@/lib/collective/repositories";
+import { createInvocationPreviewRepository } from "@/lib/collective";
 import { getCollectiveChainStageLabel } from "@/lib/collective/chain.normalization";
 import { cn } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
@@ -60,6 +62,19 @@ export function CollectiveChainDetailRail({ node }: CollectiveChainDetailRailPro
       : ["collective", "execution-eligibility", "detail", "absent"] as const,
     queryFn: () => createExecutionEligibilityRepository().evaluate(preparedEffectId!),
     enabled: Boolean(preparedEffectId),
+    staleTime: 0,
+  });
+
+  const invocationPreview = useQuery({
+    queryKey: preparedEffectId
+      ? collectiveObservabilityQueryKeys.invocationPreview.detail(preparedEffectId)
+      : ["collective", "invocation-preview", "detail", "absent"] as const,
+    queryFn: () =>
+      createInvocationPreviewRepository().preview(
+        preparedEffectId!,
+        eligibility.data!,
+      ),
+    enabled: Boolean(preparedEffectId) && Boolean(eligibility.data),
     staleTime: 0,
   });
 
@@ -144,6 +159,12 @@ export function CollectiveChainDetailRail({ node }: CollectiveChainDetailRailPro
               <p className="text-xs font-mono text-[--safety-orange] leading-relaxed">
                 Execution eligibility is unavailable for this prepared effect.
               </p>
+            </div>
+          )}
+
+          {preparedEffectId && invocationPreview.data && (
+            <div className="border-t border-[--tungsten]/30 pt-3">
+              <InvocationPreviewPanel preview={invocationPreview.data} />
             </div>
           )}
 
