@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Panel, PanelContent } from "@/components/ui/panel";
 import type { CollectiveChainNode, CollectiveChainStage } from "@/lib/collective/chain.dto";
 import type { ExecutionEligibilityStatus } from "@/lib/collective/eligibility.dto";
+import type { InvocationReadinessStatus } from "@/lib/collective/invocation-preview.dto";
 import type { PresentationTone } from "@/lib/collective/dto";
 import { getCollectiveChainStageLabel } from "@/lib/collective/chain.normalization";
 import { cn } from "@/lib/utils";
@@ -59,10 +60,11 @@ interface CollectiveChainStageCardProps {
   readonly isDimmed?: boolean;
   readonly isGuidedMissing?: boolean;
   readonly eligibilityStatus?: ExecutionEligibilityStatus;
+  readonly invocationReadiness?: InvocationReadinessStatus;
   readonly onSelect: (nodeId: string) => void;
 }
 
-export function CollectiveChainStageCard({ node, isFocused, isDimmed, isGuidedMissing, eligibilityStatus, onSelect }: CollectiveChainStageCardProps) {
+export function CollectiveChainStageCard({ node, isFocused, isDimmed, isGuidedMissing, eligibilityStatus, invocationReadiness, onSelect }: CollectiveChainStageCardProps) {
   const Icon = STAGE_ICONS[node.stage];
   const stageLabel = getCollectiveChainStageLabel(node.stage);
 
@@ -156,6 +158,23 @@ export function CollectiveChainStageCard({ node, isFocused, isDimmed, isGuidedMi
               : "text-[--ballistic-red]/80",
           )}>
             Execution Eligibility: {eligibilityStatus === "eligible" ? "ELIGIBLE" : "NOT ELIGIBLE"}
+          </p>
+        )}
+
+        {isPreparedEffect && invocationReadiness && (
+          <p className={cn(
+            "mt-1 text-[9px] font-mono leading-tight",
+            invocationReadiness === "ready"
+              ? "text-[--reactor-glow]/80"
+              : invocationReadiness === "constrained"
+                ? "text-[--safety-orange]/80"
+                : "text-[--tungsten]/80",
+          )}>
+            Invocation: {invocationReadiness === "ready"
+              ? "READY"
+              : invocationReadiness === "constrained"
+                ? "CONSTRAINED"
+                : "NOT AVAILABLE"}
           </p>
         )}
 
