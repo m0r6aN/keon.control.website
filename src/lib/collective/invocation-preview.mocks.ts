@@ -30,6 +30,11 @@ export const mockInvocationPreviewNotAvailable: InvocationPreviewView = {
 
 // ──────────────────────────────────────────────
 // Fixture 2: constrained — eligible but one requirement unsatisfied
+//
+// Forward-looking fixture: the current eligibility model cannot produce
+// this state (eligible always means empty reasons → all satisfied → ready).
+// This fixture exists for UI rendering coverage. See resolveReadinessStatus
+// in invocation-preview.repositories.ts for the full explanation.
 // ──────────────────────────────────────────────
 
 export const mockInvocationPreviewConstrained: InvocationPreviewView = {
