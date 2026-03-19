@@ -9,14 +9,8 @@ import { ExecutionEligibilityPanel } from "@/components/collective/execution-eli
 import { InvocationPreviewPanel } from "@/components/collective/invocation-preview-panel";
 import type { CollectiveChainNode } from "@/lib/collective/chain.dto";
 import { collectiveObservabilityQueryKeys } from "@/lib/collective/queryKeys";
-import {
-  createAgentPermissionRepository,
-  createAuthorityActivationRepository,
-  createDelegatedAuthorityRepository,
-  createExecutionEligibilityRepository,
-  createPreparedEffectRepository,
-} from "@/lib/collective/repositories";
-import { createInvocationPreviewRepository } from "@/lib/collective/invocation-preview.repositories";
+import { createExecutionEligibilityRepository } from "@/lib/collective/repositories";
+import { createInvocationPreviewRepository } from "@/lib/collective";
 import { getCollectiveChainStageLabel } from "@/lib/collective/chain.normalization";
 import { cn } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
@@ -117,6 +111,19 @@ export function CollectiveChainDetailRail({ node }: CollectiveChainDetailRailPro
     });
   }, [activation.data, delegation.data, eligibility.data, permission.data, preparedEffect.data]);
 
+  const invocationPreview = useQuery({
+    queryKey: preparedEffectId
+      ? collectiveObservabilityQueryKeys.invocationPreview.detail(preparedEffectId)
+      : ["collective", "invocation-preview", "detail", "absent"] as const,
+    queryFn: () =>
+      createInvocationPreviewRepository().preview(
+        preparedEffectId!,
+        eligibility.data!,
+      ),
+    enabled: Boolean(preparedEffectId) && Boolean(eligibility.data),
+    staleTime: 0,
+  });
+
   if (!node) {
     return (
       <Panel className="w-full">
@@ -212,9 +219,9 @@ export function CollectiveChainDetailRail({ node }: CollectiveChainDetailRailPro
             </div>
           )}
 
-          {preparedEffectId && invocationPreview && (
+          {preparedEffectId && invocationPreview.data && (
             <div className="border-t border-[--tungsten]/30 pt-3">
-              <InvocationPreviewPanel preview={invocationPreview} />
+              <InvocationPreviewPanel preview={invocationPreview.data} />
             </div>
           )}
 

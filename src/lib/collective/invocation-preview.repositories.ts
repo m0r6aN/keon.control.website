@@ -1,174 +1,126 @@
+import type { ExecutionEligibilityView } from "./eligibility.dto";
 import type {
-  AgentPermissionGrantDetail,
-  AuthorityActivationDetail,
-  DelegatedAuthorityGrantDetail,
-  PreparedEffectRequestDetail,
-  ExecutionEligibilityView,
-} from "./dto";
-import type {
+  InvocationAuthorityContext,
   InvocationPreviewView,
+  InvocationReadinessStatus,
   InvocationRequirement,
+  InvocationRequirementCode,
 } from "./invocation-preview.dto";
-import { buildInvocationPreviewPresentation } from "./invocation-preview.dto";
+import {
+  buildInvocationPreviewPresentation,
+  buildInvocationPreviewSummary,
+} from "./invocation-preview.dto";
 
-export interface InvocationPreviewSource {
-  readonly preparedEffect: PreparedEffectRequestDetail;
-  readonly activation: AuthorityActivationDetail | null;
-  readonly permission: AgentPermissionGrantDetail | null;
-  readonly delegation: DelegatedAuthorityGrantDetail | null;
-  readonly eligibility: ExecutionEligibilityView;
-  readonly evaluatedAtUtc?: string;
+// ──────────────────────────────────────────────
+// Requirement derivation from eligibility reasons
+// ──────────────────────────────────────────────
+
+// Maps each requirement code to the eligibility reason codes that would
+// indicate the requirement is NOT satisfied.
+const REQUIREMENT_FAILURE_CODES: Record<
+  InvocationRequirementCode,
+  ReadonlySet<string>
+> = {
+  prepared_effect_must_be_ready: new Set(["prepared_effect_not_ready"]),
+  activation_must_be_active: new Set([
+    "activation_not_active",
+    "activation_missing",
+  ]),
+  permission_must_be_valid: new Set([
+    "permission_invalid",
+    "permission_expired",
+  ]),
+  delegation_must_be_valid: new Set([
+    "delegation_invalid",
+    "delegation_revoked",
+    "upstream_revoked",
+  ]),
+  scope_must_remain_within_bounds: new Set(["scope_mismatch"]),
+};
+
+const REQUIREMENT_MESSAGES: Record<InvocationRequirementCode, string> = {
+  prepared_effect_must_be_ready: "Prepared effect must be ready",
+  activation_must_be_active: "Activation must be active",
+  permission_must_be_valid: "Permission must be valid",
+  delegation_must_be_valid: "Delegation must be valid",
+  scope_must_remain_within_bounds: "Scope must remain within bounds",
+};
+
+// Deterministic order per spec
+const REQUIREMENT_ORDER: readonly InvocationRequirementCode[] = [
+  "prepared_effect_must_be_ready",
+  "activation_must_be_active",
+  "permission_must_be_valid",
+  "delegation_must_be_valid",
+  "scope_must_remain_within_bounds",
+];
+
+function deriveRequirements(
+  eligibility: ExecutionEligibilityView,
+): readonly InvocationRequirement[] {
+  const failedCodes = new Set<string>(eligibility.reasons.map((r) => r.code));
+
+  return REQUIREMENT_ORDER.map((code) => {
+    const failureCodes = REQUIREMENT_FAILURE_CODES[code];
+    const satisfied = ![...failureCodes].some((fc) => failedCodes.has(fc));
+
+    return {
+      code,
+      message: REQUIREMENT_MESSAGES[code],
+      satisfied,
+    };
+  });
 }
+
+// ──────────────────────────────────────────────
+// Status resolution
+//
+// Current eligibility model: eligible → empty reasons → all satisfied → ready.
+// The "constrained" path exists for future eligibility models that surface
+// partial authority or time-bound constraints where eligibility is met but
+// requirements remain unsatisfied. Until then, only "not_available" and
+// "ready" are reachable from live data.
+// ──────────────────────────────────────────────
+
+function resolveReadinessStatus(
+  eligibility: ExecutionEligibilityView,
+  requirements: readonly InvocationRequirement[],
+): InvocationReadinessStatus {
+  if (eligibility.status === "not_eligible") return "not_available";
+  const allSatisfied = requirements.every((r) => r.satisfied);
+  return allSatisfied ? "ready" : "constrained";
+}
+
+// ──────────────────────────────────────────────
+// Repository interface and factory
+// ──────────────────────────────────────────────
 
 export interface InvocationPreviewRepository {
-  preview(source: InvocationPreviewSource): InvocationPreviewView;
+  preview(
+    preparedEffectId: string,
+    eligibility: ExecutionEligibilityView,
+    authorityContext?: InvocationAuthorityContext,
+  ): Promise<InvocationPreviewView>;
 }
 
-function isPermissionValid(permission: AgentPermissionGrantDetail | null, nowUtc: number): boolean {
-  return Boolean(
-    permission
-      && permission.lifecycleState === "Active"
-      && Date.parse(permission.expiresAtUtc) > nowUtc,
-  );
-}
-
-function isDelegationValid(delegation: DelegatedAuthorityGrantDetail | null, nowUtc: number): boolean {
-  return Boolean(
-    delegation
-      && delegation.lifecycleState === "Active"
-      && Date.parse(delegation.expiresAtUtc) > nowUtc,
-  );
-}
-
-function isActivationActive(activation: AuthorityActivationDetail | null, nowUtc: number): boolean {
-  return Boolean(
-    activation
-      && activation.lifecycleState === "Eligible"
-      && activation.constitutionalMode === "active"
-      && Date.parse(activation.expiresAtUtc) > nowUtc,
-  );
-}
-
-function isPreparedEffectReady(preparedEffect: PreparedEffectRequestDetail, nowUtc: number): boolean {
-  return preparedEffect.lifecycleState === "Materialized" && Date.parse(preparedEffect.expiresAtUtc) > nowUtc;
-}
-
-function isScopeSubset(child: string | null | undefined, parent: string | null | undefined): boolean {
-  if (!child) return true;
-  if (!parent) return false;
-  return child === parent || child.startsWith(`${parent}.`);
-}
-
-function includesAll(parent: readonly string[] | undefined, child: readonly string[] | undefined): boolean {
-  if (!child || child.length === 0) return true;
-  if (!parent) return false;
-  const parentValues = new Set(parent);
-  return child.every((value) => parentValues.has(value));
-}
-
-function matchesScalar(child: string | null | undefined, parent: string | null | undefined): boolean {
-  if (!child) return true;
-  if (!parent) return false;
-  return child === parent;
-}
-
-function isScopeAligned(preparedEffect: PreparedEffectRequestDetail): boolean {
-  return matchesScalar(preparedEffect.tenantId, preparedEffect.activatedScope.tenantId)
-    && isScopeSubset(preparedEffect.domainScope, preparedEffect.activatedScope.domainScope)
-    && matchesScalar(preparedEffect.authorityClass, preparedEffect.activatedScope.authorityClass)
-    && matchesScalar(preparedEffect.effectClass, preparedEffect.activatedScope.effectClass)
-    && includesAll(preparedEffect.activatedScope.actionCategories, [preparedEffect.actionCategory])
-    && includesAll(preparedEffect.activatedScope.capabilityCategories, [preparedEffect.capabilityCategory])
-    && isScopeSubset(preparedEffect.targetClass, preparedEffect.inheritedTargetClass);
-}
-
-function buildRequirements(
-  preparedEffect: PreparedEffectRequestDetail,
-  activation: AuthorityActivationDetail | null,
-  permission: AgentPermissionGrantDetail | null,
-  delegation: DelegatedAuthorityGrantDetail | null,
-  nowUtc: number,
-): readonly InvocationRequirement[] {
-  return [
-    {
-      code: "prepared_effect_must_be_ready",
-      message: "Prepared effect must be ready",
-      satisfied: isPreparedEffectReady(preparedEffect, nowUtc),
-    },
-    {
-      code: "activation_must_be_active",
-      message: "Activation must be active",
-      satisfied: isActivationActive(activation, nowUtc),
-    },
-    {
-      code: "permission_must_be_valid",
-      message: "Permission must be valid",
-      satisfied: isPermissionValid(permission, nowUtc),
-    },
-    {
-      code: "delegation_must_be_valid",
-      message: "Delegation must be valid",
-      satisfied: isDelegationValid(delegation, nowUtc),
-    },
-    {
-      code: "scope_must_remain_within_bounds",
-      message: "Scope must remain within bounds",
-      satisfied: isScopeAligned(preparedEffect),
-    },
-  ];
-}
-
-function resolveStatus(
-  eligibilityStatus: InvocationPreviewView["eligibilityStatus"],
-  requirements: readonly InvocationRequirement[],
-): InvocationPreviewView["status"] {
-  if (eligibilityStatus === "not_eligible") {
-    return "not_available";
-  }
-
-  return requirements.every((requirement) => requirement.satisfied)
-    ? "ready"
-    : "constrained";
-}
-
-function buildSummary(status: InvocationPreviewView["status"]): string {
-  switch (status) {
-    case "ready":
-      return "All authority conditions reflected in this preview are satisfied.";
-    case "constrained":
-      return "This preview reflects authority conditions that remain constrained by requirements.";
-    default:
-      return "This preview reflects authority conditions that are not currently available.";
-  }
-}
-
-export function createInvocationPreviewRepository(
-): InvocationPreviewRepository {
+export function createInvocationPreviewRepository(): InvocationPreviewRepository {
   return {
-    preview(source) {
-      const evaluatedAtUtc = source.evaluatedAtUtc ?? new Date().toISOString();
-      const nowUtc = Date.parse(evaluatedAtUtc);
-      const requirements = buildRequirements(
-        source.preparedEffect,
-        source.activation,
-        source.permission,
-        source.delegation,
-        nowUtc,
-      );
-      const status = resolveStatus(source.eligibility.status, requirements);
+    async preview(
+      preparedEffectId: string,
+      eligibility: ExecutionEligibilityView,
+      authorityContext: InvocationAuthorityContext = {},
+    ): Promise<InvocationPreviewView> {
+      const requirements = deriveRequirements(eligibility);
+      const status = resolveReadinessStatus(eligibility, requirements);
 
       return {
-        preparedEffectId: source.preparedEffect.preparedRequestId,
+        preparedEffectId,
         status,
-        summary: buildSummary(status),
+        summary: buildInvocationPreviewSummary(status),
         requirements,
-        authorityContext: {
-          delegationId: source.preparedEffect.delegationGrantId || undefined,
-          permissionId: source.preparedEffect.permissionGrantId || undefined,
-          activationId: source.preparedEffect.activationId || undefined,
-        },
-        eligibilityStatus: source.eligibility.status,
-        evaluatedAtUtc,
+        authorityContext,
+        eligibilityStatus: eligibility.status,
+        evaluatedAtUtc: eligibility.evaluatedAtUtc,
         statusPresentation: buildInvocationPreviewPresentation(status),
       };
     },

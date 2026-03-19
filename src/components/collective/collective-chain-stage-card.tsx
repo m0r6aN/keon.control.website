@@ -60,11 +60,11 @@ interface CollectiveChainStageCardProps {
   readonly isDimmed?: boolean;
   readonly isGuidedMissing?: boolean;
   readonly eligibilityStatus?: ExecutionEligibilityStatus;
-  readonly invocationStatus?: InvocationReadinessStatus;
+  readonly invocationReadiness?: InvocationReadinessStatus;
   readonly onSelect: (nodeId: string) => void;
 }
 
-export function CollectiveChainStageCard({ node, isFocused, isDimmed, isGuidedMissing, eligibilityStatus, invocationStatus, onSelect }: CollectiveChainStageCardProps) {
+export function CollectiveChainStageCard({ node, isFocused, isDimmed, isGuidedMissing, eligibilityStatus, invocationReadiness, onSelect }: CollectiveChainStageCardProps) {
   const Icon = STAGE_ICONS[node.stage];
   const stageLabel = getCollectiveChainStageLabel(node.stage);
 
@@ -161,9 +161,20 @@ export function CollectiveChainStageCard({ node, isFocused, isDimmed, isGuidedMi
           </p>
         )}
 
-        {isPreparedEffect && invocationStatus && (
-          <p className="mt-1 text-[9px] font-mono text-[--steel] leading-tight">
-            Invocation: {invocationStatus === "not_available" ? "Not Available" : invocationStatus === "constrained" ? "Constrained" : "Ready"}
+        {isPreparedEffect && invocationReadiness && (
+          <p className={cn(
+            "mt-1 text-[9px] font-mono leading-tight",
+            invocationReadiness === "ready"
+              ? "text-[--reactor-glow]/80"
+              : invocationReadiness === "constrained"
+                ? "text-[--safety-orange]/80"
+                : "text-[--tungsten]/80",
+          )}>
+            Invocation: {invocationReadiness === "ready"
+              ? "READY"
+              : invocationReadiness === "constrained"
+                ? "CONSTRAINED"
+                : "NOT AVAILABLE"}
           </p>
         )}
 
