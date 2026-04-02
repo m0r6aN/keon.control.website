@@ -2,7 +2,9 @@
 
 import { cn } from "@/lib/utils";
 import {
+    Archive,
     BookOpen,
+    CheckCircle,
     ChevronLeft,
     CreditCard,
     Gavel,
@@ -11,9 +13,11 @@ import {
     MessageSquare,
     Scale,
     Settings,
+    Shield,
     Sparkles,
     Users,
-    Waves
+    Waves,
+    Zap
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -54,7 +58,17 @@ const navSections: NavSection[] = [
       { label: "Overview", href: "/collective", icon: BookOpen },
       { label: "Deliberations", href: "/collective/deliberations", icon: MessageSquare },
       { label: "Reforms", href: "/collective/reforms", icon: Gavel },
+      { label: "Adoption", href: "/collective/reforms/adoption", icon: CheckCircle },
       { label: "Legitimacy", href: "/collective/legitimacy", icon: Scale },
+    ],
+  },
+  {
+    title: "Authority",
+    items: [
+      { label: "Delegations", href: "/collective/authority/delegations", icon: Shield },
+      { label: "Permissions", href: "/collective/authority/permissions", icon: KeyRound },
+      { label: "Activations", href: "/collective/authority/activations", icon: Zap },
+      { label: "Prepared Effects", href: "/collective/effects/prepared", icon: Archive },
     ],
   },
 ];
