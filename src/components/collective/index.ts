@@ -1,6 +1,10 @@
 export { ArtifactInspector } from "./artifact-inspector";
 export { CivicHealthPanel } from "./civic-health-panel";
 export { CollectiveBanner } from "./collective-banner";
+export { CollectiveLiveRunPage } from "./collective-live-run-page";
+export { CollectiveLiveRunView } from "./collective-live-run-view";
+export { CollectiveLiveRunsPage } from "./collective-live-runs-page";
+export { CollectiveLiveSubmitClient } from "./collective-live-submit-client";
 export { CollectiveChainDetailRail } from "./collective-chain-detail-rail";
 export { CollectiveChainEdgeConnector } from "./collective-chain-edge";
 export { CollectiveChainEmptyState } from "./collective-chain-empty-state";
@@ -22,3 +26,11 @@ export { LegitimacyRadar } from "./legitimacy-radar";
 export { LineageAnchorBadge } from "./lineage-anchor-badge";
 export { OversightSignalPanel } from "./oversight-signal-panel";
 export { ReformArtifactCard } from "./reform-artifact-card";
+
+// PT-C2-W through PT-C2-AA-A shared components
+export { ConstitutionalStatusPanel } from "./constitutional-status-panel";
+export { LifecycleTimeline } from "./lifecycle-timeline";
+export type { LifecycleTimelineEntry } from "./lifecycle-timeline";
+export { LineageRefsPanel } from "./lineage-refs-panel";
+export { ScopeDimensionGrid } from "./scope-dimension-grid";
+export { StrategyMutationReceiptPanel } from "./strategy-mutation-receipt-panel";
