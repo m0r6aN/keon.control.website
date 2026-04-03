@@ -1,5 +1,7 @@
 "use client";
 
+import { getReadinessLabel } from "@/lib/onboarding/experience";
+import { useOnboardingState } from "@/lib/onboarding/store";
 import { useTenantContext } from "@/lib/control-plane/tenant-context";
 import { useTenantBinding } from "@/lib/control-plane/tenant-binding";
 import { cn } from "@/lib/utils";
@@ -21,14 +23,15 @@ interface TopBarProps {
   className?: string;
 }
 
-const ONBOARDING_ROUTES = new Set(["/", "/get-started"]);
+const FIRST_RUN_ROUTES = new Set(["/", "/get-started", "/welcome", "/setup", "/onboarding"]);
 
 export function TopBar({ onToggleSidebar, className }: TopBarProps) {
   const pathname = usePathname();
-  const isOnboardingRoute = ONBOARDING_ROUTES.has(pathname);
+  const isOnboardingRoute = FIRST_RUN_ROUTES.has(pathname);
   const [currentTime, setCurrentTime] = React.useState(new Date());
   const { me } = useTenantContext();
   const { confirmedTenant, isConfirmed } = useTenantBinding();
+  const { state } = useOnboardingState();
 
   React.useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -66,7 +69,7 @@ export function TopBar({ onToggleSidebar, className }: TopBarProps) {
           <div>
             <h1 className="font-['Rajdhani'] text-xl font-bold tracking-wide text-[#C5C6C7]">KEON CONTROL</h1>
             <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#66FCF1] opacity-70">
-              {isOnboardingRoute ? "Guided workspace setup" : "Verified control-plane view"}
+              {isOnboardingRoute ? "Workspace setup" : "AI activity control plane"}
             </div>
           </div>
         </div>
@@ -80,13 +83,13 @@ export function TopBar({ onToggleSidebar, className }: TopBarProps) {
             </span>
             <span className="font-mono text-xs uppercase tracking-wider text-[#384656]">|</span>
             <span className="font-mono text-xs uppercase tracking-wider text-[#66FCF1]">
-              Scope: {isConfirmed ? confirmedTenant?.name ?? "Confirmed" : "Unconfirmed"}
+              Workspace: {isConfirmed ? confirmedTenant?.name ?? "Confirmed" : "Setup in progress"}
             </span>
           </div>
 
           <button className="flex items-center gap-2 rounded border border-[#384656] bg-[#0B0C10] px-3 py-2 text-[#C5C6C7] transition-colors hover:border-[#66FCF1] hover:text-[#66FCF1]">
             <Activity className="h-4 w-4" />
-            <span className="font-mono text-xs">{me?.operatorModeEnabled ? "Operator mode" : "Onboarding mode"}</span>
+            <span className="font-mono text-xs">{me?.operatorModeEnabled ? "Advanced mode" : "Standard mode"}</span>
           </button>
         </div>
       )}
@@ -95,7 +98,7 @@ export function TopBar({ onToggleSidebar, className }: TopBarProps) {
         {isOnboardingRoute && (
           <div className="hidden rounded border border-[#384656] bg-[#0B0C10] px-3 py-2 md:block">
             <span className="font-mono text-xs text-[#C5C6C7]">
-              {isConfirmed ? `Workspace ready: ${confirmedTenant?.name ?? "Confirmed"}` : "We will confirm your workspace during setup"}
+              {isConfirmed ? `${getReadinessLabel(state)} for ${confirmedTenant?.name ?? "your workspace"}` : getReadinessLabel(state)}
             </span>
           </div>
         )}

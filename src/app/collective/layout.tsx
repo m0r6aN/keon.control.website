@@ -3,9 +3,8 @@ import { Shell } from "@/components/layout";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Collective Cognition",
-  description:
-    "Collective operator surface for live inert cognition submission and constitutional observation.",
+  title: "Collaborative Review",
+  description: "Collaborative review surfaces for higher-risk AI decisions and change approval.",
 };
 
 export default function CollectiveLayout({

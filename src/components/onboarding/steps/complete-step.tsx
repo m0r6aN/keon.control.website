@@ -6,13 +6,13 @@ import { useTenantBinding } from "@/lib/control-plane/tenant-binding";
 import { useOnboardingState } from "@/lib/onboarding/store";
 import { useRouter } from "next/navigation";
 
-const intentLabels: Record<string, string> = {
-  "govern-ai-actions": "Govern AI actions",
-  "memory-and-context": "Add memory and context",
-  "oversight-and-collaboration": "Enable oversight and collaboration",
+const goalLabels: Record<string, string> = {
+  "govern-ai-actions": "Review important AI actions",
+  "memory-and-context": "Protect memory and context",
+  "oversight-and-collaboration": "Add collaborative review",
 };
 
-const baselineLabels: Record<string, string> = {
+const guardrailLabels: Record<string, string> = {
   strict: "Strict",
   balanced: "Balanced",
   flexible: "Flexible",
@@ -20,49 +20,73 @@ const baselineLabels: Record<string, string> = {
 
 export function CompleteStep() {
   const router = useRouter();
-  const { confirmedTenant } = useTenantBinding();
+  const { confirmedTenant, confirmedEnvironment } = useTenantBinding();
   const {
-    state: { selectedIntent, policyBaseline },
+    state: { selectedGoals, guardrailPreset },
     finishOnboarding,
   } = useOnboardingState();
 
   return (
     <StepShell
-      eyebrow="Step 5"
-      title="Your system is now governed"
-      description="Keon Control is configured for this workspace, with traceability in place from the first governed decision onward."
+      eyebrow="Ready to use"
+      title="Your workspace is ready."
+      description="Keon Control now knows what you want to protect, which workspace to prepare, and which starter guardrails to apply. You can start using the workspace overview now and return later for optional setup."
       footer={
-        <Button
-          size="lg"
-          onClick={() => {
-            finishOnboarding();
-            router.replace("/control");
-          }}
-        >
-          Enter Control Plane
-        </Button>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <Button
+            size="lg"
+            onClick={() => {
+              finishOnboarding();
+              router.replace("/control");
+            }}
+          >
+            Open workspace overview
+          </Button>
+          <Button size="lg" variant="secondary" onClick={() => router.push("/integrations")}>
+            Connect an integration later
+          </Button>
+        </div>
       }
     >
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-6">
-          <div className="font-mono text-xs uppercase tracking-[0.22em] text-[#7EE8E0]">Workspace</div>
-          <div className="mt-4 font-display text-3xl font-semibold text-white">{confirmedTenant?.name ?? "Confirmed"}</div>
-          <p className="mt-3 text-sm leading-7 text-white/72">Policies, receipts, and configuration are now tied to this workspace.</p>
+          <div className="font-mono text-xs uppercase tracking-[0.22em] text-[#7EE8E0]">Configured now</div>
+          <div className="mt-4 font-display text-3xl font-semibold text-white">{confirmedTenant?.name ?? "Selected workspace"}</div>
+          <p className="mt-3 text-sm leading-7 text-white/72">
+            Starting environment: {confirmedEnvironment ?? "sandbox"}.
+          </p>
         </div>
         <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-6">
-          <div className="font-mono text-xs uppercase tracking-[0.22em] text-[#7EE8E0]">Baseline</div>
+          <div className="font-mono text-xs uppercase tracking-[0.22em] text-[#7EE8E0]">Starter guardrails</div>
           <div className="mt-4 font-display text-3xl font-semibold text-white">
-            {policyBaseline ? baselineLabels[policyBaseline] : "Ready"}
+            {guardrailPreset ? guardrailLabels[guardrailPreset] : "Selected"}
           </div>
-          <p className="mt-3 text-sm leading-7 text-white/72">Your starting governance posture is active and can be refined later from the control plane.</p>
+          <p className="mt-3 text-sm leading-7 text-white/72">
+            You can adjust approvals, reviews, and policy rules later from Guardrails.
+          </p>
         </div>
         <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-6">
-          <div className="font-mono text-xs uppercase tracking-[0.22em] text-[#7EE8E0]">Enabled outcomes</div>
+          <div className="font-mono text-xs uppercase tracking-[0.22em] text-[#7EE8E0]">What you can do now</div>
           <div className="mt-4 space-y-2 text-sm leading-7 text-white/72">
-            {selectedIntent.map((intent) => (
-              <div key={intent}>{intentLabels[intent] ?? intent}</div>
+            {selectedGoals.map((goal) => (
+              <div key={goal}>{goalLabels[goal] ?? goal}</div>
             ))}
           </div>
+        </div>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <div className="rounded-[24px] border border-white/10 bg-black/20 p-6">
+          <div className="font-mono text-xs uppercase tracking-[0.22em] text-white/60">Next best action</div>
+          <p className="mt-3 text-sm leading-7 text-white/72">
+            Open the workspace overview to verify readiness, review the current posture, and move into receipts or guardrails from a stable starting point.
+          </p>
+        </div>
+        <div className="rounded-[24px] border border-white/10 bg-black/20 p-6">
+          <div className="font-mono text-xs uppercase tracking-[0.22em] text-white/60">Optional later</div>
+          <p className="mt-3 text-sm leading-7 text-white/72">
+            Connect integrations, inspect sample receipts, and set up collaborative review when your team is ready.
+          </p>
         </div>
       </div>
     </StepShell>

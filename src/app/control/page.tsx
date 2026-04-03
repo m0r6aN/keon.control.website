@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { ControlGate } from "@/components/onboarding/route-gates";
 import { Shell } from "@/components/layout";
 import { Card, CardContent, CardHeader, PageContainer, PageHeader } from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
@@ -9,13 +8,13 @@ import { useTenantContext } from "@/lib/control-plane/tenant-context";
 import { useTenantBinding } from "@/lib/control-plane/tenant-binding";
 import { useOnboardingState } from "@/lib/onboarding/store";
 
-const intentLabels: Record<string, string> = {
-  "govern-ai-actions": "Govern AI actions",
-  "memory-and-context": "Add memory and context",
-  "oversight-and-collaboration": "Enable oversight and collaboration",
+const goalLabels: Record<string, string> = {
+  "govern-ai-actions": "Review important AI actions",
+  "memory-and-context": "Protect memory and context",
+  "oversight-and-collaboration": "Add collaborative review",
 };
 
-const baselineLabels: Record<string, string> = {
+const guardrailLabels: Record<string, string> = {
   strict: "Strict",
   balanced: "Balanced",
   flexible: "Flexible",
@@ -25,19 +24,18 @@ export default function ControlPage() {
   const { me } = useTenantContext();
   const { confirmedTenant, confirmedEnvironment, isConfirmed } = useTenantBinding();
   const {
-    state: { selectedIntent, policyBaseline },
+    state: { selectedGoals, guardrailPreset },
   } = useOnboardingState();
 
   return (
-    <ControlGate>
-      <Shell>
-        <PageContainer>
+    <Shell>
+      <PageContainer>
           <PageHeader
-            title="Control Plane"
-            description="Your governed workspace is active. Review the current posture and continue with evidence, policy, and operational workflows."
+            title="Workspace overview"
+            description="This is the starting point for your team after setup. Confirm what is configured, what Keon is watching, and what to do next."
             actions={
               <Button asChild>
-                <Link href="/receipts">Open receipts</Link>
+                <Link href="/receipts">Review receipts</Link>
               </Button>
             }
           />
@@ -46,8 +44,8 @@ export default function ControlPage() {
             <div className="space-y-6">
               <Card>
                 <CardHeader
-                  title="Governed system active"
-                  description="The guided setup flow completed successfully. This workspace is now operating with a confirmed scope and an active governance baseline."
+                  title="Workspace ready"
+                  description="Your required setup is complete. Keon now has the minimum context it needs to support first use."
                 />
                 <CardContent className="grid gap-4 md:grid-cols-3">
                   <div className="rounded border border-[#384656] bg-[#0B0C10] p-4">
@@ -56,23 +54,23 @@ export default function ControlPage() {
                       {confirmedTenant?.name ?? "Confirmed"}
                     </div>
                     <p className="mt-2 text-sm leading-6 text-[#C5C6C7] opacity-80">
-                      Policies, receipts, and actions are now aligned to this workspace.
+                      Starting environment: {confirmedEnvironment ?? "sandbox"}.
                     </p>
                   </div>
                   <div className="rounded border border-[#384656] bg-[#0B0C10] p-4">
-                    <div className="font-mono text-xs uppercase tracking-[0.18em] text-[#66FCF1]">Baseline</div>
+                    <div className="font-mono text-xs uppercase tracking-[0.18em] text-[#66FCF1]">Guardrails</div>
                     <div className="mt-3 font-['Rajdhani'] text-2xl font-semibold text-[#F3F5F7]">
-                      {policyBaseline ? baselineLabels[policyBaseline] : "Ready"}
+                      {guardrailPreset ? guardrailLabels[guardrailPreset] : "Selected"}
                     </div>
                     <p className="mt-2 text-sm leading-6 text-[#C5C6C7] opacity-80">
-                      The first governed action has already been evaluated and recorded.
+                      Keon will use this starter posture until your team refines it in Guardrails.
                     </p>
                   </div>
                   <div className="rounded border border-[#384656] bg-[#0B0C10] p-4">
-                    <div className="font-mono text-xs uppercase tracking-[0.18em] text-[#66FCF1]">Enabled outcomes</div>
+                    <div className="font-mono text-xs uppercase tracking-[0.18em] text-[#66FCF1]">Enabled for</div>
                     <div className="mt-3 space-y-2 font-mono text-sm text-[#C5C6C7]">
-                      {selectedIntent.map((intent) => (
-                        <div key={intent}>{intentLabels[intent] ?? intent}</div>
+                      {selectedGoals.map((goal) => (
+                        <div key={goal}>{goalLabels[goal] ?? goal}</div>
                       ))}
                     </div>
                   </div>
@@ -81,28 +79,28 @@ export default function ControlPage() {
 
               <Card>
                 <CardHeader
-                  title="Continue from here"
-                  description="The control plane now exposes the deeper tools that rely on the governed foundation you just activated."
+                  title="What you can do now"
+                  description="These are the next destinations most teams use after completing setup."
                 />
                 <CardContent className="grid gap-4 md:grid-cols-3">
                   {[
                     {
                       title: "Receipts",
-                      body: "Review proof of what happened, why it was decided, and what policy applied.",
+                      body: "Inspect the evidence trail Keon records for reviewed actions.",
                       href: "/receipts",
                       label: "Open receipts",
                     },
                     {
-                      title: "Policies",
-                      body: "Refine your governance baseline as your workspace matures.",
+                      title: "Guardrails",
+                      body: "Refine approvals, reviews, and policy rules as your workspace matures.",
                       href: "/policies",
-                      label: "Open policies",
+                      label: "Open guardrails",
                     },
                     {
-                      title: "Collective",
-                      body: "Bring oversight and collaboration into higher-stakes decisions.",
-                      href: "/collective",
-                      label: "Open collective",
+                      title: "Integrations",
+                      body: "Connect your first runtime or service when you are ready to go live.",
+                      href: "/integrations",
+                      label: "Open integrations",
                     },
                   ].map((item) => (
                     <div key={item.title} className="rounded border border-[#384656] bg-[#0B0C10] p-4">
@@ -119,25 +117,24 @@ export default function ControlPage() {
 
             <div className="space-y-6">
               <Card>
-                <CardHeader title="Current posture" description="A concise summary of the active workspace context." />
+                <CardHeader title="Current status" description="A concise summary of the active workspace context." />
                 <CardContent className="space-y-3 font-mono text-sm text-[#C5C6C7]">
                   <div>Workspace confirmed: {isConfirmed ? "yes" : "no"}</div>
                   <div>Environment: {confirmedEnvironment ?? "none"}</div>
-                  <div>Operator mode: {me?.operatorModeEnabled ? "enabled" : "not yet enabled"}</div>
+                  <div>Advanced mode: {me?.operatorModeEnabled ? "enabled" : "not enabled"}</div>
                 </CardContent>
               </Card>
               <Card>
-                <CardHeader title="What changed" description="The guided activation flow handled the first-run experience before this control surface opened." />
+                <CardHeader title="Optional next" description="These can wait until after your team starts using the workspace." />
                 <CardContent className="space-y-3 text-sm leading-6 text-[#C5C6C7] opacity-80">
-                  <p>The workspace was confirmed before policy or evidence views became relevant.</p>
-                  <p>A governance baseline was selected before the first action ran.</p>
-                  <p>A governed decision produced a receipt before the control plane became available.</p>
+                  <p>Connect production integrations after you validate the sandbox workflow.</p>
+                  <p>Add collaborative review paths for higher-risk changes.</p>
+                  <p>Open Diagnostics only when someone needs deep system inspection.</p>
                 </CardContent>
               </Card>
             </div>
           </div>
-        </PageContainer>
-      </Shell>
-    </ControlGate>
+      </PageContainer>
+    </Shell>
   );
 }

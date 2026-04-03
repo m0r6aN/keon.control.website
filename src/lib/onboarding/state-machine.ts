@@ -1,49 +1,41 @@
-export const onboardingSteps = [
-  "ARRIVAL",
-  "INTENT_SELECTION",
-  "SCOPE_CONFIRMATION",
-  "POLICY_BASELINE",
-  "FIRST_GOVERNED_ACTION",
-  "COMPLETE",
-] as const;
+export const onboardingSteps = ["WELCOME", "DEFINE_GOALS", "CONFIRM_ACCESS", "SET_GUARDRAILS", "READY"] as const;
 
 export type OnboardingStep = (typeof onboardingSteps)[number];
 
-export const onboardingIntentOptions = [
+export const onboardingGoalOptions = [
   "govern-ai-actions",
   "memory-and-context",
   "oversight-and-collaboration",
 ] as const;
 
-export type OnboardingIntent = (typeof onboardingIntentOptions)[number];
+export type OnboardingGoal = (typeof onboardingGoalOptions)[number];
 
-export const policyBaselineOptions = ["strict", "balanced", "flexible"] as const;
+export const guardrailPresetOptions = ["strict", "balanced", "flexible"] as const;
 
-export type PolicyBaseline = (typeof policyBaselineOptions)[number];
+export type GuardrailPreset = (typeof guardrailPresetOptions)[number];
 
 export interface OnboardingState {
   currentStep: OnboardingStep;
-  selectedIntent: OnboardingIntent[];
-  tenantId: string | null;
-  policyBaseline: PolicyBaseline | null;
+  selectedGoals: OnboardingGoal[];
+  workspaceId: string | null;
+  guardrailPreset: GuardrailPreset | null;
   completed: boolean;
 }
 
 export type OnboardingEvent =
   | { type: "HYDRATE"; payload: Partial<OnboardingState> }
-  | { type: "BEGIN_SETUP" }
-  | { type: "SAVE_INTENT_SELECTION"; payload: { selectedIntent: OnboardingIntent[] } }
-  | { type: "CONFIRM_SCOPE"; payload: { tenantId: string } }
-  | { type: "APPLY_POLICY_BASELINE"; payload: { policyBaseline: PolicyBaseline } }
-  | { type: "COMPLETE_FIRST_GOVERNED_ACTION" }
+  | { type: "START_SETUP" }
+  | { type: "SAVE_GOALS"; payload: { selectedGoals: OnboardingGoal[] } }
+  | { type: "CONFIRM_ACCESS"; payload: { workspaceId: string } }
+  | { type: "APPLY_GUARDRAILS"; payload: { guardrailPreset: GuardrailPreset } }
   | { type: "FINISH_ONBOARDING" }
   | { type: "RESET" };
 
 export const defaultOnboardingState: OnboardingState = {
-  currentStep: "ARRIVAL",
-  selectedIntent: [],
-  tenantId: null,
-  policyBaseline: null,
+  currentStep: "WELCOME",
+  selectedGoals: [],
+  workspaceId: null,
+  guardrailPreset: null,
   completed: false,
 };
 
@@ -51,33 +43,30 @@ export function isOnboardingStep(value: unknown): value is OnboardingStep {
   return typeof value === "string" && onboardingSteps.includes(value as OnboardingStep);
 }
 
-export function isOnboardingIntent(value: unknown): value is OnboardingIntent {
-  return typeof value === "string" && onboardingIntentOptions.includes(value as OnboardingIntent);
+export function isOnboardingGoal(value: unknown): value is OnboardingGoal {
+  return typeof value === "string" && onboardingGoalOptions.includes(value as OnboardingGoal);
 }
 
-export function isPolicyBaseline(value: unknown): value is PolicyBaseline {
-  return typeof value === "string" && policyBaselineOptions.includes(value as PolicyBaseline);
+export function isGuardrailPreset(value: unknown): value is GuardrailPreset {
+  return typeof value === "string" && guardrailPresetOptions.includes(value as GuardrailPreset);
 }
 
 export function sanitizeOnboardingState(input: Partial<OnboardingState> | null | undefined): OnboardingState {
-  const selectedIntent = Array.isArray(input?.selectedIntent)
-    ? input.selectedIntent.filter(isOnboardingIntent)
-    : [];
-
-  const tenantId = typeof input?.tenantId === "string" && input.tenantId.length > 0 ? input.tenantId : null;
-  const policyBaseline = isPolicyBaseline(input?.policyBaseline) ? input.policyBaseline : null;
+  const selectedGoals = Array.isArray(input?.selectedGoals) ? input.selectedGoals.filter(isOnboardingGoal) : [];
+  const workspaceId = typeof input?.workspaceId === "string" && input.workspaceId.length > 0 ? input.workspaceId : null;
+  const guardrailPreset = isGuardrailPreset(input?.guardrailPreset) ? input.guardrailPreset : null;
   const completed = input?.completed === true;
   const currentStep = completed
-    ? "COMPLETE"
+    ? "READY"
     : isOnboardingStep(input?.currentStep)
       ? input.currentStep
       : defaultOnboardingState.currentStep;
 
   return {
     currentStep,
-    selectedIntent,
-    tenantId,
-    policyBaseline,
+    selectedGoals,
+    workspaceId,
+    guardrailPreset,
     completed,
   };
 }
@@ -94,68 +83,58 @@ export function transitionOnboardingState(state: OnboardingState, event: Onboard
         ...event.payload,
       });
     }
-    case "BEGIN_SETUP": {
-      if (state.currentStep !== "ARRIVAL" || state.completed) {
+    case "START_SETUP": {
+      if (state.currentStep !== "WELCOME" || state.completed) {
         return state;
       }
 
       return {
         ...state,
-        currentStep: "INTENT_SELECTION",
+        currentStep: "DEFINE_GOALS",
       };
     }
-    case "SAVE_INTENT_SELECTION": {
-      if (state.currentStep !== "INTENT_SELECTION" || event.payload.selectedIntent.length === 0) {
+    case "SAVE_GOALS": {
+      if (state.currentStep === "WELCOME" || event.payload.selectedGoals.length === 0) {
         return state;
       }
 
       return {
         ...state,
-        selectedIntent: event.payload.selectedIntent,
-        currentStep: "SCOPE_CONFIRMATION",
+        selectedGoals: event.payload.selectedGoals,
+        currentStep: "CONFIRM_ACCESS",
       };
     }
-    case "CONFIRM_SCOPE": {
-      if (state.currentStep !== "SCOPE_CONFIRMATION" || state.selectedIntent.length === 0) {
+    case "CONFIRM_ACCESS": {
+      if (state.selectedGoals.length === 0) {
         return state;
       }
 
       return {
         ...state,
-        tenantId: event.payload.tenantId,
-        currentStep: "POLICY_BASELINE",
+        workspaceId: event.payload.workspaceId,
+        currentStep: "SET_GUARDRAILS",
       };
     }
-    case "APPLY_POLICY_BASELINE": {
-      if (state.currentStep !== "POLICY_BASELINE" || !state.tenantId) {
+    case "APPLY_GUARDRAILS": {
+      if (!state.workspaceId) {
         return state;
       }
 
       return {
         ...state,
-        policyBaseline: event.payload.policyBaseline,
-        currentStep: "FIRST_GOVERNED_ACTION",
-      };
-    }
-    case "COMPLETE_FIRST_GOVERNED_ACTION": {
-      if (state.currentStep !== "FIRST_GOVERNED_ACTION" || !state.policyBaseline) {
-        return state;
-      }
-
-      return {
-        ...state,
-        currentStep: "COMPLETE",
+        guardrailPreset: event.payload.guardrailPreset,
+        currentStep: "READY",
       };
     }
     case "FINISH_ONBOARDING": {
-      if (state.currentStep !== "COMPLETE") {
+      if (state.currentStep !== "READY" || !state.guardrailPreset) {
         return state;
       }
 
       return {
         ...state,
         completed: true,
-        currentStep: "COMPLETE",
+        currentStep: "READY",
       };
     }
     case "RESET": {

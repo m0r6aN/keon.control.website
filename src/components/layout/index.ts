@@ -4,6 +4,7 @@ export { TopBar } from "./topbar";
 export { Sidebar } from "./sidebar";
 export { CommandPalette } from "./command-palette";
 export { Breadcrumbs } from "./breadcrumbs";
+export { DataSourceNotice } from "./data-source-notice";
 
 // Page container components
 export {

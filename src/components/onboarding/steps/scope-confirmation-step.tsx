@@ -36,7 +36,7 @@ function LoadingPulse() {
   return (
     <div className="flex items-center gap-3 text-sm text-white/66">
       <div className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#7EE8E0]" />
-      <span>Checking workspace...</span>
+      <span>Checking workspace access...</span>
     </div>
   );
 }
@@ -49,9 +49,11 @@ export function ScopeConfirmationStep() {
     retry,
     selectedTenantId,
     selectTenant,
+    environment,
+    setEnvironment,
     confirmBinding,
   } = useTenantBinding();
-  const { confirmScope } = useOnboardingState();
+  const { confirmAccess } = useOnboardingState();
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [isRetrying, setIsRetrying] = React.useState(false);
 
@@ -84,17 +86,17 @@ export function ScopeConfirmationStep() {
 
     const timer = window.setTimeout(() => {
       confirmBinding();
-      confirmScope(selectedTenant.id);
+      confirmAccess(selectedTenant.id);
     }, 450);
 
     return () => window.clearTimeout(timer);
-  }, [confirmBinding, confirmScope, selectedTenant, viewState]);
+  }, [confirmAccess, confirmBinding, selectedTenant, viewState]);
 
   return (
     <StepShell
-      eyebrow="Step 3"
-      title="Confirm your workspace"
-      description="We use this to load your policies, receipts, and configuration."
+      eyebrow="Step 2"
+      title="Confirm your workspace access"
+      description="Choose the workspace and environment Keon should prepare. This determines where guardrails, receipts, and later integrations will apply."
       footer={
         viewState === "ready_to_confirm" ? (
           <Button
@@ -125,9 +127,9 @@ export function ScopeConfirmationStep() {
       {viewState === "loading" ? (
         <div className="space-y-5 rounded-[24px] border border-white/10 bg-white/[0.03] p-6">
           <div>
-            <div className="font-display text-2xl font-semibold text-white">Loading your workspace</div>
+            <div className="font-display text-2xl font-semibold text-white">Loading your available workspaces</div>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-white/72">
-              We are checking which workspace should receive your policies, receipts, and configuration.
+              We are checking which workspaces are available to this access link.
             </p>
           </div>
           <LoadingPulse />
@@ -140,9 +142,9 @@ export function ScopeConfirmationStep() {
       ) : viewState === "recoverable_failure" ? (
         <div className="space-y-5 rounded-[24px] border border-white/10 bg-white/[0.03] p-6">
           <div>
-            <div className="font-display text-2xl font-semibold text-white">We&apos;re preparing your workspace.</div>
+            <div className="font-display text-2xl font-semibold text-white">We&apos;re still checking access.</div>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-white/72">
-              This usually takes a moment. Retry to check again. Once your workspace is ready, you&apos;ll be able to confirm and continue.
+              Retry in a moment. Once access details are available, you&apos;ll be able to confirm the right workspace and continue.
             </p>
             <p className="mt-3 text-sm leading-6 text-white/58">You can continue once your workspace is available.</p>
           </div>
@@ -152,17 +154,42 @@ export function ScopeConfirmationStep() {
           <div className="font-mono text-xs uppercase tracking-[0.22em] text-[#7EE8E0]">Workspace confirmed</div>
           <div className="font-display text-3xl font-semibold text-white">{selectedTenant?.name}</div>
           <p className="text-sm leading-7 text-white/74">
-            Workspace confirmed. Preparing the right policies, receipts, and configuration now.
+            Keon is preparing {environment} for this workspace now.
           </p>
         </div>
       ) : (
         <div className="space-y-4">
+          <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-6">
+            <div className="font-mono text-xs uppercase tracking-[0.22em] text-[#7EE8E0]">Environment</div>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-white/72">
+              Choose where you want to start. Most teams begin in sandbox, then return later to prepare production.
+            </p>
+            <div className="mt-5 inline-flex rounded-full border border-white/10 bg-black/20 p-1">
+              {(["sandbox", "production"] as const).map((option) => {
+                const active = environment === option;
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setEnvironment(option)}
+                    className={cn(
+                      "rounded-full px-4 py-2 font-mono text-xs uppercase tracking-[0.2em] transition",
+                      active ? "bg-white text-[#061117]" : "text-white/60 hover:text-white"
+                    )}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {tenants.length === 1 ? (
             <div className="rounded-[24px] border border-[#7EE8E0]/30 bg-[#7EE8E0]/10 p-6">
               <div className="font-mono text-xs uppercase tracking-[0.22em] text-[#7EE8E0]">Detected workspace</div>
               <div className="mt-3 font-display text-3xl font-semibold text-white">{tenants[0]?.name}</div>
               <p className="mt-3 text-sm leading-7 text-white/72">
-                This is the workspace tied to your access. Confirm it to keep setup aligned with the right policies and receipts.
+                This is the workspace tied to your access. Confirm it so setup stays aligned with the right environment and later evidence.
               </p>
             </div>
           ) : (
@@ -183,7 +210,7 @@ export function ScopeConfirmationStep() {
                   >
                     <div className="font-display text-2xl font-semibold text-white">{tenant.name}</div>
                     <p className="mt-3 text-sm leading-7 text-white/72">
-                      Keon will use this workspace to keep setup, receipts, and governance aligned.
+                      Keon will use this workspace to keep setup, evidence, and approvals aligned.
                     </p>
                   </button>
                 );

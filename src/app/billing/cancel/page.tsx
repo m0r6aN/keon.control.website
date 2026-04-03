@@ -22,7 +22,7 @@ export default function BillingCancelPage() {
                 <Link href="/admin/subscription">Back to subscription</Link>
               </Button>
               <Button asChild variant="secondary">
-                <Link href="/get-started">Return to onboarding</Link>
+                <Link href="/welcome">Return to setup</Link>
               </Button>
             </div>
           </CardContent>

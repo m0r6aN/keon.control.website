@@ -2,6 +2,11 @@ import path from "node:path";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  // Statically replace NODE_ENV so React and react-dom load their dev/test builds.
+  // This ensures React.act is available for @testing-library/react to use.
+  define: {
+    "process.env.NODE_ENV": JSON.stringify("test"),
+  },
   test: {
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
@@ -29,6 +34,11 @@ export default defineConfig({
     },
   },
   resolve: {
+    // Load development builds of packages in test. React 19's production build
+    // removes React.act (it only ships in dev/test builds), and @testing-library/react
+    // falls back to react-dom/test-utils which also needs React.act. Loading
+    // development builds makes act available on both React and react-dom/test-utils.
+    conditions: ["development", "browser", "module", "import", "default"],
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },

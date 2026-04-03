@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { DoctrineExplainer, TenantScopeGuard } from "@/components/control-plane";
+import { TenantScopeGuard } from "@/components/control-plane";
 import { Shell } from "@/components/layout";
 import { Card, CardContent, CardHeader, PageContainer, PageHeader } from "@/components/layout/page-container";
 import { Badge } from "@/components/ui/badge";
@@ -24,11 +24,7 @@ export default function IntegrationsPage() {
         return;
       }
 
-      const [billingSummary, apiKeys] = await Promise.all([
-        getBillingSummary(confirmedTenant.id),
-        listApiKeys(confirmedTenant.id),
-      ]);
-
+      const [billingSummary, apiKeys] = await Promise.all([getBillingSummary(confirmedTenant.id), listApiKeys(confirmedTenant.id)]);
       setBilling(billingSummary);
       setKeys(apiKeys);
     }
@@ -43,41 +39,41 @@ export default function IntegrationsPage() {
     <Shell>
       <PageContainer>
         <PageHeader
-          title="Developer Setup"
-          description="Issue API credentials, connect your runtime through the governed boundary, and validate your first receipt-backed request."
+          title="Integrations"
+          description="Connect your runtime through Keon, issue credentials, and validate the first evidence-backed request."
           actions={
             <Button asChild variant="secondary">
-              <Link href="/get-started">Back to product onboarding</Link>
+              <Link href="/setup">Back to setup</Link>
             </Button>
           }
         />
 
-        {!isConfirmed && <TenantScopeGuard description="Developer setup still depends on an explicitly confirmed tenant and environment." />}
+        {!isConfirmed && <TenantScopeGuard description="Connect integrations after you confirm the workspace and environment Keon should prepare." />}
 
         {isConfirmed && confirmedTenant && (
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_360px]">
             <div className="space-y-6">
               <Card>
-                <CardHeader title="Integration path" description="Technical setup starts only after the tenant and execution boundary are already bound." />
+                <CardHeader title="Connect in order" description="Most teams follow this path when they are ready to start sending real traffic through Keon." />
                 <CardContent className="space-y-4">
                   {[
                     {
                       title: "1. Issue credentials",
-                      body: `${keys.length} API credential record(s) exist for ${confirmedTenant.name}. Use runtime credentials that match the bound ${confirmedEnvironment} environment.`,
+                      body: `${keys.length} credential record(s) currently exist for ${confirmedTenant.name}. Use credentials that match the ${confirmedEnvironment} environment.`,
                       href: "/api-keys",
                       label: "Manage API keys",
                     },
                     {
-                      title: "2. Connect runtime",
-                      body: "Route the integration through the governed boundary so request evaluation and policy consequences remain receipt-backed.",
+                      title: "2. Review guardrails",
+                      body: "Confirm the default guardrails before your runtime starts sending live requests.",
                       href: "/policies",
-                      label: "Review policy boundary",
+                      label: "Open guardrails",
                     },
                     {
-                      title: "3. Validate receipt-backed request",
-                      body: "Run a first implementation request and confirm the resulting receipt chain from the control plane.",
+                      title: "3. Validate with receipts",
+                      body: "Send a first request and confirm the resulting evidence trail from Receipts.",
                       href: "/receipts",
-                      label: "Inspect receipts",
+                      label: "Review receipts",
                     },
                   ].map((step) => (
                     <div key={step.title} className="rounded border border-[#384656] bg-[#0B0C10] p-4">
@@ -90,33 +86,18 @@ export default function IntegrationsPage() {
                   ))}
                 </CardContent>
               </Card>
-
-              <DoctrineExplainer
-                title="Why this moved"
-                description="The developer path is now an explicit branch instead of the default authenticated landing experience."
-                points={[
-                  {
-                    label: "Product-first entry",
-                    detail: "Primary users need to understand governed execution, scope, and baseline consequences before the product reads like an API console.",
-                  },
-                  {
-                    label: "Receipt-backed validation",
-                    detail: "Integration success is not just a 200 response. It is a receipt-backed request observed under the correct policy boundary.",
-                  },
-                ]}
-              />
             </div>
 
             <Card>
-              <CardHeader title="Bound environment snapshot" description="Developer setup stays tied to the confirmed product scope." />
+              <CardHeader title="Current integration context" description="Integration setup stays tied to the confirmed workspace scope." />
               <CardContent className="space-y-3 font-mono text-sm text-[#C5C6C7]">
-                <div>Tenant: {confirmedTenant.name}</div>
+                <div>Workspace: {confirmedTenant.name}</div>
                 <div>Environment: {confirmedEnvironment}</div>
                 <div>Plan: {billing?.planName ?? "Loading"}</div>
                 <div>Billing state: {billing?.billingState ?? "Loading"}</div>
                 <div>API keys: {keys.length}</div>
                 <div className="pt-2">
-                  <Badge variant="healthy">Scope confirmed</Badge>
+                  <Badge variant="healthy">Ready for integration setup</Badge>
                 </div>
               </CardContent>
             </Card>

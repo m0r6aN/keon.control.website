@@ -1,24 +1,19 @@
 "use client";
 
 import { StepShell } from "@/components/onboarding/step-shell";
-import { Button } from "@/components/ui/button";
-import { useOnboardingState } from "@/lib/onboarding/store";
 
 export function ArrivalStep() {
-  const { beginSetup } = useOnboardingState();
-
   return (
     <StepShell
-      eyebrow="Step 0"
-      title="Welcome to Keon Control"
-      description="Set up your governed workspace in a few guided steps. We will keep the path clear and handle the complexity behind the scenes."
-      footer={<Button size="lg" onClick={beginSetup}>Begin Setup</Button>}
+      eyebrow="Welcome"
+      title="Keon Control keeps AI-driven work authorized, traceable, and reviewable."
+      description="Use setup to confirm the right workspace, apply starter guardrails, and leave with a clear signal that your team is ready to use Keon."
     >
       <div className="grid gap-4 md:grid-cols-3">
         {[
-          "Choose what you want to enable first.",
-          "Confirm the right workspace for your setup.",
-          "Watch your first governed decision produce a receipt.",
+          "Define what you want Keon to manage first so setup stays relevant.",
+          "Confirm the workspace and environment this setup should prepare.",
+          "Apply a starter guardrail preset before anyone starts using the workspace.",
         ].map((item, index) => (
           <div key={item} className="rounded-[20px] border border-white/10 bg-white/[0.03] p-5">
             <div className="font-mono text-xs uppercase tracking-[0.22em] text-[#B6F09C]">0{index + 1}</div>
