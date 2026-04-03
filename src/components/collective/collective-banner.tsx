@@ -5,7 +5,7 @@ export function CollectiveBanner() {
         Collective Cognition
       </div>
       <p className="text-[11px] leading-tight text-[--steel]">
-        Read-only constitutional observation surface.
+        Live submission now exists at `/collective/submit`. Legacy overview, timeline, and reform surfaces remain observation-first and may still include projection-only or mock-backed views.
       </p>
     </div>
   );

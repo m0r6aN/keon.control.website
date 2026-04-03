@@ -8,6 +8,7 @@ import {
     Gavel,
     KeyRound,
     LayoutDashboard,
+    PlaySquare,
     MessageSquare,
     Scale,
     Settings,
@@ -52,6 +53,8 @@ const navSections: NavSection[] = [
     title: "Collective",
     items: [
       { label: "Overview", href: "/collective", icon: BookOpen },
+      { label: "Submit Run", href: "/collective/submit", icon: PlaySquare },
+      { label: "Recent Runs", href: "/collective/runs", icon: BookOpen },
       { label: "Deliberations", href: "/collective/deliberations", icon: MessageSquare },
       { label: "Reforms", href: "/collective/reforms", icon: Gavel },
       { label: "Legitimacy", href: "/collective/legitimacy", icon: Scale },
