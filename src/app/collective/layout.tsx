@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Collective Cognition",
   description:
-    "Read-only constitutional observation surface for deliberations, reforms, and legitimacy assessments.",
+    "Collective operator surface for live inert cognition submission and constitutional observation.",
 };
 
 export default function CollectiveLayout({

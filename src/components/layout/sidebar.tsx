@@ -2,25 +2,27 @@
 
 import { cn } from "@/lib/utils";
 import {
-    Activity,
-    Archive,
-    BookOpen,
-    CheckCircle,
-    ChevronLeft,
-    Cpu,
-    CreditCard,
-    FileCheck2,
-    GitBranch,
-    KeyRound,
-    LayoutDashboard,
-    Link2,
-    Scale,
-    Settings,
-    Shield,
-    Sparkles,
-    Users,
-    Waves,
-    Zap
+  Activity,
+  Archive,
+  BookOpen,
+  CheckCircle,
+  ChevronLeft,
+  Cpu,
+  CreditCard,
+  FileCheck2,
+  GitBranch,
+  KeyRound,
+  LayoutDashboard,
+  Link2,
+  MessageSquare,
+  PlaySquare,
+  Scale,
+  Settings,
+  Shield,
+  Sparkles,
+  Users,
+  Waves,
+  Zap
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -59,6 +61,12 @@ const navGroups: NavGroup[] = [
   {
     label: "GOVERNANCE",
     items: [
+      { label: "Overview", href: "/collective", icon: BookOpen },
+      { label: "Submit Run", href: "/collective/submit", icon: PlaySquare },
+      { label: "Recent Runs", href: "/collective/runs", icon: BookOpen },
+      { label: "Deliberations", href: "/collective/deliberations", icon: MessageSquare },
+      { label: "Reforms", href: "/collective/reforms", icon: Gavel },
+      { label: "Legitimacy", href: "/collective/legitimacy", icon: Scale },
       { label: "Pulse", href: "/collective", icon: Activity },
       { label: "Decisions", href: "/collective/decisions", icon: Scale },
       { label: "Executions", href: "/collective/executions", icon: Cpu },
