@@ -143,9 +143,33 @@ export default function CollectiveOverviewPage() {
       <header className="space-y-3">
         <h1 className="font-display text-3xl text-[--flash]">Collective Cognition</h1>
         <p className="text-sm text-[--steel]">
-          Constitutional observation surface for deliberations, reform artifacts, and legitimacy assessments.
+          Constitutional operator surface for live inert cognition submission plus observational views for deliberations, reform artifacts, and legitimacy assessments.
         </p>
       </header>
+
+      <section className="rounded border border-[--reactor-blue] bg-[#081316] p-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="space-y-2">
+            <Badge variant="healthy">LIVE SUBMISSION</Badge>
+            <h2 className="font-display text-2xl text-[--flash]">Submit To Collective</h2>
+            <p className="max-w-3xl text-sm text-[--steel]">
+              Launch a real Collective run, bind tenant and actor identity, and inspect canonical host artifacts without implying authorization or execution authority.
+            </p>
+          </div>
+          <Link
+            href="/collective/submit"
+            className="inline-flex h-10 items-center justify-center border border-[--reactor-blue] bg-[--reactor-blue] px-4 font-mono text-xs uppercase tracking-widest text-[--void] transition-colors hover:bg-[--reactor-glow]"
+          >
+            Open Live Submit
+          </Link>
+          <Link
+            href="/collective/runs"
+            className="inline-flex h-10 items-center justify-center border border-[--tungsten] px-4 font-mono text-xs uppercase tracking-widest text-[--flash] transition-colors hover:border-[--reactor-blue]"
+          >
+            Review Recent Runs
+          </Link>
+        </div>
+      </section>
 
       <CollectiveStatusHeader
         activeDeliberations={activeDeliberations}
@@ -238,7 +262,7 @@ export default function CollectiveOverviewPage() {
       </section>
 
       <footer className="text-xs text-[--steel]">
-        All data is sourced from canonical governance endpoints. This surface provides observation only.
+        The live submit workflow is real and host-backed. The observer views below remain read-only, and some deeper Collective pages still surface projection-only or mock-backed data until their backend contracts are merged.
       </footer>
     </div>
   );
