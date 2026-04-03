@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Shell } from "@/components/layout";
+import { DataSourceNotice, Shell } from "@/components/layout";
 import { Card, CardContent, CardHeader, PageContainer, PageHeader } from "@/components/layout/page-container";
 import { Input } from "@/components/ui/input";
 import { ManifestEntry } from "@/lib/contracts/pt013";
@@ -55,11 +55,16 @@ export default function GlobalReceiptsPage() {
       <PageContainer maxWidth="full">
         <PageHeader
           title="Receipts"
-          description="Global explorer for verifiable governance receipts and immutable rulings."
+          description="Inspect the evidence trail Keon records for reviewed actions, including what happened, when it happened, and why it was allowed or blocked."
+        />
+
+        <DataSourceNotice
+          title="Sample receipts"
+          description="This receipts view currently shows sample data for preview purposes. The records below are not from your connected systems."
         />
 
         <Card>
-          <CardHeader title="Receipt registry" description="Use receipts to inspect what was bound to each governed action and why." />
+          <CardHeader title="Receipt explorer" description="Use receipts to inspect what was recorded for each action and why." />
           <CardContent className="space-y-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#C5C6C7] opacity-50" />
@@ -72,7 +77,14 @@ export default function GlobalReceiptsPage() {
             </div>
 
             {isLoading ? (
-              <div className="font-mono text-xs opacity-40">Scanning chain of custody...</div>
+              <div className="font-mono text-xs opacity-40">Loading sample receipts...</div>
+            ) : filteredReceipts.length === 0 ? (
+              <div className="rounded border border-dashed border-[#384656] py-12 text-center">
+                <div className="font-['Rajdhani'] text-xl font-semibold text-[#F3F5F7]">No receipts match this search</div>
+                <p className="mt-2 text-sm leading-6 text-[#C5C6C7] opacity-70">
+                  Try a different search term, or come back after your team starts sending actions through Keon.
+                </p>
+              </div>
             ) : (
               <div className="grid grid-cols-1 gap-4">
                 {filteredReceipts.map((receipt) => (
@@ -84,13 +96,10 @@ export default function GlobalReceiptsPage() {
                         </div>
                         <div>
                           <h4 className="font-mono text-sm text-[#66FCF1]">{receipt.actionType}</h4>
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-[#C5C6C7] opacity-60">Action outcome</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-[#C5C6C7] opacity-60">Sample outcome</span>
                         </div>
                       </div>
-                      <Link
-                        href={`/runtime/executions/${receipt.runId}`}
-                        className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#66FCF1] opacity-0 transition-opacity group-hover:opacity-100"
-                      >
+                      <Link href={`/runtime/executions/${receipt.runId}`} className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#66FCF1] opacity-0 transition-opacity group-hover:opacity-100">
                         View case <ExternalLink className="h-3.5 w-3.5" />
                       </Link>
                     </div>
@@ -115,11 +124,6 @@ export default function GlobalReceiptsPage() {
                     </div>
                   </div>
                 ))}
-                {filteredReceipts.length === 0 && (
-                  <div className="rounded border border-dashed border-[#384656] py-12 text-center opacity-30">
-                    No matching receipts found in current registry scan.
-                  </div>
-                )}
               </div>
             )}
           </CardContent>

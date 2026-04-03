@@ -1,24 +1,8 @@
 "use client";
 
+import { navigationItems, navigationSections } from "@/components/layout/navigation";
 import { cn } from "@/lib/utils";
-import {
-  Activity,
-  BookOpen,
-  ChevronLeft,
-  Gavel,
-  Home,
-  Cpu,
-  CreditCard,
-  FileCheck2,
-  GitBranch, 
-  KeyRound,
-  MessageSquare,
-  Scale,
-  Settings,
-  ShieldCheck,
-  Users,
-  Waves,
-} from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
@@ -28,50 +12,6 @@ interface SidebarProps {
   onCollapse?: (collapsed: boolean) => void;
   className?: string;
 }
-
-interface NavItem {
-  label: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-interface NavSection {
-  title?: string;
-  items: NavItem[];
-}
-
-const navSections: NavSection[] = [
-  {
-    title: "Core",
-    items: [
-      { label: "Control", href: "/control", icon: Home },
-      { label: "Receipts", href: "/receipts", icon: KeyRound },
-      { label: "Policies", href: "/policies", icon: ShieldCheck },
-      { label: "Tenants", href: "/tenants", icon: Users },
-      { label: "Integrations", href: "/integrations", icon: Waves },
-      { label: "Collective", href: "/collective", icon: BookOpen },
-      { label: "System State", href: "/cockpit", icon: Activity },
-    ],
-  },
-  {
-    title: "Operator",
-    items: [
-      { label: "Usage", href: "/usage", icon: Waves },
-      { label: "API Keys", href: "/api-keys", icon: KeyRound },
-      { label: "Settings", href: "/settings", icon: Settings },
-    ],
-  },
-  {
-    title: "Collective Detail",
-    items: [
-      { label: "Deliberations", href: "/collective/deliberations", icon: MessageSquare },
-      { label: "Reforms", href: "/collective/reforms", icon: Gavel },
-      { label: "Legitimacy", href: "/collective/legitimacy", icon: Scale },
-    ],
-  },
-];
-
-const navItems: NavItem[] = navSections.flatMap((section) => section.items);
 
 export function Sidebar({ collapsed = false, onCollapse, className }: SidebarProps) {
   const pathname = usePathname();
@@ -85,12 +25,12 @@ export function Sidebar({ collapsed = false, onCollapse, className }: SidebarPro
 
       if (e.key === "j") {
         e.preventDefault();
-        setSelectedIndex((prev) => (prev + 1) % navItems.length);
+        setSelectedIndex((prev) => (prev + 1) % navigationItems.length);
       } else if (e.key === "k") {
         e.preventDefault();
-        setSelectedIndex((prev) => (prev - 1 + navItems.length) % navItems.length);
+        setSelectedIndex((prev) => (prev - 1 + navigationItems.length) % navigationItems.length);
       } else if (e.key === "Enter" && selectedIndex >= 0) {
-        const item = navItems[selectedIndex];
+        const item = navigationItems[selectedIndex];
         if (item) {
           window.location.href = item.href;
         }
@@ -102,7 +42,7 @@ export function Sidebar({ collapsed = false, onCollapse, className }: SidebarPro
   }, [selectedIndex]);
 
   React.useEffect(() => {
-    const index = navItems.findIndex((item) => item.href === pathname);
+    const index = navigationItems.findIndex((item) => item.href === pathname);
     if (index !== -1) {
       setSelectedIndex(index);
     }
@@ -118,20 +58,20 @@ export function Sidebar({ collapsed = false, onCollapse, className }: SidebarPro
     <aside
       className={cn(
         "fixed left-0 top-16 z-40 flex h-[calc(100vh-4rem)] flex-col border-r border-[#384656] bg-[#1F2833] transition-all duration-300",
-        collapsed ? "w-16" : "w-60",
+        collapsed ? "w-16" : "w-72",
         className
       )}
     >
       <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-        {navSections.map((section, sectionIdx) => {
+        {navigationSections.map((section, sectionIdx) => {
           let globalOffset = 0;
           for (let i = 0; i < sectionIdx; i += 1) {
-            globalOffset += navSections[i].items.length;
+            globalOffset += navigationSections[i].items.length;
           }
 
           return (
-            <div key={section.title ?? sectionIdx} className={cn(sectionIdx > 0 && "mt-4")}>
-              {section.title && !collapsed && (
+            <div key={section.title} className={cn(sectionIdx > 0 && "mt-4")}>
+              {!collapsed && (
                 <div className="mb-2 px-3 font-mono text-[10px] uppercase tracking-widest text-[#66FCF1] opacity-60">
                   {section.title}
                 </div>
@@ -148,7 +88,7 @@ export function Sidebar({ collapsed = false, onCollapse, className }: SidebarPro
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "group relative flex items-center gap-3 rounded px-3 py-2.5 transition-all",
+                      "group relative flex items-start gap-3 rounded px-3 py-2.5 transition-all",
                       "text-[#C5C6C7] hover:bg-[#384656] hover:text-[#66FCF1]",
                       isActive && "border-l-2 border-[#66FCF1] bg-[#384656] text-[#66FCF1]",
                       isSelected && !isActive && "ring-1 ring-[#66FCF1] ring-opacity-50"
@@ -156,11 +96,25 @@ export function Sidebar({ collapsed = false, onCollapse, className }: SidebarPro
                     onMouseEnter={() => setSelectedIndex(globalIndex)}
                   >
                     {isActive && <div className="absolute inset-0 rounded bg-[#66FCF1] opacity-5" />}
-                    <Icon className={cn("h-5 w-5 shrink-0 transition-colors", isActive && "text-[#66FCF1]")} />
-                    {!collapsed && <span className="font-mono text-sm font-medium">{item.label}</span>}
+                    <Icon className={cn("mt-0.5 h-5 w-5 shrink-0 transition-colors", isActive && "text-[#66FCF1]")} />
+                    {!collapsed && (
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-sm font-medium">{item.label}</span>
+                          {item.badge ? (
+                            <span className="rounded-full border border-[#384656] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.18em] text-[#66FCF1]">
+                              {item.badge}
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className="text-pretty font-mono text-[11px] leading-5 text-[#C5C6C7] opacity-55">
+                          {item.description}
+                        </div>
+                      </div>
+                    )}
                     {collapsed && (
                       <div className="absolute left-full top-1/2 ml-2 hidden -translate-y-1/2 whitespace-nowrap rounded border border-[#384656] bg-[#1F2833] px-3 py-2 font-mono text-sm text-[#C5C6C7] group-hover:block">
-                        {section.title ? `${section.title}: ${item.label}` : item.label}
+                        {item.label}
                       </div>
                     )}
                   </Link>
@@ -189,7 +143,7 @@ export function Sidebar({ collapsed = false, onCollapse, className }: SidebarPro
         <div className="border-t border-[#384656] p-3">
           <div className="rounded bg-[#0B0C10] p-2 text-center">
             <p className="font-mono text-[11px] text-[#C5C6C7] opacity-40">
-              Guided setup lives outside the control plane and returns here only after activation is complete.
+              Welcome and Setup stay visible so first-time users always know where to start and what remains.
             </p>
           </div>
         </div>

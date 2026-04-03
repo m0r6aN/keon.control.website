@@ -1,32 +1,28 @@
 "use client";
 
+import { clampVisibleStep } from "@/lib/onboarding/experience";
 import { useOnboardingState } from "@/lib/onboarding/store";
-import { ArrivalStep } from "./steps/arrival-step";
+import { useSearchParams } from "next/navigation";
 import { CompleteStep } from "./steps/complete-step";
-import { FirstGovernedActionStep } from "./steps/first-governed-action-step";
 import { IntentSelectionStep } from "./steps/intent-selection-step";
 import { PolicyBaselineStep } from "./steps/policy-baseline-step";
 import { ScopeConfirmationStep } from "./steps/scope-confirmation-step";
 
 export function OnboardingFlow() {
-  const {
-    state: { currentStep },
-  } = useOnboardingState();
+  const searchParams = useSearchParams();
+  const { state } = useOnboardingState();
+  const visibleStep = clampVisibleStep(searchParams.get("step"), state);
 
-  switch (currentStep) {
-    case "ARRIVAL":
-      return <ArrivalStep />;
-    case "INTENT_SELECTION":
+  switch (visibleStep) {
+    case "DEFINE_GOALS":
       return <IntentSelectionStep />;
-    case "SCOPE_CONFIRMATION":
+    case "CONFIRM_ACCESS":
       return <ScopeConfirmationStep />;
-    case "POLICY_BASELINE":
+    case "SET_GUARDRAILS":
       return <PolicyBaselineStep />;
-    case "FIRST_GOVERNED_ACTION":
-      return <FirstGovernedActionStep />;
-    case "COMPLETE":
+    case "READY":
       return <CompleteStep />;
     default:
-      return <ArrivalStep />;
+      return <IntentSelectionStep />;
   }
 }

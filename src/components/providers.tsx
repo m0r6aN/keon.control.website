@@ -2,6 +2,7 @@
 
 import { getApiConfig } from "@/lib/api";
 import { OnboardingPreferencesProvider } from "@/lib/control-plane/onboarding-preferences";
+import { FirstRunStateProvider } from "@/lib/first-run/state";
 import { TenantContextProvider } from "@/lib/control-plane/tenant-context";
 import { TenantBindingProvider } from "@/lib/control-plane/tenant-binding";
 import { IncidentModeProvider } from "@/lib/incident-mode";
@@ -20,7 +21,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <TenantBindingProvider>
             <OnboardingPreferencesProvider>
               <OnboardingStateProvider>
-                <IncidentModeProvider>{children}</IncidentModeProvider>
+                <FirstRunStateProvider>
+                  <IncidentModeProvider>{children}</IncidentModeProvider>
+                </FirstRunStateProvider>
               </OnboardingStateProvider>
             </OnboardingPreferencesProvider>
           </TenantBindingProvider>

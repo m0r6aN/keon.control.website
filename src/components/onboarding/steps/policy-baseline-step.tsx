@@ -4,11 +4,11 @@ import { StepShell } from "@/components/onboarding/step-shell";
 import { Button } from "@/components/ui/button";
 import { useOnboardingState } from "@/lib/onboarding/store";
 import { cn } from "@/lib/utils";
-import type { PolicyBaseline } from "@/lib/onboarding/state-machine";
+import type { GuardrailPreset } from "@/lib/onboarding/state-machine";
 import * as React from "react";
 
-const baselineOptions: {
-  id: PolicyBaseline;
+const guardrailOptions: {
+  id: GuardrailPreset;
   title: string;
   description: string;
   outcome: string;
@@ -16,43 +16,43 @@ const baselineOptions: {
   {
     id: "strict",
     title: "Strict",
-    description: "Blocks sensitive actions until the right proof or review is present.",
+    description: "Block sensitive actions until the right proof or review is present.",
     outcome: "Best when high-impact changes should stop unless everything is in place.",
   },
   {
     id: "balanced",
     title: "Balanced",
-    description: "Lets routine work keep moving while protecting riskier actions.",
+    description: "Let routine work keep moving while protecting riskier actions.",
     outcome: "Best when you want trust and momentum without heavy friction.",
   },
   {
     id: "flexible",
     title: "Flexible",
-    description: "Keeps decisions visible while allowing more actions to proceed.",
+    description: "Keep decisions visible while allowing more actions to proceed.",
     outcome: "Best when your team needs lighter guardrails and fast iteration.",
   },
 ];
 
 export function PolicyBaselineStep() {
   const {
-    state: { policyBaseline },
-    applyPolicyBaseline,
+    state: { guardrailPreset },
+    applyGuardrails,
   } = useOnboardingState();
-  const [selection, setSelection] = React.useState<PolicyBaseline | null>(policyBaseline);
+  const [selection, setSelection] = React.useState<GuardrailPreset | null>(guardrailPreset);
 
   return (
     <StepShell
       eyebrow="Step 3"
-      title="Choose your governance baseline"
-      description="This sets the starting posture for how actions are evaluated in your workspace. You can refine it later, but this gives Keon a clear default right now."
+      title="Choose your starter guardrails"
+      description="This is the default review posture for your workspace. You can refine it later, but choosing it now makes the product ready for first use."
       footer={
-        <Button size="lg" disabled={!selection} onClick={() => selection && applyPolicyBaseline(selection)}>
-          Apply and continue
+        <Button size="lg" disabled={!selection} onClick={() => selection && applyGuardrails(selection)}>
+          Review ready state
         </Button>
       }
     >
       <div className="grid gap-4 md:grid-cols-3">
-        {baselineOptions.map((option) => {
+        {guardrailOptions.map((option) => {
           const active = selection === option.id;
           return (
             <button

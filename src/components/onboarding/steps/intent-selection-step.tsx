@@ -2,62 +2,60 @@
 
 import { StepShell } from "@/components/onboarding/step-shell";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { useOnboardingState } from "@/lib/onboarding/store";
-import type { OnboardingIntent } from "@/lib/onboarding/state-machine";
+import type { OnboardingGoal } from "@/lib/onboarding/state-machine";
+import { cn } from "@/lib/utils";
 import * as React from "react";
 
-const intentOptions: { id: OnboardingIntent; title: string; description: string }[] = [
+const goalOptions: { id: OnboardingGoal; title: string; description: string }[] = [
   {
     id: "govern-ai-actions",
-    title: "Govern AI actions",
-    description: "Make high-impact actions run through clear decisions and receipts.",
+    title: "Review important AI actions",
+    description: "Require clear approvals and an evidence trail before sensitive actions can happen.",
   },
   {
     id: "memory-and-context",
-    title: "Add memory and context",
-    description: "Keep the right context available so work stays grounded and consistent.",
+    title: "Protect memory and context",
+    description: "Keep the context your AI systems use inside the right workspace boundaries.",
   },
   {
     id: "oversight-and-collaboration",
-    title: "Enable oversight and collaboration",
-    description: "Bring the right people into review when actions need shared visibility.",
+    title: "Add collaborative review",
+    description: "Bring the right reviewers into higher-risk decisions and escalations.",
   },
 ];
 
 export function IntentSelectionStep() {
   const {
-    state: { selectedIntent },
-    saveIntentSelection,
+    state: { selectedGoals },
+    saveGoals,
   } = useOnboardingState();
-  const [selection, setSelection] = React.useState<OnboardingIntent[]>(selectedIntent);
+  const [selection, setSelection] = React.useState<OnboardingGoal[]>(selectedGoals);
 
-  const toggleIntent = (intent: OnboardingIntent) => {
-    setSelection((current) =>
-      current.includes(intent) ? current.filter((item) => item !== intent) : [...current, intent]
-    );
+  const toggleGoal = (goal: OnboardingGoal) => {
+    setSelection((current) => (current.includes(goal) ? current.filter((item) => item !== goal) : [...current, goal]));
   };
 
   return (
     <StepShell
       eyebrow="Step 1"
-      title="What do you want Keon Control to turn on first?"
-      description="Choose the outcomes you want from day one. Your selections shape the rest of setup so the next decisions stay relevant."
+      title="What do you want to use Keon for first?"
+      description="Choose the outcomes that matter most right now. Keon uses this to keep the rest of setup focused on your actual first use case."
       footer={
-        <Button size="lg" disabled={selection.length === 0} onClick={() => saveIntentSelection(selection)}>
+        <Button size="lg" disabled={selection.length === 0} onClick={() => saveGoals(selection)}>
           Continue
         </Button>
       }
     >
       <div className="grid gap-4 md:grid-cols-3">
-        {intentOptions.map((option) => {
+        {goalOptions.map((option) => {
           const active = selection.includes(option.id);
 
           return (
             <button
               key={option.id}
               type="button"
-              onClick={() => toggleIntent(option.id)}
+              onClick={() => toggleGoal(option.id)}
               className={cn(
                 "rounded-[24px] border p-6 text-left transition-all duration-200",
                 active

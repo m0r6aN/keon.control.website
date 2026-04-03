@@ -2,6 +2,7 @@
 
 import { NextStepCard } from "@/components/control-plane";
 import { IncidentShell } from "@/components/incident";
+import { AppReadyGate } from "@/components/onboarding/route-gates";
 import { useIncidentMode } from "@/lib/incident-mode";
 import { useIncidentTrigger } from "@/lib/use-incident-trigger";
 import { cn } from "@/lib/utils";
@@ -16,11 +17,11 @@ interface ShellProps {
   className?: string;
 }
 
-const ONBOARDING_ROUTES = new Set(["/", "/get-started"]);
+const FIRST_RUN_ROUTES = new Set(["/", "/get-started", "/welcome", "/setup", "/onboarding"]);
 
 export function Shell({ children, className }: ShellProps) {
   const pathname = usePathname();
-  const isOnboardingRoute = ONBOARDING_ROUTES.has(pathname);
+  const isOnboardingRoute = FIRST_RUN_ROUTES.has(pathname);
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(isOnboardingRoute);
   const [commandPaletteOpen, setCommandPaletteOpen] = React.useState(false);
   const { state } = useIncidentMode();
@@ -56,7 +57,7 @@ export function Shell({ children, className }: ShellProps) {
     return <IncidentShell>{children}</IncidentShell>;
   }
 
-  return (
+  const shellContent = (
     <div className={cn("relative flex h-screen w-full flex-col bg-[#0B0C10]", className)}>
       <CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} />
       <TopBar onToggleSidebar={isOnboardingRoute ? undefined : () => setSidebarCollapsed((prev) => !prev)} />
@@ -67,7 +68,7 @@ export function Shell({ children, className }: ShellProps) {
         <main
           className={cn(
             "relative flex-1 overflow-y-auto transition-all duration-300",
-            !isOnboardingRoute && (sidebarCollapsed ? "ml-16" : "ml-60")
+            !isOnboardingRoute && (sidebarCollapsed ? "ml-16" : "ml-72")
           )}
         >
           {!isOnboardingRoute && (
@@ -81,4 +82,10 @@ export function Shell({ children, className }: ShellProps) {
       </div>
     </div>
   );
+
+  if (isOnboardingRoute) {
+    return shellContent;
+  }
+
+  return <AppReadyGate>{shellContent}</AppReadyGate>;
 }

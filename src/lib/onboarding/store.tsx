@@ -3,9 +3,9 @@
 import * as React from "react";
 import {
   defaultOnboardingState,
-  type OnboardingIntent,
+  type OnboardingGoal,
   type OnboardingState,
-  type PolicyBaseline,
+  type GuardrailPreset,
   sanitizeOnboardingState,
   transitionOnboardingState,
 } from "./state-machine";
@@ -15,11 +15,10 @@ const STORAGE_KEY = "keon.onboarding.state";
 interface OnboardingStoreValue {
   hydrated: boolean;
   state: OnboardingState;
-  beginSetup: () => void;
-  saveIntentSelection: (selectedIntent: OnboardingIntent[]) => void;
-  confirmScope: (tenantId: string) => void;
-  applyPolicyBaseline: (policyBaseline: PolicyBaseline) => void;
-  completeFirstGovernedAction: () => void;
+  startSetup: () => void;
+  saveGoals: (selectedGoals: OnboardingGoal[]) => void;
+  confirmAccess: (workspaceId: string) => void;
+  applyGuardrails: (guardrailPreset: GuardrailPreset) => void;
   finishOnboarding: () => void;
   resetOnboarding: () => void;
 }
@@ -27,11 +26,10 @@ interface OnboardingStoreValue {
 const OnboardingStoreContext = React.createContext<OnboardingStoreValue>({
   hydrated: false,
   state: defaultOnboardingState,
-  beginSetup: () => undefined,
-  saveIntentSelection: () => undefined,
-  confirmScope: () => undefined,
-  applyPolicyBaseline: () => undefined,
-  completeFirstGovernedAction: () => undefined,
+  startSetup: () => undefined,
+  saveGoals: () => undefined,
+  confirmAccess: () => undefined,
+  applyGuardrails: () => undefined,
   finishOnboarding: () => undefined,
   resetOnboarding: () => undefined,
 });
@@ -73,12 +71,10 @@ export function OnboardingStateProvider({ children }: { children: React.ReactNod
     () => ({
       hydrated,
       state,
-      beginSetup: () => dispatch({ type: "BEGIN_SETUP" }),
-      saveIntentSelection: (selectedIntent) => dispatch({ type: "SAVE_INTENT_SELECTION", payload: { selectedIntent } }),
-      confirmScope: (tenantId) => dispatch({ type: "CONFIRM_SCOPE", payload: { tenantId } }),
-      applyPolicyBaseline: (policyBaseline) =>
-        dispatch({ type: "APPLY_POLICY_BASELINE", payload: { policyBaseline } }),
-      completeFirstGovernedAction: () => dispatch({ type: "COMPLETE_FIRST_GOVERNED_ACTION" }),
+      startSetup: () => dispatch({ type: "START_SETUP" }),
+      saveGoals: (selectedGoals) => dispatch({ type: "SAVE_GOALS", payload: { selectedGoals } }),
+      confirmAccess: (workspaceId) => dispatch({ type: "CONFIRM_ACCESS", payload: { workspaceId } }),
+      applyGuardrails: (guardrailPreset) => dispatch({ type: "APPLY_GUARDRAILS", payload: { guardrailPreset } }),
       finishOnboarding: () => dispatch({ type: "FINISH_ONBOARDING" }),
       resetOnboarding: () => dispatch({ type: "RESET" }),
     }),

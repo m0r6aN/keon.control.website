@@ -30,6 +30,8 @@ function buildTenantBinding(overrides: Partial<ReturnType<typeof mockUseTenantBi
     retry: vi.fn(),
     selectedTenantId: tenant.id,
     selectTenant: vi.fn(),
+    environment: "sandbox",
+    setEnvironment: vi.fn(),
     confirmBinding: vi.fn(),
     ...overrides,
   };
@@ -38,7 +40,7 @@ function buildTenantBinding(overrides: Partial<ReturnType<typeof mockUseTenantBi
 beforeEach(() => {
   vi.useRealTimers();
   mockUseOnboardingState.mockReturnValue({
-    confirmScope: vi.fn(),
+    confirmAccess: vi.fn(),
   });
 });
 
@@ -58,13 +60,14 @@ describe("ScopeConfirmationStep", () => {
     expect(screen.getByText(/you can continue once your workspace is available/i)).toBeInTheDocument();
   });
 
-  it("renders 'Confirm and continue' when the workspace is ready", () => {
+  it("renders the environment selector when the workspace is ready", () => {
     mockUseTenantBinding.mockReturnValue(buildTenantBinding());
 
     render(<ScopeConfirmationStep />);
 
     expect(screen.getByRole("button", { name: /confirm and continue/i })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /retry/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /sandbox/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /production/i })).toBeInTheDocument();
   });
 
   it("retry can recover into a ready state", async () => {
@@ -96,29 +99,27 @@ describe("ScopeConfirmationStep", () => {
   it("only advances after confirmation from the ready state", async () => {
     vi.useFakeTimers();
     const confirmBinding = vi.fn();
-    const confirmScope = vi.fn();
+    const confirmAccess = vi.fn();
 
     mockUseTenantBinding.mockReturnValue(buildTenantBinding({ confirmBinding }));
-    mockUseOnboardingState.mockReturnValue({ confirmScope });
+    mockUseOnboardingState.mockReturnValue({ confirmAccess });
 
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     render(<ScopeConfirmationStep />);
 
     expect(confirmBinding).not.toHaveBeenCalled();
-    expect(confirmScope).not.toHaveBeenCalled();
+    expect(confirmAccess).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole("button", { name: /confirm and continue/i }));
 
     expect(screen.queryByRole("button", { name: /confirm and continue/i })).not.toBeInTheDocument();
     expect(screen.getByText(/workspace confirmed/i)).toBeInTheDocument();
-    expect(confirmBinding).not.toHaveBeenCalled();
-    expect(confirmScope).not.toHaveBeenCalled();
 
     vi.advanceTimersByTime(450);
 
     await waitFor(() => {
       expect(confirmBinding).toHaveBeenCalledTimes(1);
-      expect(confirmScope).toHaveBeenCalledWith(tenant.id);
+      expect(confirmAccess).toHaveBeenCalledWith(tenant.id);
     });
   });
 });

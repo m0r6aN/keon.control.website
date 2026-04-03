@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { DoctrineExplainer, TenantScopeGuard } from "@/components/control-plane";
+import { TenantScopeGuard } from "@/components/control-plane";
 import { Shell } from "@/components/layout";
 import { Card, CardContent, CardHeader, PageContainer, PageHeader } from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ export default function SettingsPage() {
   React.useEffect(() => {
     async function load() {
       if (!confirmedTenant) {
-        setBillingState("scope required");
+        setBillingState("workspace required");
         return;
       }
 
@@ -32,10 +32,10 @@ export default function SettingsPage() {
       <PageContainer>
         <PageHeader
           title="Settings"
-          description="Operator preferences are secondary to governance-critical setup. This page now focuses on verified scope, notification posture, and account hygiene."
+          description="Manage workspace details, notifications, and account hygiene without leaving the customer-facing path."
         />
 
-        {!isConfirmed && <TenantScopeGuard description="Settings that depend on tenant context require an explicitly confirmed scope first." />}
+        {!isConfirmed && <TenantScopeGuard description="Workspace settings only become specific after you confirm the workspace and environment." />}
 
         {isConfirmed && confirmedTenant && (
           <div className="space-y-6 max-w-4xl">
@@ -44,17 +44,17 @@ export default function SettingsPage() {
                 title={
                   <div className="flex items-center gap-2">
                     <User className="h-4 w-4 text-[#66FCF1]" />
-                    <span>Verified scope</span>
+                    <span>Workspace details</span>
                   </div>
                 }
-                description="Settings no longer imply tenant authority. They reflect the scope you have already confirmed."
+                description="Settings reflect the workspace you already confirmed during setup."
               />
               <CardContent className="space-y-3 font-mono text-sm text-[#C5C6C7]">
-                <div>Tenant: {confirmedTenant.name}</div>
+                <div>Workspace: {confirmedTenant.name}</div>
                 <div>Environment: {confirmedEnvironment}</div>
                 <div>Billing state: {billingState}</div>
                 <div className="pt-2">
-                  <Button size="sm">Refresh scope metadata</Button>
+                  <Button size="sm">Refresh workspace details</Button>
                 </div>
               </CardContent>
             </Card>
@@ -65,13 +65,13 @@ export default function SettingsPage() {
                   title={
                     <div className="flex items-center gap-2">
                       <Bell className="h-4 w-4 text-[#66FCF1]" />
-                      <span>Governance notifications</span>
+                      <span>Notifications</span>
                     </div>
                   }
-                  description="Alert posture matters more than theme toggles during tenant activation."
+                  description="Choose how your team hears about policy issues, escalations, and regular summaries."
                 />
                 <CardContent className="space-y-4 font-mono text-sm text-[#C5C6C7]">
-                  <div>Policy violations: enabled</div>
+                  <div>Policy issues: enabled</div>
                   <div>Escalation notices: enabled</div>
                   <div>Weekly digest: optional</div>
                 </CardContent>
@@ -85,30 +85,17 @@ export default function SettingsPage() {
                       <span>Account hygiene</span>
                     </div>
                   }
-                  description="Keep identity and session state clean without confusing this screen for the governance baseline itself."
+                  description="Keep access clean and session state under control."
                 />
                 <CardContent className="space-y-4 font-mono text-sm text-[#C5C6C7]">
                   <div>Session posture: verified</div>
-                  <div>Scope drift protection: active</div>
-                  <Button variant="outline" size="sm">Sign out all sessions</Button>
+                  <div>Drift protection: active</div>
+                  <Button variant="outline" size="sm">
+                    Sign out all sessions
+                  </Button>
                 </CardContent>
               </Card>
             </div>
-
-            <DoctrineExplainer
-              title="Why settings moved down"
-              description="Generic SaaS preferences are no longer positioned ahead of governance-critical setup."
-              points={[
-                {
-                  label: "Scope first",
-                  detail: "Settings should never be the screen that quietly chooses enterprise context on the user’s behalf.",
-                },
-                {
-                  label: "Governance before cosmetics",
-                  detail: "Notification posture and verified scope matter more than visual preferences during initial activation.",
-                },
-              ]}
-            />
           </div>
         )}
       </PageContainer>

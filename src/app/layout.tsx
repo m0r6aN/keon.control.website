@@ -25,7 +25,7 @@ const instrumentSerif = Instrument_Serif({
 
 export const metadata: Metadata = {
   title: "Keon Control",
-  description: "Governed execution control plane for tenant scope confirmation, policy baselines, receipts, and verified operator inspection",
+  description: "Control plane for reviewing AI-driven actions with clear approvals, evidence, and workspace guardrails.",
 };
 
 export default function RootLayout({

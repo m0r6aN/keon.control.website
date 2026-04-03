@@ -23,7 +23,7 @@ export function StepShell({
         </div>
       </div>
       <div className="space-y-6">{children}</div>
-      {footer ? <div className="pt-2">{footer}</div> : null}
+      {footer ? <div className="border-t border-white/10 pt-6">{footer}</div> : null}
     </div>
   );
 }

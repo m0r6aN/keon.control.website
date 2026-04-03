@@ -3,63 +3,62 @@ import { defaultOnboardingState, transitionOnboardingState } from "./state-machi
 
 describe("transitionOnboardingState", () => {
   it("moves through the happy path in order", () => {
-    const started = transitionOnboardingState(defaultOnboardingState, { type: "BEGIN_SETUP" });
-    const withIntent = transitionOnboardingState(started, {
-      type: "SAVE_INTENT_SELECTION",
-      payload: { selectedIntent: ["govern-ai-actions"] },
+    const started = transitionOnboardingState(defaultOnboardingState, { type: "START_SETUP" });
+    const withGoals = transitionOnboardingState(started, {
+      type: "SAVE_GOALS",
+      payload: { selectedGoals: ["govern-ai-actions"] },
     });
-    const withScope = transitionOnboardingState(withIntent, {
-      type: "CONFIRM_SCOPE",
-      payload: { tenantId: "tenant_123" },
+    const withAccess = transitionOnboardingState(withGoals, {
+      type: "CONFIRM_ACCESS",
+      payload: { workspaceId: "tenant_123" },
     });
-    const withPolicy = transitionOnboardingState(withScope, {
-      type: "APPLY_POLICY_BASELINE",
-      payload: { policyBaseline: "balanced" },
+    const readyToFinish = transitionOnboardingState(withAccess, {
+      type: "APPLY_GUARDRAILS",
+      payload: { guardrailPreset: "balanced" },
     });
-    const readyToFinish = transitionOnboardingState(withPolicy, { type: "COMPLETE_FIRST_GOVERNED_ACTION" });
     const completed = transitionOnboardingState(readyToFinish, { type: "FINISH_ONBOARDING" });
 
     expect(completed).toMatchObject({
-      currentStep: "COMPLETE",
-      selectedIntent: ["govern-ai-actions"],
-      tenantId: "tenant_123",
-      policyBaseline: "balanced",
+      currentStep: "READY",
+      selectedGoals: ["govern-ai-actions"],
+      workspaceId: "tenant_123",
+      guardrailPreset: "balanced",
       completed: true,
     });
   });
 
   it("does not skip ahead without required data", () => {
     const skipped = transitionOnboardingState(defaultOnboardingState, {
-      type: "APPLY_POLICY_BASELINE",
-      payload: { policyBaseline: "strict" },
+      type: "APPLY_GUARDRAILS",
+      payload: { guardrailPreset: "strict" },
     });
 
     expect(skipped).toEqual(defaultOnboardingState);
   });
 
-  it("requires at least one selected intent", () => {
-    const started = transitionOnboardingState(defaultOnboardingState, { type: "BEGIN_SETUP" });
+  it("requires at least one selected goal", () => {
+    const started = transitionOnboardingState(defaultOnboardingState, { type: "START_SETUP" });
     const unchanged = transitionOnboardingState(started, {
-      type: "SAVE_INTENT_SELECTION",
-      payload: { selectedIntent: [] },
+      type: "SAVE_GOALS",
+      payload: { selectedGoals: [] },
     });
 
-    expect(unchanged.currentStep).toBe("INTENT_SELECTION");
+    expect(unchanged.currentStep).toBe("DEFINE_GOALS");
   });
 
   it("normalizes completed hydrated state to the final step", () => {
     const hydrated = transitionOnboardingState(defaultOnboardingState, {
       type: "HYDRATE",
       payload: {
-        currentStep: "FIRST_GOVERNED_ACTION",
-        selectedIntent: ["memory-and-context"],
-        tenantId: "tenant_456",
-        policyBaseline: "flexible",
+        currentStep: "SET_GUARDRAILS",
+        selectedGoals: ["memory-and-context"],
+        workspaceId: "tenant_456",
+        guardrailPreset: "flexible",
         completed: true,
       },
     });
 
-    expect(hydrated.currentStep).toBe("COMPLETE");
+    expect(hydrated.currentStep).toBe("READY");
     expect(hydrated.completed).toBe(true);
   });
-});
+}
