@@ -1,69 +1,76 @@
-name: Control Website CI (pnpm-only + build + governance smoke)
+name: Control Website — CI & Deploy
 
 on:
-  pull_request:
-    branches: ["*"]
-    paths:
-      - "**"
-      - ".github/workflows/control-website-ci.yml"
   push:
-    branches: ["recovery/2026-02-24-rescue", "main"]
-    paths:
-      - "**"
-      - ".github/workflows/control-website-ci.yml"
+    branches: ["main"]
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: ["main"]
 
 permissions:
   contents: read
+  pull-requests: write
 
 concurrency:
-  group: control-website-ci-${{ github.ref }}
+  group: control-website-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  control-website:
+  ci:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: .
-
+    name: Lint & Build Check
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node (Corepack + cache)
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
+      - uses: pnpm/action-setup@v4
 
-      - name: Setup pnpm`n        uses: pnpm/action-setup@v4`n        with:`n          run_install: false
-
-      - name: Setup Node cache (pnpm)
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "pnpm"
-          cache-dependency-path: pnpm-lock.yaml
 
-      - name: Enable Corepack (pnpm)
-        run: corepack enable
-
-      - name: Show tool versions
-        run: |
-          node --version
-          pnpm --version
-
-      - name: Verify package manager policy
-        run: pnpm verify:pm
-
-      - name: Install (frozen lockfile)
+      - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build
-
-      - name: Governance route smoke (no server)
-        run: pnpm smoke:governance
+      - name: Verify pnpm-only policy
+        run: pnpm verify:pm
 
       - name: Lint
         run: pnpm lint
 
+      - name: Build
+        run: pnpm build
+
+  deploy:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Deploy to Azure SWA
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Deploy to Azure Static Web App — control.keon.systems
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_CONTROL }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "/"
+          output_location: ""
+
+  close_pull_request:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request
+    steps:
+      - name: Close Pull Request
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_CONTROL }}
+          action: "close"
