@@ -21,7 +21,13 @@
  */
 
 import { deriveProvisioningState, resolveSimulatedState } from "@/lib/activation/state-machine";
-import type { ProvisioningStatusResponse, StartProvisioningResponse } from "@/lib/activation/types";
+import { INTERNAL_TEST_ACTIVATION } from "@/lib/activation/test-mode";
+import type {
+  ActivationContextSummary,
+  ActivationMode,
+  ProvisioningStatusResponse,
+  StartProvisioningResponse,
+} from "@/lib/activation/types";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
 
@@ -32,11 +38,44 @@ import crypto from "node:crypto";
 interface ProvisioningRecord {
   id: string;
   token: string;
+  activation: ActivationContextSummary;
   createdAt: number;
   forceFailed?: boolean;
 }
 
 const sessions = new Map<string, ProvisioningRecord>();
+
+function getConfiguredTestActivationToken(): string {
+  return (process.env.KEON_TEST_ACTIVATION_TOKEN ?? "").trim();
+}
+
+function isProductionEnvironment(): boolean {
+  return process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
+}
+
+function isTestActivationAllowed(): boolean {
+  return !isProductionEnvironment() || process.env.ALLOW_TEST_ACTIVATION === "true";
+}
+
+function buildInviteActivationContext(): ActivationContextSummary {
+  return {
+    mode: "invite",
+    source: "invite_token",
+  };
+}
+
+function getRequestedActivationMode(value: unknown, token: string): ActivationMode {
+  if (value === "test") {
+    return "test";
+  }
+
+  const configuredTestToken = getConfiguredTestActivationToken();
+  if (configuredTestToken && token === configuredTestToken) {
+    return "test";
+  }
+
+  return "invite";
+}
 
 // ─── POST — Start Provisioning ────────────────────────────────────────────────
 
@@ -44,6 +83,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json().catch(() => ({}));
     const token = typeof body?.token === "string" ? body.token.trim() : "";
+    const activationMode = getRequestedActivationMode(body?.activationMode, token);
 
     // In production: validate token signature, check expiry, prevent replay.
     // For now: accept any non-empty token string.
@@ -54,10 +94,45 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
+    let activation = buildInviteActivationContext();
+
+    if (activationMode === "test") {
+      const configuredTestToken = getConfiguredTestActivationToken();
+
+      if (!configuredTestToken) {
+        return NextResponse.json(
+          { error: "test_activation_not_configured", message: "Test activation is not configured." },
+          { status: 503 }
+        );
+      }
+
+      if (!isTestActivationAllowed()) {
+        return NextResponse.json(
+          {
+            error: "activation_test_token_disabled",
+            message: "Test activation tokens are disabled in production.",
+          },
+          { status: 403 }
+        );
+      }
+
+      if (token !== configuredTestToken) {
+        return NextResponse.json(
+          { error: "token_invalid", message: "The test activation token is invalid." },
+          { status: 401 }
+        );
+      }
+
+      activation = INTERNAL_TEST_ACTIVATION;
+    }
+
     // Check if a session already exists for this token (idempotent POST)
     for (const [, record] of sessions) {
-      if (record.token === token) {
-        return NextResponse.json<StartProvisioningResponse>({ provisioningId: record.id });
+      if (record.token === token && record.activation.mode === activationMode) {
+        return NextResponse.json<StartProvisioningResponse>({
+          provisioningId: record.id,
+          activation: record.activation,
+        });
       }
     }
 
@@ -65,8 +140,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     sessions.set(provisioningId, {
       id: provisioningId,
       token,
+      activation,
       createdAt: Date.now(),
     });
+
+    if (activation.mode === "test") {
+      console.info("[activation] accepted internal test activation token", {
+        provisioningId,
+        environment: activation.environment,
+        tenantId: activation.tenantId,
+        workspaceId: activation.workspaceId,
+      });
+    }
 
     // Cleanup stale sessions (> 30 minutes old) on each new session creation
     const cutoff = Date.now() - 30 * 60 * 1000;
@@ -74,7 +159,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       if (record.createdAt < cutoff) sessions.delete(id);
     }
 
-    return NextResponse.json<StartProvisioningResponse>({ provisioningId }, { status: 201 });
+    return NextResponse.json<StartProvisioningResponse>({ provisioningId, activation }, { status: 201 });
   } catch {
     return NextResponse.json(
       { error: "internal_error", message: "Unable to start provisioning." },
@@ -112,6 +197,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const response: ProvisioningStatusResponse = {
     provisioningId,
     state,
+    activation: record.activation,
     ...(internalState === "provisioning_complete" && {
       completedAt: new Date().toISOString(),
     }),
