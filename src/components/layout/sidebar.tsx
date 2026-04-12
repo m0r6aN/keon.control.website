@@ -1,6 +1,7 @@
 "use client";
 
-import { navigationItems, navigationSections } from "@/components/layout/navigation";
+import { navigationSections } from "@/components/layout/navigation";
+import { useOnboardingState } from "@/lib/onboarding/store";
 import { cn } from "@/lib/utils";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
@@ -15,7 +16,20 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed = false, onCollapse, className }: SidebarProps) {
   const pathname = usePathname();
+  const { state } = useOnboardingState();
   const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  const visibleSections = state.completed
+    ? navigationSections
+        .map((section) =>
+          section.title === "Start"
+            ? { ...section, items: section.items.filter((item) => item.href === "/control") }
+            : section
+        )
+        .filter((section) => section.items.length > 0)
+    : navigationSections;
+
+  const visibleItems = visibleSections.flatMap((section) => section.items);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -25,12 +39,12 @@ export function Sidebar({ collapsed = false, onCollapse, className }: SidebarPro
 
       if (e.key === "j") {
         e.preventDefault();
-        setSelectedIndex((prev) => (prev + 1) % navigationItems.length);
+        setSelectedIndex((prev) => (prev + 1) % visibleItems.length);
       } else if (e.key === "k") {
         e.preventDefault();
-        setSelectedIndex((prev) => (prev - 1 + navigationItems.length) % navigationItems.length);
+        setSelectedIndex((prev) => (prev - 1 + visibleItems.length) % visibleItems.length);
       } else if (e.key === "Enter" && selectedIndex >= 0) {
-        const item = navigationItems[selectedIndex];
+        const item = visibleItems[selectedIndex];
         if (item) {
           window.location.href = item.href;
         }
@@ -39,14 +53,14 @@ export function Sidebar({ collapsed = false, onCollapse, className }: SidebarPro
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [selectedIndex]);
+  }, [selectedIndex, visibleItems]);
 
   React.useEffect(() => {
-    const index = navigationItems.findIndex((item) => item.href === pathname);
+    const index = visibleItems.findIndex((item) => item.href === pathname);
     if (index !== -1) {
       setSelectedIndex(index);
     }
-  }, [pathname]);
+  }, [pathname, visibleItems]);
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -63,10 +77,10 @@ export function Sidebar({ collapsed = false, onCollapse, className }: SidebarPro
       )}
     >
       <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-        {navigationSections.map((section, sectionIdx) => {
+        {visibleSections.map((section, sectionIdx) => {
           let globalOffset = 0;
           for (let i = 0; i < sectionIdx; i += 1) {
-            globalOffset += navigationSections[i].items.length;
+            globalOffset += visibleSections[i].items.length;
           }
 
           return (
@@ -139,7 +153,7 @@ export function Sidebar({ collapsed = false, onCollapse, className }: SidebarPro
         </button>
       </div>
 
-      {!collapsed && (
+      {!collapsed && !state.completed && (
         <div className="border-t border-[#384656] p-3">
           <div className="rounded bg-[#0B0C10] p-2 text-center">
             <p className="font-mono text-[11px] text-[#C5C6C7] opacity-40">
