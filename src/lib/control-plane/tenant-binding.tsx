@@ -1,6 +1,9 @@
 "use client";
 
+import { getStoredActivationSession, subscribeToActivationSession } from "@/lib/activation/session";
+import { INTERNAL_TEST_TENANT } from "@/lib/activation/test-mode";
 import { listControlTenants } from "@/lib/api/control-plane";
+import type { ActivationMode } from "@/lib/activation/types";
 import type { Tenant } from "@/lib/api/types";
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
@@ -11,6 +14,8 @@ interface TenantBindingContextValue {
   tenants: Tenant[];
   isLoading: boolean;
   isError: boolean;
+  activationMode: ActivationMode;
+  isTestMode: boolean;
   selectedTenantId: string | null;
   selectedTenant: Tenant | null;
   confirmedTenantId: string | null;
@@ -34,6 +39,8 @@ const TenantBindingContext = React.createContext<TenantBindingContextValue>({
   tenants: [],
   isLoading: true,
   isError: false,
+  activationMode: "invite",
+  isTestMode: false,
   selectedTenantId: null,
   selectedTenant: null,
   confirmedTenantId: null,
@@ -60,6 +67,16 @@ export function TenantBindingProvider({ children }: { children: React.ReactNode 
   const [confirmedTenantId, setConfirmedTenantId] = React.useState<string | null>(null);
   const [environment, setEnvironmentState] = React.useState<BoundEnvironment>("sandbox");
   const [confirmedEnvironment, setConfirmedEnvironment] = React.useState<BoundEnvironment | null>(null);
+  const [activationMode, setActivationMode] = React.useState<ActivationMode>("invite");
+
+  React.useEffect(() => {
+    const syncActivation = () => {
+      setActivationMode(getStoredActivationSession()?.mode ?? "invite");
+    };
+
+    syncActivation();
+    return subscribeToActivationSession(syncActivation);
+  }, []);
 
   React.useEffect(() => {
     if (typeof window === "undefined") {
@@ -88,9 +105,26 @@ export function TenantBindingProvider({ children }: { children: React.ReactNode 
     }
   }, []);
 
-  const tenants = query.data ?? [];
+  const isLocalMode = process.env.NEXT_PUBLIC_ONBOARDING_LOCAL_MODE === "true";
+  const isTestMode = isLocalMode || activationMode === "test";
+  const tenants = isTestMode ? [INTERNAL_TEST_TENANT] : query.data ?? [];
 
   React.useEffect(() => {
+    if (!isTestMode) {
+      return;
+    }
+
+    setSelectedTenantId(INTERNAL_TEST_TENANT.id);
+    setConfirmedTenantId(INTERNAL_TEST_TENANT.id);
+    setEnvironmentState("sandbox");
+    setConfirmedEnvironment("sandbox");
+  }, [isTestMode]);
+
+  React.useEffect(() => {
+    if (isTestMode) {
+      return;
+    }
+
     if (!tenants.length) {
       setSelectedTenantId(null);
       setConfirmedTenantId(null);
@@ -112,7 +146,7 @@ export function TenantBindingProvider({ children }: { children: React.ReactNode 
       setConfirmedTenantId(null);
       setConfirmedEnvironment(null);
     }
-  }, [confirmedTenantId, selectedTenantId, tenants]);
+  }, [confirmedTenantId, isTestMode, selectedTenantId, tenants]);
 
   React.useEffect(() => {
     if (typeof window === "undefined") {
@@ -169,30 +203,56 @@ export function TenantBindingProvider({ children }: { children: React.ReactNode 
   );
 
   const selectTenant = React.useCallback((tenantId: string) => {
+    if (isTestMode) {
+      setSelectedTenantId(INTERNAL_TEST_TENANT.id);
+      return;
+    }
+
     setSelectedTenantId(tenantId);
-  }, []);
+  }, [isTestMode]);
 
   const setEnvironment = React.useCallback((nextEnvironment: BoundEnvironment) => {
+    if (isTestMode) {
+      setEnvironmentState("sandbox");
+      return;
+    }
+
     setEnvironmentState(nextEnvironment);
-  }, []);
+  }, [isTestMode]);
 
   const confirmBinding = React.useCallback(() => {
+    if (isTestMode) {
+      setSelectedTenantId(INTERNAL_TEST_TENANT.id);
+      setConfirmedTenantId(INTERNAL_TEST_TENANT.id);
+      setEnvironmentState("sandbox");
+      setConfirmedEnvironment("sandbox");
+      return;
+    }
+
     if (!selectedTenantId) {
       return;
     }
 
     setConfirmedTenantId(selectedTenantId);
     setConfirmedEnvironment(environment);
-  }, [environment, selectedTenantId]);
+  }, [environment, isTestMode, selectedTenantId]);
 
   const clearBinding = React.useCallback(() => {
+    if (isTestMode) {
+      return;
+    }
+
     setConfirmedTenantId(null);
     setConfirmedEnvironment(null);
-  }, []);
+  }, [isTestMode]);
 
   const retry = React.useCallback(() => {
+    if (isTestMode) {
+      return;
+    }
+
     void query.refetch();
-  }, [query]);
+  }, [isTestMode, query]);
 
   const isConfirmed =
     !!confirmedTenantId &&
@@ -204,8 +264,10 @@ export function TenantBindingProvider({ children }: { children: React.ReactNode 
     <TenantBindingContext.Provider
       value={{
         tenants,
-        isLoading: query.isLoading,
-        isError: query.isError,
+        isLoading: isTestMode ? false : query.isLoading,
+        isError: isTestMode ? false : query.isError,
+        activationMode,
+        isTestMode,
         selectedTenantId,
         selectedTenant,
         confirmedTenantId,

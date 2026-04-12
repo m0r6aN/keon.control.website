@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { INTERNAL_TEST_TENANT, buildInternalTestUsageSummary } from "@/lib/activation/test-mode";
 import type { ApiEnvelope, ApiKeyPreview, BillingSummary, MeResponse, Tenant, UsageSummary } from "@/lib/api/types";
 import {
   type BillingProjectionRecord,
@@ -104,6 +105,7 @@ function buildBillingSummary(planCode: PlanCode, usage: UsageSummary, billingSta
 
 function defaultMemoryState(): MemoryState {
   const tenantId = "ten_keon_builder";
+  const testTenantId = INTERNAL_TEST_TENANT.id;
   const usage: UsageSummary = {
     tenantId,
     billingPeriodStartUtc: currentBillingWindow().start,
@@ -119,6 +121,7 @@ function defaultMemoryState(): MemoryState {
       { date: "2026-03-05", authorizedExecutions: 151, deniedExecutions: 10, totalExecutions: 161 },
     ],
   };
+  const testUsage = buildInternalTestUsageSummary();
 
   return {
     me: {
@@ -140,6 +143,7 @@ function defaultMemoryState(): MemoryState {
         billingEmail: "billing@keon.systems",
         emailVerified: true,
       },
+      INTERNAL_TEST_TENANT,
     ],
     apiKeys: {
       [tenantId]: [
@@ -155,14 +159,33 @@ function defaultMemoryState(): MemoryState {
           createdAtUtc: "2026-03-01T00:05:00Z",
         },
       ],
+      [testTenantId]: [
+        {
+          id: "key_internal_test_001",
+          name: "Internal Test Key",
+          prefix: "test_keon",
+          mode: "test",
+          status: "active",
+          environmentId: "env_internal_sandbox",
+          lastUsedAtUtc: "2026-04-03T13:15:00Z",
+          lastUsedIp: "127.0.0.1",
+          createdAtUtc: "2026-04-01T00:00:00Z",
+        },
+      ],
     },
-    usage: { [tenantId]: usage },
+    usage: { [tenantId]: usage, [testTenantId]: testUsage },
     billing: {
       [tenantId]: {
         stripeCustomerId: null,
         stripeSubscriptionId: null,
         stripePriceId: null,
         summary: buildBillingSummary("builder", usage, "trialing"),
+      },
+      [testTenantId]: {
+        stripeCustomerId: null,
+        stripeSubscriptionId: null,
+        stripePriceId: null,
+        summary: buildBillingSummary("growth", testUsage, "active"),
       },
     },
     sessions: {},
