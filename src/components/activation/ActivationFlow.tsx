@@ -20,8 +20,15 @@
  */
 
 import { useFirstRunState } from "@/lib/first-run/state";
+import {
+  clearStoredActivationSession,
+  getStoredActivationSession,
+  setStoredActivationSession,
+} from "@/lib/activation/session";
 import { deriveProvisioningState } from "@/lib/activation/state-machine";
 import type {
+  ActivationContextSummary,
+  ActivationMode,
   ProvisioningState,
   ProvisioningStatusResponse,
   StartProvisioningResponse,
@@ -45,11 +52,14 @@ const ACTIVATION_DESKTOP_GRID =
 
 // ─── API Helpers ──────────────────────────────────────────────────────────────
 
-async function startProvisioning(token: string): Promise<StartProvisioningResponse> {
+async function startProvisioning(
+  token: string,
+  activationMode: ActivationMode
+): Promise<StartProvisioningResponse> {
   const res = await fetch("/api/activation/provision", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token }),
+    body: JSON.stringify({ token, activationMode }),
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
@@ -78,10 +88,11 @@ function errorKindFromMessage(message: string): ActivationErrorKind {
 
 // ─── Hook: Provisioning Flow ─────────────────────────────────────────────────
 
-function useProvisioningFlow(token: string | null) {
+function useProvisioningFlow(token: string | null, activationMode: ActivationMode) {
   const initialState = deriveProvisioningState("invite_validating");
   const [provisioningId, setProvisioningId] = React.useState<string | null>(null);
   const [state, setState] = React.useState<ProvisioningState>(initialState);
+  const [activation, setActivation] = React.useState<ActivationContextSummary | null>(null);
   const [errorKind, setErrorKind] = React.useState<ActivationErrorKind | null>(null);
   const [isComplete, setIsComplete] = React.useState(false);
   const [startedAt] = React.useState(() => Date.now());
@@ -102,14 +113,17 @@ function useProvisioningFlow(token: string | null) {
     // Resume from a prior session if page was refreshed
     const cached = typeof window !== "undefined" ? sessionStorage.getItem(SESSION_KEY) : null;
     if (cached) {
+      setActivation(getStoredActivationSession());
       setProvisioningId(cached);
       return;
     }
 
-    startProvisioning(token)
-      .then(({ provisioningId: id }) => {
+    startProvisioning(token, activationMode)
+      .then(({ provisioningId: id, activation: activationContext }) => {
         if (!mountedRef.current) return;
+        setStoredActivationSession(activationContext);
         sessionStorage.setItem(SESSION_KEY, id);
+        setActivation(activationContext);
         setProvisioningId(id);
       })
       .catch((err: Error & { status?: number }) => {
@@ -118,7 +132,7 @@ function useProvisioningFlow(token: string | null) {
           err.status === 401 ? "token_invalid" : errorKindFromMessage(err.message)
         );
       });
-  }, [token]);
+  }, [activationMode, token]);
 
   // ── Poll for status ──
   React.useEffect(() => {
@@ -131,6 +145,7 @@ function useProvisioningFlow(token: string | null) {
         const response = await pollProvisioningStatus(provisioningId);
         if (!active || !mountedRef.current) return;
 
+        setActivation(response.activation);
         setState(response.state);
 
         if (response.state.internalState === "provisioning_complete") {
@@ -170,16 +185,18 @@ function useProvisioningFlow(token: string | null) {
     if (typeof window !== "undefined") {
       sessionStorage.removeItem(SESSION_KEY);
     }
+    clearStoredActivationSession();
     setErrorKind(null);
     setIsComplete(false);
     setProvisioningId(null);
+    setActivation(null);
     setState(deriveProvisioningState("invite_validating"));
     // Re-trigger the start effect by clearing and re-providing the token
     // (token is from URL, so a page reload achieves this cleanly)
     window.location.reload();
   }, []);
 
-  return { state, errorKind, isComplete, retry };
+  return { state, activation, errorKind, isComplete, retry };
 }
 
 // ─── Transition Overlay ───────────────────────────────────────────────────────
@@ -212,9 +229,10 @@ export function ActivationFlow() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+  const activationMode: ActivationMode = searchParams.get("mode") === "test" ? "test" : "invite";
   const { markProvisioningComplete } = useFirstRunState();
 
-  const { state, errorKind, isComplete, retry } = useProvisioningFlow(token);
+  const { state, activation, errorKind, isComplete, retry } = useProvisioningFlow(token, activationMode);
   const [showTransition, setShowTransition] = React.useState(false);
 
   // Handle redirect on completion
@@ -254,7 +272,7 @@ export function ActivationFlow() {
             </div>
           </div>
           <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/25">
-            Secure workspace activation
+            {activation?.mode === "test" ? activation.uiLabel ?? "Test activation mode" : "Secure workspace activation"}
           </div>
         </div>
       </header>
@@ -276,7 +294,12 @@ export function ActivationFlow() {
             className={cn("grid min-h-[560px] gap-6 xl:gap-8", ACTIVATION_DESKTOP_GRID)}
             data-testid="activation-layout"
           >
-            <ProvisioningPanel state={state} className="min-h-[400px]" />
+            <ProvisioningPanel
+              state={state}
+              activationMode={activation?.mode ?? activationMode}
+              activationLabel={activation?.uiLabel}
+              className="min-h-[400px]"
+            />
             <CollectiveReplay className="lg:min-h-[620px]" />
           </div>
         )}

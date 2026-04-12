@@ -14,7 +14,7 @@
  *   - Progress bar
  */
 
-import type { ProvisioningChecklistItem, ProvisioningState } from "@/lib/activation/types";
+import type { ActivationMode, ProvisioningChecklistItem, ProvisioningState } from "@/lib/activation/types";
 import { cn } from "@/lib/utils";
 import * as React from "react";
 
@@ -78,13 +78,21 @@ function CheckItem({ item }: { item: ProvisioningChecklistItem }) {
 
 interface ProvisioningPanelProps {
   state: ProvisioningState;
+  activationMode?: ActivationMode;
+  activationLabel?: string;
   className?: string;
 }
 
 // ─── Panel ────────────────────────────────────────────────────────────────────
 
-export function ProvisioningPanel({ state, className }: ProvisioningPanelProps) {
+export function ProvisioningPanel({
+  state,
+  activationMode = "invite",
+  activationLabel,
+  className,
+}: ProvisioningPanelProps) {
   const isReady = state.userStep === "ready";
+  const isTestMode = activationMode === "test";
 
   return (
     <div
@@ -108,6 +116,14 @@ export function ProvisioningPanel({ state, className }: ProvisioningPanelProps) 
             Workspace activation
           </div>
         </div>
+        {isTestMode && (
+          <div
+            className="rounded-full border border-[#F4D35E]/40 bg-[#F4D35E]/12 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[#F4D35E]"
+            data-testid="test-activation-badge"
+          >
+            {activationLabel ?? "Test activation mode"}
+          </div>
+        )}
         <div className="ml-auto flex items-center gap-1.5">
           <div className={cn(
             "h-1.5 w-1.5 rounded-full",

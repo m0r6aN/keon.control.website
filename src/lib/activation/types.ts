@@ -17,6 +17,21 @@ export type ProvisioningInternalState =
   | "provisioning_complete"
   | "provisioning_failed";
 
+export type ActivationMode = "invite" | "test";
+
+export type ActivationSource = "invite_token" | "test_token";
+
+export interface ActivationContextSummary {
+  mode: ActivationMode;
+  source: ActivationSource;
+  tenantId?: string;
+  tenantName?: string;
+  workspaceId?: string;
+  workspaceName?: string;
+  environment?: "sandbox" | "production";
+  uiLabel?: string;
+}
+
 // ─── User-Facing Step Keys ────────────────────────────────────────────────────
 
 export type ProvisioningUserStep =
@@ -52,15 +67,18 @@ export interface ProvisioningState {
 
 export interface StartProvisioningRequest {
   token: string;
+  activationMode?: ActivationMode;
 }
 
 export interface StartProvisioningResponse {
   provisioningId: string;
+  activation: ActivationContextSummary;
 }
 
 export interface ProvisioningStatusResponse {
   provisioningId: string;
   state: ProvisioningState;
+  activation: ActivationContextSummary;
   completedAt?: string;
   failedAt?: string;
   failureCode?: string;
