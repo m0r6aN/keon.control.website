@@ -9,9 +9,9 @@ import { useTenantBinding } from "@/lib/control-plane/tenant-binding";
 import { useOnboardingState } from "@/lib/onboarding/store";
 
 const goalLabels: Record<string, string> = {
-  "govern-ai-actions": "Review important AI actions",
-  "memory-and-context": "Protect memory and context",
-  "oversight-and-collaboration": "Add collaborative review",
+  "govern-ai-actions": "Governance Runtime",
+  "memory-and-context": "Cortex",
+  "oversight-and-collaboration": "Collective",
 };
 
 const guardrailLabels: Record<string, string> = {
@@ -33,11 +33,6 @@ export default function ControlPage() {
           <PageHeader
             title="Workspace overview"
             description="This is the starting point for your team after setup. Confirm what is configured, what Keon is watching, and what to do next."
-            actions={
-              <Button asChild>
-                <Link href="/receipts">Review receipts</Link>
-              </Button>
-            }
           />
 
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1.25fr)_360px]">
@@ -85,10 +80,10 @@ export default function ControlPage() {
                 <CardContent className="grid gap-4 md:grid-cols-3">
                   {[
                     {
-                      title: "Receipts",
-                      body: "Inspect the evidence trail Keon records for reviewed actions.",
-                      href: "/receipts",
-                      label: "Open receipts",
+                      title: "Integrations",
+                      body: "Connect your first runtime or service to start governing real AI actions.",
+                      href: "/integrations",
+                      label: "Open integrations",
                     },
                     {
                       title: "Guardrails",
@@ -97,10 +92,10 @@ export default function ControlPage() {
                       label: "Open guardrails",
                     },
                     {
-                      title: "Integrations",
-                      body: "Connect your first runtime or service when you are ready to go live.",
-                      href: "/integrations",
-                      label: "Open integrations",
+                      title: "Receipts",
+                      body: "Review the evidence trail once your first integration starts sending actions.",
+                      href: "/receipts",
+                      label: "Open receipts",
                     },
                   ].map((item) => (
                     <div key={item.title} className="rounded border border-[#384656] bg-[#0B0C10] p-4">
