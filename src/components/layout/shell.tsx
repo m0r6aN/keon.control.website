@@ -17,7 +17,14 @@ interface ShellProps {
   className?: string;
 }
 
-const FIRST_RUN_ROUTES = new Set(["/", "/get-started", "/welcome", "/setup", "/onboarding"]);
+const FIRST_RUN_ROUTES = new Set([
+  "/",
+  "/get-started",
+  "/welcome",
+  "/setup",
+  "/onboarding",
+  "/collective/showcase",
+]);
 
 export function Shell({ children, className }: ShellProps) {
   const pathname = usePathname();
