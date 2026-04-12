@@ -1,4 +1,4 @@
-import { CollectiveBanner } from "@/components/collective";
+import { CollectiveLayoutShell } from "@/components/collective/collective-layout-shell";
 import { Shell } from "@/components/layout";
 import type { Metadata } from "next";
 
@@ -14,10 +14,7 @@ export default function CollectiveLayout({
 }>) {
   return (
     <Shell>
-      <div className="flex min-h-[calc(100vh-4rem)] flex-col gap-6 px-6 py-6">
-        <CollectiveBanner />
-        {children}
-      </div>
+      <CollectiveLayoutShell>{children}</CollectiveLayoutShell>
     </Shell>
   );
 }
