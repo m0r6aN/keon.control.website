@@ -456,8 +456,6 @@ export interface PreparedEffectLineageNode {
   readonly executionAuthorized: false;
   readonly constitutionalMode: "inert";
 }
-<<<<<<< HEAD
-=======
 
 export type ExecutionEligibilityStatus = "eligible" | "not_eligible";
 
@@ -486,4 +484,3 @@ export interface ExecutionEligibilityView {
     readonly tone: "success" | "warning" | "danger" | "neutral";
   };
 }
->>>>>>> origin/main
