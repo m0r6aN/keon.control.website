@@ -412,15 +412,15 @@ body {
 @keyframes interaction-field-pulse {
   0% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.24);
+    transform: translate(-50%, -50%) scale(0.3);
   }
 
-  18% {
-    opacity: 1;
+  24% {
+    opacity: 0.82;
   }
 
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(1.6);
+    transform: translate(-50%, -50%) scale(var(--if-pulse-scale, 1.2));
   }
 }

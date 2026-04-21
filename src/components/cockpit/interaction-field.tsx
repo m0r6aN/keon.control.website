@@ -31,42 +31,58 @@ interface Pulse {
 }
 
 interface InteractionConfig {
+  fieldIntensity: number;
   glowSize: number;
   glowOpacity: number;
   glowMidOpacity: number;
-  maxLift: number;
-  maxTilt: number;
+  glowFalloff: number;
+  liftAmount: number;
+  tiltRange: number;
   pulseSize: number;
+  pulseScale: number;
+  pulseDuration: number;
   pulseOpacity: number;
 }
 
 const INTERACTION_CONFIG: Record<InteractionIntensity, InteractionConfig> = {
   row: {
-    glowSize: 180,
-    glowOpacity: 0.14,
-    glowMidOpacity: 0.08,
-    maxLift: 3,
-    maxTilt: 1.2,
-    pulseSize: 64,
-    pulseOpacity: 0.48,
-  },
-  stage: {
-    glowSize: 220,
-    glowOpacity: 0.1,
-    glowMidOpacity: 0.06,
-    maxLift: 1.75,
-    maxTilt: 0.75,
-    pulseSize: 72,
+    fieldIntensity: 1,
+    glowSize: 156,
+    glowOpacity: 0.11,
+    glowMidOpacity: 0.055,
+    glowFalloff: 72,
+    liftAmount: 2.5,
+    tiltRange: 1.05,
+    pulseSize: 44,
+    pulseScale: 1.22,
+    pulseDuration: 230,
     pulseOpacity: 0.34,
   },
-  rail: {
-    glowSize: 160,
-    glowOpacity: 0.065,
+  stage: {
+    fieldIntensity: 0.72,
+    glowSize: 180,
+    glowOpacity: 0.078,
     glowMidOpacity: 0.04,
-    maxLift: 1,
-    maxTilt: 0.35,
-    pulseSize: 56,
-    pulseOpacity: 0.24,
+    glowFalloff: 74,
+    liftAmount: 1.45,
+    tiltRange: 0.7,
+    pulseSize: 40,
+    pulseScale: 1.18,
+    pulseDuration: 215,
+    pulseOpacity: 0.22,
+  },
+  rail: {
+    fieldIntensity: 0.44,
+    glowSize: 132,
+    glowOpacity: 0.05,
+    glowMidOpacity: 0.024,
+    glowFalloff: 76,
+    liftAmount: 0.7,
+    tiltRange: 0.28,
+    pulseSize: 34,
+    pulseScale: 1.14,
+    pulseDuration: 190,
+    pulseOpacity: 0.14,
   },
 };
 
@@ -150,7 +166,10 @@ export function InteractiveSurface({
     const normalizedX = (x / width - 0.5) * 2;
     const normalizedY = (y / height - 0.5) * 2;
     const distance = Math.min(1, Math.hypot(normalizedX, normalizedY));
-    const liftStrength = active ? 1 - distance * 0.5 : 0;
+    const curveAxis = (value: number) => Math.sign(value) * Math.pow(Math.abs(value), 1.35);
+    const curvedX = curveAxis(normalizedX);
+    const curvedY = curveAxis(normalizedY);
+    const liftStrength = active ? Math.pow(1 - distance, 0.72) * config.fieldIntensity : 0;
 
     node.style.setProperty("--if-x", `${x.toFixed(2)}px`);
     node.style.setProperty("--if-y", `${y.toFixed(2)}px`);
@@ -162,14 +181,14 @@ export function InteractiveSurface({
       return;
     }
 
-    const rotateX = normalizedY * -config.maxTilt;
-    const rotateY = normalizedX * config.maxTilt;
-    const lift = -config.maxLift * liftStrength;
+    const rotateX = curvedY * -config.tiltRange;
+    const rotateY = curvedX * config.tiltRange;
+    const lift = -config.liftAmount * liftStrength;
 
     node.style.setProperty("--if-lift", `${lift.toFixed(3)}px`);
     node.style.setProperty("--if-tilt-x", `${rotateX.toFixed(3)}deg`);
     node.style.setProperty("--if-tilt-y", `${rotateY.toFixed(3)}deg`);
-  }, [config.maxLift, config.maxTilt, reducedMotion]);
+  }, [config.fieldIntensity, config.liftAmount, config.tiltRange, reducedMotion]);
 
   const scheduleFieldUpdate = React.useCallback(
     (x: number, y: number, active = true) => {
@@ -194,10 +213,10 @@ export function InteractiveSurface({
       setPulses((current) => [...current.slice(-1), nextPulse]);
       const timeout = window.setTimeout(() => {
         setPulses((current) => current.filter((pulse) => pulse.id !== nextPulse.id));
-      }, 440);
+      }, config.pulseDuration + 40);
       timeoutRef.current.push(timeout);
     },
-    [config.pulseSize, reducedMotion],
+    [config.pulseDuration, config.pulseSize, reducedMotion],
   );
 
   React.useEffect(() => {
@@ -249,9 +268,9 @@ export function InteractiveSurface({
   };
 
   const glowOpacity = reducedMotion
-    ? Math.min(config.glowOpacity, 0.055)
+    ? Math.min(config.glowOpacity, 0.045)
     : isPressed
-      ? config.glowOpacity + 0.02
+      ? config.glowOpacity + 0.012
       : config.glowOpacity;
 
   const componentStyle = {
@@ -290,7 +309,7 @@ export function InteractiveSurface({
           isHovered && "opacity-100",
         )}
         style={{
-          background: `radial-gradient(circle ${config.glowSize}px at var(--if-x) var(--if-y), rgba(102,252,241,${glowOpacity}) 0%, rgba(69,162,158,${config.glowMidOpacity}) 32%, rgba(11,12,16,0) 78%)`,
+          background: `radial-gradient(circle ${config.glowSize}px at var(--if-x) var(--if-y), rgba(102,252,241,${glowOpacity}) 0%, rgba(69,162,158,${config.glowMidOpacity}) 24%, rgba(11,12,16,0) ${config.glowFalloff}%)`,
         }}
       />
 
@@ -307,8 +326,9 @@ export function InteractiveSurface({
             opacity: config.pulseOpacity,
             transform: "translate(-50%, -50%)",
             background:
-              "radial-gradient(circle, rgba(102,252,241,0.7) 0%, rgba(102,252,241,0.24) 28%, rgba(102,252,241,0.08) 52%, rgba(102,252,241,0) 72%)",
-            animation: "interaction-field-pulse 420ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
+              "radial-gradient(circle, rgba(102,252,241,0.52) 0%, rgba(102,252,241,0.2) 26%, rgba(102,252,241,0.06) 48%, rgba(102,252,241,0) 66%)",
+            animation: `interaction-field-pulse ${config.pulseDuration}ms cubic-bezier(0.18, 0.9, 0.32, 1) forwards`,
+            "--if-pulse-scale": String(config.pulseScale),
           }}
         />
       ))}
