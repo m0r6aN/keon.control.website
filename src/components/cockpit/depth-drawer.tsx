@@ -16,10 +16,11 @@
 import { useFocusDepth, useFocusSelection } from "@/lib/cockpit/use-focus";
 import { useSelectionGovernance } from "@/lib/cockpit/use-selection-governance";
 import { formatHash } from "@/lib/format";
+import { InteractiveSurface } from "./interaction-field";
 
 export function DepthDrawer() {
   const { selection } = useFocusSelection();
-  const { inspectionDepth, canForensic } = useFocusDepth();
+  const { canForensic } = useFocusDepth();
   const selectionGov = useSelectionGovernance();
 
   if (!selection) return null;
@@ -59,7 +60,7 @@ export function DepthDrawer() {
       <div className="flex-1 overflow-y-auto">
         <div className="grid grid-cols-3 gap-px bg-[#1F2833]/20 min-h-[120px]">
           {/* Column 1: Identity + Anchor Proof */}
-          <div className="bg-[#0B0C10] p-3 space-y-2">
+          <InteractiveSurface intensity="stage" className="bg-[#0B0C10]" contentClassName="p-3 space-y-2">
             <div className="text-[9px] font-mono uppercase tracking-wider text-[#45A29E]/60 mb-2">
               Identity
             </div>
@@ -71,10 +72,10 @@ export function DepthDrawer() {
               )}
               <div className="text-[#C5C6C7]/40">Source: <span className="text-[#C5C6C7]/50">{selection.source}</span></div>
             </div>
-          </div>
+          </InteractiveSurface>
 
           {/* Column 2: Receipt Chain */}
-          <div className="bg-[#0B0C10] p-3 space-y-2">
+          <InteractiveSurface intensity="stage" className="bg-[#0B0C10]" contentClassName="p-3 space-y-2">
             <div className="text-[9px] font-mono uppercase tracking-wider text-[#45A29E]/60 mb-2">
               Receipt Chain
             </div>
@@ -94,10 +95,10 @@ export function DepthDrawer() {
                   : "Derived entity — no direct receipts"}
               </div>
             )}
-          </div>
+          </InteractiveSurface>
 
           {/* Column 3: Governance Context */}
-          <div className="bg-[#0B0C10] p-3 space-y-2">
+          <InteractiveSurface intensity="stage" className="bg-[#0B0C10]" contentClassName="p-3 space-y-2">
             <div className="text-[9px] font-mono uppercase tracking-wider text-[#45A29E]/60 mb-2">
               Governance Context
             </div>
@@ -124,10 +125,9 @@ export function DepthDrawer() {
                 </div>
               )}
             </div>
-          </div>
+          </InteractiveSurface>
         </div>
       </div>
     </div>
   );
 }
-

@@ -5,6 +5,7 @@
  * Immutable decision receipts. Hash-chained. Policy-bound.
  */
 
+import { InvestigationSurfaceRow } from "@/components/cockpit/interaction-field";
 import { useFocusSelection, useSelectionActions } from "@/lib/cockpit/use-focus";
 import { formatHash, formatTimestamp } from "@/lib/format";
 import type { Selection } from "@/lib/cockpit/types";
@@ -66,13 +67,14 @@ export function ReceiptsMode() {
           const isSelected = selection?.id === row.receiptId;
           const config = OUTCOME_CONFIG[row.outcome] ?? OUTCOME_CONFIG.approved;
           return (
-            <button
+            <InvestigationSurfaceRow
               key={row.receiptId}
               onClick={() => handleClick(row)}
-              className={`flex w-full text-left border-b border-[#1F2833]/20 transition-colors ${isSelected ? "bg-[#1F2833]/50" : "hover:bg-[#1F2833]/20"}`}
+              selected={isSelected}
+              heatClassName={isSelected ? config.heat : `${config.heat}/30`}
+              contentClassName="grid flex-1 grid-cols-[2fr_1fr_1fr_1.5fr_1.5fr_1fr] items-center gap-2 px-3 py-2.5"
             >
-              <div className={`w-1 shrink-0 ${isSelected ? config.heat : config.heat + "/30"}`} />
-              <div className="flex-1 grid grid-cols-[2fr_1fr_1fr_1.5fr_1.5fr_1fr] gap-2 px-3 py-2.5 items-center">
+              <>
                 <span className="text-[11px] font-mono text-[#C5C6C7]/70 truncate">
                   {formatHash(row.receiptId)}
                   {row.prevReceiptHash && <span className="text-[#C5C6C7]/25 ml-1">← {formatHash(row.prevReceiptHash)}</span>}
@@ -82,12 +84,11 @@ export function ReceiptsMode() {
                 <span className="text-[11px] font-mono text-[#66FCF1]/70 truncate">{row.action}</span>
                 <span className="text-[10px] font-mono text-[#C5C6C7]/40">{formatTimestamp(new Date(row.decidedAt))}</span>
                 <span className="text-[10px] font-mono text-[#45A29E]/60">{row.policyVersion}</span>
-              </div>
-            </button>
+              </>
+            </InvestigationSurfaceRow>
           );
         })}
       </div>
     </div>
   );
 }
-

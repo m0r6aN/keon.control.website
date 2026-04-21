@@ -5,6 +5,7 @@
  * Status, last action, health, authority level.
  */
 
+import { InvestigationSurfaceRow } from "@/components/cockpit/interaction-field";
 import { useFocusSelection, useSelectionActions } from "@/lib/cockpit/use-focus";
 import { formatTimestamp } from "@/lib/format";
 import type { Selection } from "@/lib/cockpit/types";
@@ -66,13 +67,14 @@ export function FleetMode() {
           const isSelected = selection?.id === row.agentId;
           const config = STATUS_CONFIG[row.status] ?? STATUS_CONFIG.idle;
           return (
-            <button
+            <InvestigationSurfaceRow
               key={row.agentId}
               onClick={() => handleClick(row)}
-              className={`flex w-full text-left border-b border-[#1F2833]/20 transition-colors ${isSelected ? "bg-[#1F2833]/50" : "hover:bg-[#1F2833]/20"}`}
+              selected={isSelected}
+              heatClassName={isSelected ? config.heat : `${config.heat}/30`}
+              contentClassName="grid flex-1 grid-cols-[2fr_0.7fr_1.5fr_1.5fr_0.5fr] items-center gap-2 px-3 py-2.5"
             >
-              <div className={`w-1 shrink-0 ${isSelected ? config.heat : config.heat + "/30"}`} />
-              <div className="flex-1 grid grid-cols-[2fr_0.7fr_1.5fr_1.5fr_0.5fr] gap-2 px-3 py-2.5 items-center">
+              <>
                 <div className="flex items-center gap-2 min-w-0">
                   <div className={`h-2 w-2 rounded-full shrink-0 ${config.dot}`} />
                   <div className="min-w-0">
@@ -84,12 +86,11 @@ export function FleetMode() {
                 <span className="text-[10px] font-mono text-[#66FCF1]/60 truncate">{row.lastAction}</span>
                 <span className="text-[10px] font-mono text-[#C5C6C7]/40">{formatTimestamp(new Date(row.lastActiveAt))}</span>
                 <span className="text-[10px] font-mono text-[#C5C6C7]/40 tabular-nums">{row.executionCount}</span>
-              </div>
-            </button>
+              </>
+            </InvestigationSurfaceRow>
           );
         })}
       </div>
     </div>
   );
 }
-

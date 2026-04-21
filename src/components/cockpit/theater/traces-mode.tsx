@@ -5,6 +5,7 @@
  * Span count, duration, error flag, execution correlation.
  */
 
+import { InvestigationSurfaceRow } from "@/components/cockpit/interaction-field";
 import { useFocusSelection, useSelectionActions } from "@/lib/cockpit/use-focus";
 import { formatDuration, formatHash, formatTimestamp } from "@/lib/format";
 import type { Selection } from "@/lib/cockpit/types";
@@ -60,13 +61,14 @@ export function TracesMode() {
           const isSelected = selection?.id === row.traceId;
           const heatColor = row.hasError ? "bg-[#E94560]" : "bg-[#66FCF1]";
           return (
-            <button
+            <InvestigationSurfaceRow
               key={row.traceId}
               onClick={() => handleClick(row)}
-              className={`flex w-full text-left border-b border-[#1F2833]/20 transition-colors ${isSelected ? "bg-[#1F2833]/50" : "hover:bg-[#1F2833]/20"}`}
+              selected={isSelected}
+              heatClassName={isSelected ? heatColor : `${heatColor}/30`}
+              contentClassName="grid flex-1 grid-cols-[2fr_0.5fr_1fr_1.5fr_1fr] items-center gap-2 px-3 py-2.5"
             >
-              <div className={`w-1 shrink-0 ${isSelected ? heatColor : heatColor + "/30"}`} />
-              <div className="flex-1 grid grid-cols-[2fr_0.5fr_1fr_1.5fr_1fr] gap-2 px-3 py-2.5 items-center">
+              <>
                 <div className="min-w-0">
                   <div className={`text-[11px] font-mono truncate ${row.hasError ? "text-[#E94560]/80" : "text-[#C5C6C7]/70"}`}>
                     {row.hasError && <span className="mr-1">✕</span>}
@@ -80,12 +82,11 @@ export function TracesMode() {
                 <span className="text-[10px] font-mono text-[#45A29E]/50 truncate">
                   {row.executionId ? formatHash(row.executionId) : "—"}
                 </span>
-              </div>
-            </button>
+              </>
+            </InvestigationSurfaceRow>
           );
         })}
       </div>
     </div>
   );
 }
-

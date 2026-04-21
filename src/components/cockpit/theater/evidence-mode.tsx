@@ -5,6 +5,7 @@
  * Seal status, artifact count, anchoring chains.
  */
 
+import { InvestigationSurfaceRow } from "@/components/cockpit/interaction-field";
 import { useFocusSelection, useSelectionActions } from "@/lib/cockpit/use-focus";
 import { formatHash, formatTimestamp } from "@/lib/format";
 import type { Selection } from "@/lib/cockpit/types";
@@ -66,13 +67,14 @@ export function EvidenceMode() {
           const isSelected = selection?.id === row.packId;
           const config = SEAL_CONFIG[row.sealStatus] ?? SEAL_CONFIG.pending;
           return (
-            <button
+            <InvestigationSurfaceRow
               key={row.packId}
               onClick={() => handleClick(row)}
-              className={`flex w-full text-left border-b border-[#1F2833]/20 transition-colors ${isSelected ? "bg-[#1F2833]/50" : "hover:bg-[#1F2833]/20"}`}
+              selected={isSelected}
+              heatClassName={isSelected ? config.heat : `${config.heat}/30`}
+              contentClassName="grid flex-1 grid-cols-[1fr_1.5fr_0.8fr_0.5fr_1.5fr] items-center gap-2 px-3 py-2.5"
             >
-              <div className={`w-1 shrink-0 ${isSelected ? config.heat : config.heat + "/30"}`} />
-              <div className="flex-1 grid grid-cols-[1fr_1.5fr_0.8fr_0.5fr_1.5fr] gap-2 px-3 py-2.5 items-center">
+              <>
                 <div className="min-w-0">
                   <div className="text-[10px] font-mono text-[#45A29E]/70">{row.entityKind}</div>
                   <div className="text-[9px] font-mono text-[#C5C6C7]/25 truncate">{row.entityId}</div>
@@ -84,12 +86,11 @@ export function EvidenceMode() {
                 <span className={`text-[10px] font-mono font-bold ${config.color}`}>{config.label}</span>
                 <span className="text-[10px] font-mono text-[#C5C6C7]/40 tabular-nums">{row.artifactCount}</span>
                 <span className="text-[10px] font-mono text-[#C5C6C7]/40">{formatTimestamp(new Date(row.createdAt))}</span>
-              </div>
-            </button>
+              </>
+            </InvestigationSurfaceRow>
           );
         })}
       </div>
     </div>
   );
 }
-

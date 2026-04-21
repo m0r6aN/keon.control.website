@@ -12,10 +12,11 @@
  */
 
 import { computeExecutionAnchorType, fetchExecutions, type ExecutionRow } from "@/lib/cockpit/adapters/executions.adapter";
+import { InvestigationSurfaceRow } from "@/components/cockpit/interaction-field";
 import type { Selection } from "@/lib/cockpit/types";
 import { useFocusSelection, useSelectionActions } from "@/lib/cockpit/use-focus";
 import { formatDuration, formatHash } from "@/lib/format";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 // ============================================================
 // STATUS → VISUAL MAPPING
@@ -32,20 +33,27 @@ export function ExecutionsMode() {
   const { selection } = useFocusSelection();
   const { select } = useSelectionActions();
   const [rows, setRows] = useState<ExecutionRow[]>([]);
-  const [dataSource, setDataSource] = useState<"live" | "mock">("mock");
-
-  const loadData = useCallback(async () => {
-    const result = await fetchExecutions();
-    setRows(result.rows);
-    setDataSource(result.source);
-  }, []);
 
   // Initial load + periodic refresh (15s)
   useEffect(() => {
-    loadData();
-    const interval = setInterval(loadData, 15_000);
-    return () => clearInterval(interval);
-  }, [loadData]);
+    let isActive = true;
+
+    const loadData = async () => {
+      const result = await fetchExecutions();
+      if (!isActive) return;
+      setRows(result.rows);
+    };
+
+    void loadData();
+    const interval = setInterval(() => {
+      void loadData();
+    }, 15_000);
+
+    return () => {
+      isActive = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   const handleRowClick = (row: ExecutionRow) => {
     const sel: Selection = {
@@ -80,20 +88,14 @@ export function ExecutionsMode() {
           const config = STATUS_CONFIG[row.status] ?? STATUS_CONFIG.completed;
 
           return (
-            <button
+            <InvestigationSurfaceRow
               key={row.executionId}
               onClick={() => handleRowClick(row)}
-              className={`flex w-full text-left border-b border-[#1F2833]/20 transition-colors ${
-                isSelected
-                  ? "bg-[#1F2833]/50"
-                  : "hover:bg-[#1F2833]/20"
-              }`}
+              selected={isSelected}
+              heatClassName={isSelected ? config.heatColor : `${config.heatColor}/30`}
+              contentClassName="grid flex-1 grid-cols-[2fr_1fr_1fr_1.5fr_1fr_0.5fr] items-center gap-2 px-3 py-2.5"
             >
-              {/* Heat bar — left edge color */}
-              <div className={`w-1 shrink-0 ${isSelected ? config.heatColor : config.heatColor + "/30"}`} />
-
-              {/* Row content */}
-              <div className="flex-1 grid grid-cols-[2fr_1fr_1fr_1.5fr_1fr_0.5fr] gap-2 px-3 py-2.5 items-center">
+              <>
                 <span className="text-[11px] font-mono text-[#C5C6C7]/70 truncate">
                   {formatHash(row.executionId)}
                 </span>
@@ -112,12 +114,11 @@ export function ExecutionsMode() {
                 <span className="text-[10px] font-mono text-[#C5C6C7]/40 tabular-nums">
                   {row.traceCount}
                 </span>
-              </div>
-            </button>
+              </>
+            </InvestigationSurfaceRow>
           );
         })}
       </div>
     </div>
   );
 }
-

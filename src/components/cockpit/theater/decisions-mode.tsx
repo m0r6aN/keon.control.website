@@ -5,8 +5,9 @@
  * Policy ref, outcome, rationale summary.
  */
 
+import { InvestigationSurfaceRow } from "@/components/cockpit/interaction-field";
 import { useFocusSelection, useSelectionActions } from "@/lib/cockpit/use-focus";
-import { formatHash, formatTimestamp } from "@/lib/format";
+import { formatTimestamp } from "@/lib/format";
 import type { Selection } from "@/lib/cockpit/types";
 
 interface DecisionRow {
@@ -65,13 +66,14 @@ export function DecisionsMode() {
           const isSelected = selection?.id === row.decisionId;
           const config = OUTCOME_CONFIG[row.outcome] ?? OUTCOME_CONFIG.permit;
           return (
-            <button
+            <InvestigationSurfaceRow
               key={row.decisionId}
               onClick={() => handleClick(row)}
-              className={`flex w-full text-left border-b border-[#1F2833]/20 transition-colors ${isSelected ? "bg-[#1F2833]/50" : "hover:bg-[#1F2833]/20"}`}
+              selected={isSelected}
+              heatClassName={isSelected ? config.heat : `${config.heat}/30`}
+              contentClassName="grid flex-1 grid-cols-[0.7fr_1.5fr_1fr_2fr] items-center gap-2 px-3 py-2.5"
             >
-              <div className={`w-1 shrink-0 ${isSelected ? config.heat : config.heat + "/30"}`} />
-              <div className="flex-1 grid grid-cols-[0.7fr_1.5fr_1fr_2fr] gap-2 px-3 py-2.5 items-center">
+              <>
                 <span className={`text-[10px] font-mono font-bold ${config.color}`}>{config.label}</span>
                 <div className="min-w-0">
                   <div className="text-[11px] font-mono text-[#66FCF1]/70 truncate">{row.action}</div>
@@ -79,12 +81,11 @@ export function DecisionsMode() {
                 </div>
                 <span className="text-[10px] font-mono text-[#45A29E]/60 truncate">{row.policyRef}</span>
                 <span className="text-[10px] font-mono text-[#C5C6C7]/40 truncate">{row.rationale}</span>
-              </div>
-            </button>
+              </>
+            </InvestigationSurfaceRow>
           );
         })}
       </div>
     </div>
   );
 }
-

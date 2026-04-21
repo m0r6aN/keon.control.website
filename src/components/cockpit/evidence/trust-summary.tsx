@@ -13,6 +13,7 @@
  * It must answer: "Can I trust this?" without scrolling.
  */
 
+import { InteractiveSurface } from "@/components/cockpit/interaction-field";
 import type { TrustSummary as TrustSummaryType, TrustLevel } from "@/lib/cockpit/types";
 
 const TRUST_CONFIG: Record<TrustLevel, { label: string; icon: string; color: string; border: string; bg: string }> = {
@@ -31,17 +32,17 @@ interface TrustSummaryProps {
 export function TrustSummary({ trust, isLoading }: TrustSummaryProps) {
   if (isLoading) {
     return (
-      <div className="rounded border border-[#1F2833]/30 bg-[#0B0C10]/60 p-3 animate-pulse">
+      <InteractiveSurface intensity="rail" className="rounded border border-[#1F2833]/30 bg-[#0B0C10]/60 animate-pulse" contentClassName="p-3">
         <div className="h-3 w-24 bg-[#1F2833]/40 rounded mb-2" />
         <div className="h-4 w-32 bg-[#1F2833]/30 rounded" />
-      </div>
+      </InteractiveSurface>
     );
   }
 
   const config = TRUST_CONFIG[trust.level];
 
   return (
-    <div className={`rounded border ${config.border} ${config.bg} p-3`}>
+    <InteractiveSurface intensity="rail" className={`rounded border ${config.border} ${config.bg}`} contentClassName="p-3">
       {/* Trust Level */}
       <div className="flex items-center gap-2 mb-2">
         <span className="text-sm">{config.icon}</span>
@@ -70,7 +71,7 @@ export function TrustSummary({ trust, isLoading }: TrustSummaryProps) {
           ))}
         </div>
       )}
-    </div>
+    </InteractiveSurface>
   );
 }
 
@@ -86,4 +87,3 @@ function ProofLine({ label, present }: { label: string; present: boolean }) {
     </div>
   );
 }
-

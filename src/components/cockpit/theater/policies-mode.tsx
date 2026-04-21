@@ -5,6 +5,7 @@
  * Version, status, constraint count, enforcement scope.
  */
 
+import { InvestigationSurfaceRow } from "@/components/cockpit/interaction-field";
 import { useFocusSelection, useSelectionActions } from "@/lib/cockpit/use-focus";
 import { formatHash } from "@/lib/format";
 import type { Selection } from "@/lib/cockpit/types";
@@ -67,13 +68,14 @@ export function PoliciesMode() {
           const isSelected = selection?.id === row.policyId;
           const config = STATUS_CONFIG[row.status] ?? STATUS_CONFIG.active;
           return (
-            <button
+            <InvestigationSurfaceRow
               key={row.policyId + row.version}
               onClick={() => handleClick(row)}
-              className={`flex w-full text-left border-b border-[#1F2833]/20 transition-colors ${isSelected ? "bg-[#1F2833]/50" : "hover:bg-[#1F2833]/20"}`}
+              selected={isSelected}
+              heatClassName={isSelected ? config.heat : `${config.heat}/30`}
+              contentClassName="grid flex-1 grid-cols-[2fr_0.8fr_0.8fr_0.5fr_1fr] items-center gap-2 px-3 py-2.5"
             >
-              <div className={`w-1 shrink-0 ${isSelected ? config.heat : config.heat + "/30"}`} />
-              <div className="flex-1 grid grid-cols-[2fr_0.8fr_0.8fr_0.5fr_1fr] gap-2 px-3 py-2.5 items-center">
+              <>
                 <div className="min-w-0">
                   <div className="text-[11px] font-mono text-[#C5C6C7]/70 truncate">{row.name}</div>
                   <div className="text-[9px] font-mono text-[#C5C6C7]/25">{formatHash(row.hash)}</div>
@@ -82,12 +84,11 @@ export function PoliciesMode() {
                 <span className={`text-[10px] font-mono font-bold ${config.color}`}>{config.label}</span>
                 <span className="text-[10px] font-mono text-[#C5C6C7]/40 tabular-nums">{row.constraintCount}</span>
                 <span className="text-[10px] font-mono text-[#C5C6C7]/40">{row.scope}</span>
-              </div>
-            </button>
+              </>
+            </InvestigationSurfaceRow>
           );
         })}
       </div>
     </div>
   );
 }
-

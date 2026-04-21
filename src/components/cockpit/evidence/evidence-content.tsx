@@ -12,6 +12,7 @@
  * Epoch-guarded: never shows stale data.
  */
 
+import { InteractiveSurface } from "@/components/cockpit/interaction-field";
 import { useFocusDepth, useFocusSelection, useSelectionActions } from "@/lib/cockpit/use-focus";
 import { formatHash, formatTimestamp } from "@/lib/format";
 import type { EvidenceData, EvidencePackEntry, ReceiptEntry } from "./use-evidence-data";
@@ -30,7 +31,7 @@ export function EvidenceContent({ data }: EvidenceContentProps) {
   return (
     <div className="space-y-3">
       {/* Entity Identity */}
-      <div className="rounded border border-[#1F2833]/30 bg-[#0B0C10]/60 p-3">
+      <InteractiveSurface intensity="rail" className="rounded border border-[#1F2833]/30 bg-[#0B0C10]/60" contentClassName="p-3">
         <div className="text-[9px] font-mono text-[#C5C6C7]/40 mb-2 uppercase">Selected Entity</div>
         <div className="space-y-1 text-[10px] font-mono">
           <div className="text-[#C5C6C7]/40">Kind: <span className="text-[#66FCF1]">{selection.kind}</span></div>
@@ -39,7 +40,7 @@ export function EvidenceContent({ data }: EvidenceContentProps) {
             <div className="text-[#C5C6C7]/40">Corr: <span className="text-[#C5C6C7]/50">{formatHash(selection.correlationId)}</span></div>
           )}
         </div>
-      </div>
+      </InteractiveSurface>
 
       {/* Receipt Chain */}
       <ReceiptChain receipts={data.receipts} isLoading={data.isLoading} />
@@ -48,7 +49,7 @@ export function EvidenceContent({ data }: EvidenceContentProps) {
       {data.evidencePack && <EvidencePackCard pack={data.evidencePack} />}
 
       {/* Causal Lineage */}
-      <div className="rounded border border-[#1F2833]/30 bg-[#0B0C10]/60 p-3">
+      <InteractiveSurface intensity="rail" className="rounded border border-[#1F2833]/30 bg-[#0B0C10]/60" contentClassName="p-3">
         <div className="text-[9px] font-mono text-[#C5C6C7]/40 mb-2 uppercase">Causal Lineage</div>
         <div className="space-y-1 text-[10px] font-mono text-[#C5C6C7]/50">
           <div>Parent: <span className="text-[#45A29E]">{data.causalLineage.parentId ? formatHash(data.causalLineage.parentId) : "root"}</span></div>
@@ -57,10 +58,10 @@ export function EvidenceContent({ data }: EvidenceContentProps) {
             <div>Thread: <span className="text-[#45A29E]">{formatHash(data.causalLineage.correlationId)}</span></div>
           )}
         </div>
-      </div>
+      </InteractiveSurface>
 
       {/* Depth Controls */}
-      <div className="rounded border border-[#1F2833]/30 bg-[#0B0C10]/60 p-3">
+      <InteractiveSurface intensity="rail" className="rounded border border-[#1F2833]/30 bg-[#0B0C10]/60" contentClassName="p-3">
         <div className="text-[9px] font-mono text-[#C5C6C7]/40 mb-2 uppercase">Inspection Depth</div>
         <div className="flex gap-2">
           {(["scan", "inspect", "verify", "forensic"] as const).map((d) => {
@@ -87,7 +88,7 @@ export function EvidenceContent({ data }: EvidenceContentProps) {
             );
           })}
         </div>
-      </div>
+      </InteractiveSurface>
     </div>
   );
 }
@@ -99,18 +100,18 @@ export function EvidenceContent({ data }: EvidenceContentProps) {
 function ReceiptChain({ receipts, isLoading }: { receipts: ReceiptEntry[]; isLoading: boolean }) {
   if (isLoading) {
     return (
-      <div className="rounded border border-[#1F2833]/30 bg-[#0B0C10]/60 p-3 animate-pulse">
+      <InteractiveSurface intensity="rail" className="rounded border border-[#1F2833]/30 bg-[#0B0C10]/60 animate-pulse" contentClassName="p-3">
         <div className="h-3 w-20 bg-[#1F2833]/40 rounded mb-3" />
         <div className="space-y-2">
           <div className="h-8 bg-[#1F2833]/20 rounded" />
           <div className="h-8 bg-[#1F2833]/20 rounded" />
         </div>
-      </div>
+      </InteractiveSurface>
     );
   }
 
   return (
-    <div className="rounded border border-[#1F2833]/30 bg-[#0B0C10]/60 p-3">
+    <InteractiveSurface intensity="rail" className="rounded border border-[#1F2833]/30 bg-[#0B0C10]/60" contentClassName="p-3">
       <div className="text-[9px] font-mono text-[#C5C6C7]/40 mb-2 uppercase">
         Receipt Chain ({receipts.length})
       </div>
@@ -142,17 +143,17 @@ function ReceiptChain({ receipts, isLoading }: { receipts: ReceiptEntry[]; isLoa
           ))}
         </div>
       )}
-    </div>
+    </InteractiveSurface>
   );
 }
 
 function EvidencePackCard({ pack }: { pack: EvidencePackEntry }) {
   return (
-    <div className={`rounded border p-3 ${
+    <InteractiveSurface intensity="rail" className={`rounded border ${
       pack.verified
         ? "border-[#66FCF1]/20 bg-[#66FCF1]/5"
         : "border-amber-400/20 bg-amber-400/5"
-    }`}>
+    }`} contentClassName="p-3">
       <div className="text-[9px] font-mono text-[#C5C6C7]/40 mb-2 uppercase">Evidence Pack</div>
       <div className="space-y-1 text-[10px] font-mono">
         <div className="text-[#C5C6C7]/50">Pack: <span className="text-[#45A29E]">{formatHash(pack.packId)}</span></div>
@@ -162,7 +163,6 @@ function EvidencePackCard({ pack }: { pack: EvidencePackEntry }) {
         </div>
         <div className="text-[#C5C6C7]/40">{pack.artifactCount} artifacts</div>
       </div>
-    </div>
+    </InteractiveSurface>
   );
 }
-

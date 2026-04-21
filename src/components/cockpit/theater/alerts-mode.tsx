@@ -7,12 +7,13 @@
  * Data: Real via alerts.adapter with mock fallback.
  */
 
+import { InvestigationSurfaceRow } from "@/components/cockpit/interaction-field";
 import { fetchAlerts, type AlertRow } from "@/lib/cockpit/adapters/alerts.adapter";
 import type { Selection } from "@/lib/cockpit/types";
 import { useCockpitRealtime } from "@/lib/cockpit/use-cockpit-realtime";
 import { useFocusSelection, useSelectionActions } from "@/lib/cockpit/use-focus";
 import { formatHash, formatTimestamp } from "@/lib/format";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; heat: string; dot: string }> = {
   critical: { label: "CRIT", color: "text-[#E94560]", heat: "bg-[#E94560]", dot: "bg-[#E94560] animate-pulse" },
@@ -27,14 +28,21 @@ export function AlertsMode() {
   const [rows, setRows] = useState<AlertRow[]>([]);
   const { streamingAlerts } = useCockpitRealtime();
 
-  const loadData = useCallback(async () => {
-    const result = await fetchAlerts();
-    setRows(result.rows);
-  }, []);
-
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    let isActive = true;
+
+    const loadData = async () => {
+      const result = await fetchAlerts();
+      if (!isActive) return;
+      setRows(result.rows);
+    };
+
+    void loadData();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   // Merge streaming alerts (newest first) with adapter-fetched rows
   // Deduplicate by alertId — streaming alerts take precedence
@@ -78,13 +86,14 @@ export function AlertsMode() {
           const isSelected = selection?.id === row.alertId;
           const config = SEVERITY_CONFIG[row.severity] ?? SEVERITY_CONFIG.medium;
           return (
-            <button
+            <InvestigationSurfaceRow
               key={row.alertId}
               onClick={() => handleClick(row)}
-              className={`flex w-full text-left border-b border-[#1F2833]/20 transition-colors ${isSelected ? "bg-[#1F2833]/50" : "hover:bg-[#1F2833]/20"}`}
+              selected={isSelected}
+              heatClassName={isSelected ? config.heat : `${config.heat}/30`}
+              contentClassName="grid flex-1 grid-cols-[0.3fr_2.5fr_1fr_1.5fr_0.7fr] items-center gap-2 px-3 py-2.5"
             >
-              <div className={`w-1 shrink-0 ${isSelected ? config.heat : config.heat + "/30"}`} />
-              <div className="flex-1 grid grid-cols-[0.3fr_2.5fr_1fr_1.5fr_0.7fr] gap-2 px-3 py-2.5 items-center">
+              <>
                 <div className="flex items-center">
                   <div className={`h-2 w-2 rounded-full ${config.dot}`} />
                 </div>
@@ -97,12 +106,11 @@ export function AlertsMode() {
                 <span className={`text-[10px] font-mono ${row.acknowledged ? "text-[#66FCF1]/50" : "text-[#E94560]/60"}`}>
                   {row.acknowledged ? "ACK" : "OPEN"}
                 </span>
-              </div>
-            </button>
+              </>
+            </InvestigationSurfaceRow>
           );
         })}
       </div>
     </div>
   );
 }
-
