@@ -8,6 +8,7 @@ import {
     readCollectiveLiveRunIndex,
 } from "@/lib/collective/live-run";
 import type { CollectiveLiveRun } from "@/lib/contracts/collective-live";
+import type { CollectiveRequestContext } from "@/lib/server/collective-client";
 import { lookupCollectiveLiveRun, mapCollectiveLiveError, submitCollectiveLiveRun } from "@/lib/server/collective-live";
 import { render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
@@ -207,6 +208,18 @@ function buildSubmission() {
   };
 }
 
+function buildTrustedContext(overrides: Partial<CollectiveRequestContext> = {}): CollectiveRequestContext {
+  return {
+    authorization: "Bearer collective-test-token",
+    tenantId: "tenant-trusted",
+    tenantPartition: "trusted-partition",
+    actorId: "operator:trusted",
+    actorType: "human-operator",
+    correlationId: "corr:trusted",
+    ...overrides,
+  };
+}
+
 async function makeResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -220,6 +233,9 @@ describe("collective live workflow", () => {
   beforeEach(() => {
     process.env.KEON_COLLECTIVE_HOST_BASE_URL = "http://localhost:5122";
     process.env.KEON_COLLECTIVE_HOST_TIMEOUT_MS = "15000";
+    delete process.env.NEXT_PUBLIC_API_LIVE_MODE;
+    delete process.env.KEON_COLLECTIVE_HOST_AUTHORIZATION;
+    delete process.env.KEON_COLLECTIVE_HOST_BEARER_TOKEN;
   });
 
   it("rejects malformed task payloads", async () => {
@@ -271,6 +287,49 @@ describe("collective live workflow", () => {
       edgeCount: 1,
       effectBearingClaimCount: 1,
     });
+  });
+
+  it("propagates auth, tenant, actor, and correlation headers from trusted context", async () => {
+    process.env.NEXT_PUBLIC_API_LIVE_MODE = "true";
+    const fetchMock = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      const headers = init?.headers as Record<string, string>;
+      const body = JSON.parse(String(init?.body));
+
+      expect(headers.Authorization).toBe("Bearer collective-test-token");
+      expect(headers["X-Keon-Tenant-Id"]).toBe("tenant-trusted");
+      expect(headers["X-Keon-Actor-Id"]).toBe("operator:trusted");
+      expect(headers["X-Correlation-Id"]).toBe("corr:trusted");
+      expect(body.tenantContext.tenantId.value).toBe("tenant-trusted");
+      expect(body.actorContext.actorId.value).toBe("operator:trusted");
+      expect(body.correlationContext.correlationId.value).toBe("corr:trusted");
+
+      return makeResponse(buildHostPayload());
+    });
+
+    const run = await submitCollectiveLiveRun(
+      {
+        ...buildSubmission(),
+        tenantId: "tenant-browser-editable",
+        actorId: "operator:browser-editable",
+        correlationId: "corr:browser-editable",
+      },
+      buildTrustedContext(),
+      fetchMock,
+    );
+
+    expect(run.submission.tenantId).toBe("tenant-trusted");
+    expect(run.submission.actorId).toBe("operator:trusted");
+    expect(run.run.correlationId).toBe("corr:trusted");
+  });
+
+  it("fails closed in live mode when tenant and actor would only come from browser payload", async () => {
+    process.env.NEXT_PUBLIC_API_LIVE_MODE = "true";
+    const fetchMock = vi.fn(async () => makeResponse(buildHostPayload()));
+
+    await expect(submitCollectiveLiveRun(buildSubmission(), fetchMock)).rejects.toMatchObject({
+      name: "CollectiveClientAuthContextError",
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("returns structured NOT_YET_AVAILABLE when durable backend retrieval is absent", async () => {
@@ -449,8 +508,8 @@ describe("collective live workflow", () => {
 
     render(<CollectiveLiveRunView run={run} />);
 
-    expect(screen.getByText("Not Invoked")).toBeInTheDocument();
-    expect(screen.getByText("Not Attempted")).toBeInTheDocument();
+    expect(screen.getAllByText("Not Invoked").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Not Attempted").length).toBeGreaterThan(0);
     expect(screen.getByText("receipt:truth:1")).toBeInTheDocument();
     expect(screen.getByText("Witness narrative anchored to collapse and review.")).toBeInTheDocument();
     expect(screen.getByText("View In Runtime")).toBeInTheDocument();

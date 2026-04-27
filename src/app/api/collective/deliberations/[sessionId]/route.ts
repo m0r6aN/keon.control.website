@@ -1,13 +1,18 @@
-import { NextResponse } from "next/server";
-import {
-  mockDeliberationSessions,
-  type GovernanceEnvelope,
-} from "@/lib/server/governance-api";
 import type {
-  DeliberationRecord,
-  DeliberationSummary,
-  GetDeliberationDetailResponse,
+    DeliberationRecord,
+    DeliberationSummary,
+    GetDeliberationDetailResponse,
 } from "@/lib/contracts/collective";
+import {
+    collectiveMockGovernance,
+    collectiveUnavailablePayload,
+    isCollectiveMockModeEnabled,
+} from "@/lib/server/collective-client";
+import {
+    mockDeliberationSessions,
+    type GovernanceEnvelope,
+} from "@/lib/server/governance-api";
+import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +22,16 @@ export async function GET(
 ) {
   try {
     const { sessionId } = await params;
+    if (!isCollectiveMockModeEnabled()) {
+      return NextResponse.json(
+        collectiveUnavailablePayload(
+          `/api/collective/deliberations/${sessionId}`,
+          "Live Collective deliberation detail is not exposed by the Collective Host yet.",
+        ),
+        { status: 503 },
+      );
+    }
+
     const sessions = mockDeliberationSessions();
     const session = sessions.find((s) => s.id === sessionId);
 
@@ -68,11 +83,7 @@ export async function GET(
     const envelope: GovernanceEnvelope<GetDeliberationDetailResponse> = {
       mode: "MOCK",
       generatedAt: new Date().toISOString(),
-      governance: {
-        determinismStatus: "SEALED",
-        sealValidationResult: "VALID",
-        incidentFlag: false,
-      },
+      governance: collectiveMockGovernance(),
       data: [detail],
       source: "local-mock-provider",
       mockLabel: "MOCK",

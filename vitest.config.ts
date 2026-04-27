@@ -40,6 +40,7 @@ export default defineConfig({
     // development builds makes act available on both React and react-dom/test-utils.
     conditions: ["development", "browser", "module", "import", "default"],
     alias: {
+      "server-only": path.resolve(__dirname, "tests/unit/mocks/server-only.ts"),
       "@": path.resolve(__dirname, "./src"),
     },
   },
