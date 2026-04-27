@@ -29,16 +29,18 @@ export function IntegrationSelectionStep() {
 
   return (
     <StepShell
-      eyebrow="Step 3 of 5"
+      eyebrow="Step 3 of 4"
       title="How do you want governed decisions to happen?"
       description="This is not a vendor choice. It determines how Keon evaluates, challenges, and seals every decision."
       footer={
         <div className="flex items-center gap-4">
-          <Button size="lg" onClick={handleContinue}>
+          <Button size="lg" onClick={handleContinue} disabled={!selected}>
             Continue
           </Button>
           <p className="font-mono text-xs text-white/32">
-            You can start with BYO AI and upgrade later.
+            {selected
+              ? "You can start with BYO AI and upgrade later."
+              : "Select an operating model to continue."}
           </p>
         </div>
       }
