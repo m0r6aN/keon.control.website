@@ -1,5 +1,6 @@
 "use client";
 
+import { IncidentShell } from "@/components/incident";
 import { CommandPalette } from "@/components/layout/command-palette";
 import { useFocus } from "@/lib/cockpit/use-focus";
 import { useIncidentMode } from "@/lib/incident-mode";
