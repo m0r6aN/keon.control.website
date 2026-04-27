@@ -1,14 +1,29 @@
-import { NextResponse } from "next/server";
-import {
-  mockReformLegitimacyAssessments,
-  type GovernanceEnvelope,
-} from "@/lib/server/governance-api";
 import type { ReformLegitimacyAssessment } from "@/lib/contracts/collective";
+import {
+    collectiveMockGovernance,
+    collectiveUnavailablePayload,
+    isCollectiveMockModeEnabled,
+} from "@/lib/server/collective-client";
+import {
+    mockReformLegitimacyAssessments,
+    type GovernanceEnvelope,
+} from "@/lib/server/governance-api";
+import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
+    if (!isCollectiveMockModeEnabled()) {
+      return NextResponse.json(
+        collectiveUnavailablePayload(
+          "/api/collective/legitimacy",
+          "Live Collective legitimacy assessment listing is not exposed by the Collective Host yet.",
+        ),
+        { status: 503 },
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const artifactRef = searchParams.get("artifactRef");
 
@@ -23,11 +38,7 @@ export async function GET(request: Request) {
     }> = {
       mode: "MOCK",
       generatedAt: new Date().toISOString(),
-      governance: {
-        determinismStatus: "SEALED",
-        sealValidationResult: "VALID",
-        incidentFlag: false,
-      },
+      governance: collectiveMockGovernance(),
       data: [{ items }],
       source: "local-mock-provider",
       mockLabel: "MOCK",

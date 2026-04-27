@@ -1,6 +1,11 @@
-import { NextResponse } from "next/server";
 import type { CollectiveChainEntrypointKind } from "@/lib/collective/chain.dto";
 import { createCollectiveChainRepository } from "@/lib/collective/chain.repositories";
+import {
+    collectiveMockGovernance,
+    collectiveUnavailablePayload,
+    isCollectiveMockModeEnabled,
+} from "@/lib/server/collective-client";
+import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +32,16 @@ export async function GET(
           error: `Unknown entrypoint kind '${kind}'.`,
         },
         { status: 400 },
+      );
+    }
+
+    if (!isCollectiveMockModeEnabled()) {
+      return NextResponse.json(
+        collectiveUnavailablePayload(
+          `/api/collective/chain/${kind}/${id}`,
+          "Live Collective causal chain lookup is not exposed by the Collective Host yet.",
+        ),
+        { status: 503 },
       );
     }
 
@@ -74,11 +89,7 @@ export async function GET(
       {
         mode: "MOCK",
         generatedAt: new Date().toISOString(),
-        governance: {
-          determinismStatus: "SEALED",
-          sealValidationResult: "VALID",
-          incidentFlag: false,
-        },
+        governance: collectiveMockGovernance(),
         data: detail,
         source: "local-mock-provider",
         mockLabel: "MOCK",

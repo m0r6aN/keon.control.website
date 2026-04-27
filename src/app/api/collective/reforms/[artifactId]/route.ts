@@ -1,12 +1,17 @@
-import { NextResponse } from "next/server";
-import {
-  mockReformArtifacts,
-  type GovernanceEnvelope,
-} from "@/lib/server/governance-api";
 import type {
-  GetReformDetailResponse,
-  ReformArtifactLineage,
+    GetReformDetailResponse,
+    ReformArtifactLineage,
 } from "@/lib/contracts/collective";
+import {
+    collectiveMockGovernance,
+    collectiveUnavailablePayload,
+    isCollectiveMockModeEnabled,
+} from "@/lib/server/collective-client";
+import {
+    mockReformArtifacts,
+    type GovernanceEnvelope,
+} from "@/lib/server/governance-api";
+import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +21,16 @@ export async function GET(
 ) {
   try {
     const { artifactId } = await params;
+    if (!isCollectiveMockModeEnabled()) {
+      return NextResponse.json(
+        collectiveUnavailablePayload(
+          `/api/collective/reforms/${artifactId}`,
+          "Live Collective reform detail is not exposed by the Collective Host yet.",
+        ),
+        { status: 503 },
+      );
+    }
+
     const artifacts = mockReformArtifacts();
     const artifact = artifacts.find((a) => a.id === artifactId);
 
@@ -54,11 +69,7 @@ export async function GET(
     const envelope: GovernanceEnvelope<GetReformDetailResponse> = {
       mode: "MOCK",
       generatedAt: new Date().toISOString(),
-      governance: {
-        determinismStatus: "SEALED",
-        sealValidationResult: "VALID",
-        incidentFlag: false,
-      },
+      governance: collectiveMockGovernance(),
       data: [detail],
       source: "local-mock-provider",
       mockLabel: "MOCK",

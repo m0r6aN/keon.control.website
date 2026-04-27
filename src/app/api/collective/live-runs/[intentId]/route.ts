@@ -1,3 +1,4 @@
+import { buildCollectiveRequestContext } from "@/lib/server/collective-client";
 import { lookupCollectiveLiveRun, mapCollectiveLiveError } from "@/lib/server/collective-live";
 import { NextResponse } from "next/server";
 
@@ -11,7 +12,8 @@ export async function GET(
     const { intentId } = await params;
     const url = new URL(request.url);
     const correlationId = url.searchParams.get("correlationId") ?? undefined;
-    const result = await lookupCollectiveLiveRun(decodeURIComponent(intentId), correlationId);
+    const context = await buildCollectiveRequestContext(request, correlationId ? { correlationId } : {});
+    const result = await lookupCollectiveLiveRun(decodeURIComponent(intentId), correlationId, fetch, context);
 
     const unavailable = "status" in result && result.status === "NOT_YET_AVAILABLE";
     return NextResponse.json(result, {

@@ -1,26 +1,24 @@
-import { z } from "zod";
+import { classifyCollectivePlane } from "@/lib/collective/live-run";
 import type {
-  CollectiveLiveRun,
-  CollectiveLiveBranch,
-  CollectiveLiveRunLookupUnavailable,
-  SubmitCollectiveRunInput,
+    CollectiveLiveBranch,
+    CollectiveLiveRun,
+    CollectiveLiveRunLookupUnavailable,
+    SubmitCollectiveRunInput,
 } from "@/lib/contracts/collective-live";
 import { submitCollectiveRunInputSchema } from "@/lib/contracts/collective-live";
-import { classifyCollectivePlane } from "@/lib/collective/live-run";
-
-class CollectiveLiveConfigurationError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "CollectiveLiveConfigurationError";
-  }
-}
-
-class CollectiveLiveUpstreamError extends Error {
-  constructor(message: string, readonly status = 503) {
-    super(message);
-    this.name = "CollectiveLiveUpstreamError";
-  }
-}
+import {
+    CollectiveClientAuthContextError,
+    CollectiveClientConfigurationError,
+    CollectiveClientUpstreamError,
+    type CollectiveFetch,
+    type CollectiveRequestContext,
+    assertTrustedCollectiveContext,
+    collectiveBaseUrl,
+    collectiveRequestJson,
+    isCollectiveLiveMode,
+    unknownCollectiveResponseSchema,
+} from "@/lib/server/collective-client";
+import { z } from "zod";
 
 class CollectiveLiveAnchorError extends Error {
   constructor(message: string) {
@@ -67,26 +65,6 @@ const BRANCH_STATE = {
   7: "Pruned",
   8: "Aborted",
 } as const;
-
-function envBaseUrl() {
-  const baseUrl = process.env.KEON_COLLECTIVE_HOST_BASE_URL?.trim();
-  if (!baseUrl) {
-    throw new CollectiveLiveConfigurationError(
-      "KEON_COLLECTIVE_HOST_BASE_URL is required for live Collective submission.",
-    );
-  }
-
-  return baseUrl.replace(/\/+$/, "");
-}
-
-function envLookupBaseUrl() {
-  return envBaseUrl();
-}
-
-function envTimeoutMs() {
-  const parsed = Number.parseInt(process.env.KEON_COLLECTIVE_HOST_TIMEOUT_MS ?? "15000", 10);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 15000;
-}
 
 function asObject(value: unknown, label: string) {
   if (!value || typeof value !== "object") {
@@ -386,7 +364,7 @@ function parseHostResponse(payload: unknown, submission: SubmitCollectiveRunInpu
   const result: CollectiveLiveRun = {
     dataMode: "LIVE",
     retrievalMode: "session-cache",
-    hostSource: envBaseUrl(),
+    hostSource: collectiveBaseUrl(),
     run: {
       intentId: readId(data.intentId, "Intent id"),
       selectedBranchId: readId(data.selectedBranchId, "Selected branch id"),
@@ -484,25 +462,71 @@ function buildIntentPayload(submission: SubmitCollectiveRunInput) {
   });
 }
 
+function isFetch(value: unknown): value is CollectiveFetch {
+  return typeof value === "function";
+}
+
+function contextFromSubmissionForNonLive(submission: SubmitCollectiveRunInput): CollectiveRequestContext {
+  return {
+    tenantId: submission.tenantId,
+    tenantPartition: submission.tenantPartition,
+    actorId: submission.actorId,
+    actorType: submission.actorType,
+    delegatedBy: submission.delegatedBy,
+    correlationId: submission.correlationId,
+    parentCorrelationId: submission.parentCorrelationId,
+    interactionId: submission.interactionId,
+    causationId: submission.causationId,
+  };
+}
+
+function bindTrustedSubmission(
+  submission: SubmitCollectiveRunInput,
+  context?: CollectiveRequestContext,
+): SubmitCollectiveRunInput {
+  if (isCollectiveLiveMode() && !context) {
+    throw new CollectiveClientAuthContextError(
+      "Trusted Collective request context is required in live mode; tenant and actor cannot come from browser payloads.",
+    );
+  }
+
+  const trusted = context ?? contextFromSubmissionForNonLive(submission);
+  assertTrustedCollectiveContext(trusted);
+
+  return {
+    ...submission,
+    tenantId: trusted.tenantId,
+    tenantPartition: trusted.tenantPartition ?? submission.tenantPartition,
+    actorId: trusted.actorId,
+    actorType: trusted.actorType,
+    delegatedBy: trusted.delegatedBy ?? submission.delegatedBy,
+    correlationId: trusted.correlationId,
+    parentCorrelationId: trusted.parentCorrelationId ?? submission.parentCorrelationId,
+    interactionId: trusted.interactionId ?? submission.interactionId,
+    causationId: trusted.causationId ?? submission.causationId,
+  };
+}
+
 export async function submitCollectiveLiveRun(
   input: unknown,
-  fetchImpl: typeof fetch = fetch,
+  contextOrFetch?: CollectiveRequestContext | CollectiveFetch,
+  fetchImpl: CollectiveFetch = fetch,
 ): Promise<CollectiveLiveRun> {
-  const submission = submitCollectiveRunInputSchema.parse(input);
+  const parsedSubmission = submitCollectiveRunInputSchema.parse(input);
+  const requestContext = isFetch(contextOrFetch) ? undefined : contextOrFetch;
+  const effectiveFetch = isFetch(contextOrFetch) ? contextOrFetch : fetchImpl;
+  const submission = bindTrustedSubmission(parsedSubmission, requestContext);
+  const context = requestContext ?? contextFromSubmissionForNonLive(submission);
   const startedAtUtc = new Date().toISOString();
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), envTimeoutMs());
 
   try {
-    const response = await fetchImpl(`${envBaseUrl()}/intents`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      cache: "no-store",
-      signal: controller.signal,
-      body: JSON.stringify({
+    const payload = await collectiveRequestJson(
+      context,
+      "/intents",
+      {
+        method: "POST",
+        fetchImpl: effectiveFetch,
+        body: {
         intentId: { value: submission.intentId ?? `intent:${submission.tenantId}:${submission.correlationId}` },
         goal: submission.objective,
         intentPayloadJson: buildIntentPayload(submission),
@@ -522,18 +546,10 @@ export async function submitCollectiveLiveRun(
           causationId: submission.causationId ?? null,
         },
         timestampUtc: startedAtUtc,
-      }),
-    });
-
-    if (!response.ok) {
-      const body = await response.text();
-      throw new CollectiveLiveUpstreamError(
-        `Collective host returned HTTP ${response.status}${body ? `: ${body}` : ""}`,
-        response.status,
-      );
-    }
-
-    const payload = await response.json();
+        },
+      },
+      unknownCollectiveResponseSchema,
+    );
     const run = parseHostResponse(payload, submission);
 
     return {
@@ -548,62 +564,41 @@ export async function submitCollectiveLiveRun(
       throw error;
     }
 
-    if (error instanceof CollectiveLiveConfigurationError ||
-        error instanceof CollectiveLiveUpstreamError ||
+    if (error instanceof CollectiveClientConfigurationError ||
+        error instanceof CollectiveClientAuthContextError ||
+        error instanceof CollectiveClientUpstreamError ||
         error instanceof CollectiveLiveAnchorError) {
       throw error;
     }
 
-    if (error instanceof Error && error.name === "AbortError") {
-      throw new CollectiveLiveUpstreamError(
-        `Collective host timed out after ${envTimeoutMs()}ms.`,
-        504,
-      );
-    }
-
-    throw new CollectiveLiveUpstreamError(
+    throw new CollectiveClientUpstreamError(
       `Collective host could not be reached: ${error instanceof Error ? error.message : String(error)}`,
     );
-  } finally {
-    clearTimeout(timeoutId);
   }
 }
 
 export async function lookupCollectiveLiveRun(
   intentId: string,
   correlationId?: string,
-  fetchImpl: typeof fetch = fetch,
+  fetchImpl: CollectiveFetch = fetch,
+  requestContext?: CollectiveRequestContext,
 ): Promise<CollectiveLiveRun | CollectiveLiveRunLookupUnavailable> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), envTimeoutMs());
-  const attemptedEndpoint = `${envLookupBaseUrl()}/intents/${encodeURIComponent(intentId)}`;
+  const path = `/intents/${encodeURIComponent(intentId)}`;
+  const attemptedEndpoint = `${collectiveBaseUrl()}${path}`;
+  const lookupSubmission = buildRetrievedSubmission(intentId, correlationId);
+  const context = requestContext ?? contextFromSubmissionForNonLive(lookupSubmission);
 
   try {
-    const response = await fetchImpl(attemptedEndpoint, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
+    const payload = await collectiveRequestJson(
+      context,
+      path,
+      {
+        method: "GET",
+        fetchImpl,
       },
-      cache: "no-store",
-      signal: controller.signal,
-    });
-
-    if (!response.ok) {
-      return {
-        status: "NOT_YET_AVAILABLE",
-        intentId,
-        correlationId,
-        detail:
-          response.status === 404 || response.status === 405 || response.status === 501
-            ? "The Collective host does not yet expose durable run retrieval for this intent."
-            : `Collective host lookup returned HTTP ${response.status}.`,
-        hostSource: envLookupBaseUrl(),
-        attemptedEndpoint,
-      };
-    }
-
-    const payload = await response.json();
-    const run = parseHostResponse(payload, buildRetrievedSubmission(intentId, correlationId));
+      unknownCollectiveResponseSchema,
+    );
+    const run = parseHostResponse(payload, lookupSubmission);
 
     return {
       ...run,
@@ -614,19 +609,26 @@ export async function lookupCollectiveLiveRun(
       },
     };
   } catch (error) {
+    if (error instanceof CollectiveClientConfigurationError ||
+        error instanceof CollectiveClientAuthContextError ||
+        error instanceof z.ZodError) {
+      throw error;
+    }
+
+    const upstreamStatus = error instanceof CollectiveClientUpstreamError ? error.status : undefined;
     return {
       status: "NOT_YET_AVAILABLE",
       intentId,
       correlationId,
       detail:
-        error instanceof Error && error.name === "AbortError"
-          ? `Collective host lookup timed out after ${envTimeoutMs()}ms.`
-          : "The Collective host lookup seam is not yet available.",
-      hostSource: envLookupBaseUrl(),
+        upstreamStatus === 404 || upstreamStatus === 405 || upstreamStatus === 501
+          ? "The Collective host does not yet expose durable run retrieval for this intent."
+          : upstreamStatus
+            ? `Collective host lookup returned HTTP ${upstreamStatus}.`
+            : "The Collective host lookup seam is not yet available.",
+      hostSource: collectiveBaseUrl(),
       attemptedEndpoint,
     };
-  } finally {
-    clearTimeout(timeoutId);
   }
 }
 
@@ -639,10 +641,18 @@ export function mapCollectiveLiveError(error: unknown) {
     };
   }
 
-  if (error instanceof CollectiveLiveConfigurationError) {
+  if (error instanceof CollectiveClientConfigurationError) {
     return {
       status: 500,
       code: "CONFIGURATION_ERROR",
+      detail: error.message,
+    };
+  }
+
+  if (error instanceof CollectiveClientAuthContextError) {
+    return {
+      status: 401,
+      code: "AUTH_CONTEXT_UNAVAILABLE",
       detail: error.message,
     };
   }
@@ -655,7 +665,7 @@ export function mapCollectiveLiveError(error: unknown) {
     };
   }
 
-  if (error instanceof CollectiveLiveUpstreamError) {
+  if (error instanceof CollectiveClientUpstreamError) {
     return {
       status: error.status,
       code: "UPSTREAM_UNAVAILABLE",

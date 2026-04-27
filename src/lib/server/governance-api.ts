@@ -1,9 +1,9 @@
-import { mockAlerts, mockExecutions } from "@/lib/mock-data";
 import type {
-  DeliberationSession,
-  ReformArtifact,
-  ReformLegitimacyAssessment,
+    DeliberationSession,
+    ReformArtifact,
+    ReformLegitimacyAssessment,
 } from "@/lib/contracts/collective";
+import { mockAlerts, mockExecutions } from "@/lib/mock-data";
 
 export type GovernanceCollectionKind =
   | "tenants"
@@ -42,8 +42,8 @@ export type GovernanceCollectionKind =
 export type GovernanceMode = "MOCK" | "LIVE";
 
 export interface GovernanceIndicators {
-  determinismStatus: "SEALED" | "DEGRADED" | "UNKNOWN";
-  sealValidationResult: "VALID" | "INVALID" | "UNKNOWN";
+  determinismStatus: "SEALED" | "DEGRADED" | "UNKNOWN" | "MOCK_UNVERIFIED";
+  sealValidationResult: "VALID" | "INVALID" | "UNKNOWN" | "NOT_APPLICABLE";
   incidentFlag: boolean;
 }
 
