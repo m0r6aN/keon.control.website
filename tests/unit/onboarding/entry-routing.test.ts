@@ -23,10 +23,10 @@ const midSetupState: OnboardingState = {
 
 describe("getEntryRoute — canonical first-run routing", () => {
   describe("fully completed onboarding", () => {
-    it("routes to /control regardless of activation flag", () => {
-      expect(getEntryRoute(completedState, { activationCompleted: true })).toBe("/control");
-      expect(getEntryRoute(completedState, { activationCompleted: false })).toBe("/control");
-      expect(getEntryRoute(completedState)).toBe("/control");
+    it("routes completed setup to /integrations regardless of activation flag", () => {
+      expect(getEntryRoute(completedState, { activationCompleted: true })).toBe("/integrations");
+      expect(getEntryRoute(completedState, { activationCompleted: false })).toBe("/integrations");
+      expect(getEntryRoute(completedState)).toBe("/integrations");
     });
   });
 
@@ -58,8 +58,8 @@ describe("getEntryRoute — canonical first-run routing", () => {
       expect(getEntryRoute(defaultOnboardingState)).toBe("/welcome");
     });
 
-    it("still routes completed state to /control", () => {
-      expect(getEntryRoute(completedState)).toBe("/control");
+    it("routes completed state to /integrations", () => {
+      expect(getEntryRoute(completedState)).toBe("/integrations");
     });
   });
 });

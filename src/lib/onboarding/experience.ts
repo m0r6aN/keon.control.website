@@ -151,7 +151,7 @@ export function getEntryRoute(
   options?: { activationCompleted?: boolean }
 ) {
   if (state.completed) {
-    return "/control";
+    return "/integrations";
   }
 
   // If activation has explicitly not completed, gate here before onboarding.

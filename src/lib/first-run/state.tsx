@@ -67,7 +67,7 @@ export function deriveFirstRunStatus(input: {
     provisioningComplete: true,
     onboardingComplete: true,
     readyState: true,
-    nextRoute: "/control",
+    nextRoute: "/integrations",
     stage: "app",
   };
 }
