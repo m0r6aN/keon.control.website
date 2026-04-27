@@ -1,7 +1,6 @@
 "use client";
-import * as React from "react";
 import { formatCurrency } from "@/lib/format";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 interface SpendByService {
   service: string;
@@ -66,7 +65,10 @@ export function AzureSpendChart({ data, totalSpend, budgetAmount }: AzureSpendCh
                 fontSize: 12,
                 color: "#C5C6C7",
               }}
-              formatter={(value: number | undefined) => [formatCurrency(value ?? 0), "Spend"]}
+              formatter={(value) => {
+                const numValue = typeof value === "number" ? value : 0;
+                return [formatCurrency(numValue), "Spend"];
+              }}
             />
             <Bar dataKey="spend" radius={0}>
               {chartData.map((entry, index) => (
