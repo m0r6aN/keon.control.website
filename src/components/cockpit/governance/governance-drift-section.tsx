@@ -12,9 +12,9 @@
  * differs from the governance context that exists now.
  */
 
-import { useSelectionGovernance } from "@/lib/cockpit/use-selection-governance";
-import { useSelectionActions } from "@/lib/cockpit/use-focus";
 import type { GovernanceDrift } from "@/lib/cockpit/types";
+import { useSelectionActions } from "@/lib/cockpit/use-focus";
+import { useSelectionGovernance } from "@/lib/cockpit/use-selection-governance";
 
 const SEVERITY_CONFIG: Record<string, { border: string; bg: string; text: string; icon: string }> = {
   info:     { border: "border-[#45A29E]/30", bg: "bg-[#45A29E]/5",  text: "text-[#45A29E]",   icon: "ℹ" },
@@ -51,7 +51,7 @@ function DriftSignal({
   onNavigate,
 }: {
   drift: GovernanceDrift;
-  onNavigate: (sel: any) => void;
+  onNavigate: (sel: Selection) => void;
 }) {
   const config = SEVERITY_CONFIG[drift.severity] ?? SEVERITY_CONFIG.info;
 

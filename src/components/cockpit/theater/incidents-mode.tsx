@@ -12,7 +12,7 @@ import { fetchIncidents } from "@/lib/cockpit/adapters/incidents.adapter";
 import type { Selection } from "@/lib/cockpit/types";
 import { useFocusSelection, useSelectionActions } from "@/lib/cockpit/use-focus";
 import { formatHash, formatTimestamp } from "@/lib/format";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 
 const SEV_CONFIG: Record<string, { label: string; color: string; heat: string }> = {
   sev1: { label: "SEV1", color: "text-[#E94560]", heat: "bg-[#E94560]" },
@@ -31,11 +31,14 @@ export function IncidentsMode() {
   const { selection } = useFocusSelection();
   const { select } = useSelectionActions();
   const [rows, setRows] = useState<IncidentRow[]>([]);
+  const [, startTransition] = useTransition();
 
   const loadData = useCallback(async () => {
     const result = await fetchIncidents();
-    setRows(result.rows);
-  }, []);
+    startTransition(() => {
+      setRows(result.rows);
+    });
+  }, [startTransition]);
 
   useEffect(() => {
     loadData();

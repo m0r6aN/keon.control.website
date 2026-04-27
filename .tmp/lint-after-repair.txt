@@ -1,0 +1,116 @@
+﻿node.exe : [BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claud
+e\worktrees\confident-kirch\.next\dev\server\chunks\64e05_next_111a1570._.js as it exceeds the max of 500KB.
+At D:\nodejs_symlinks\pnpm.ps1:16 char:5
++     & "$basedir/node$exe"  "$basedir/node_modules/corepack/dist/pnpm. ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([BABEL] Note: T...e max of 500KB.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\server\chunks\64e05_next_e5bbe6c9._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\server\chunks\64e05_next_caae19f3._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\server\chunks\64e05_next_b644222f._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\server\chunks\ssr\33430__pnpm_98cd2934._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\server\chunks\ssr\33430__pnpm_34feff37._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\server\chunks\ssr\33430__pnpm_c856a900._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\server\chunks\ssr\64e05_next_323bf4f9._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\server\chunks\ssr\64e05_next_dist_144aa0e5._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\server\chunks\ssr\64e05_next_dist_7824fa3c._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\server\chunks\ssr\64e05_next_dist_esm_b1d349f2._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\server\chunks\ssr\[root-of-the-server]__e8ffe2f4._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\static\chunks\33430__pnpm_c44efa1a._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\static\chunks\64e05_next_dist_client_5f0f79bb._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\static\chunks\64e05_next_dist_compiled_next-devtools_index_d5f34e4b.js as it exceeds the max 
+of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\static\chunks\_claude_worktrees_confident-kirch_src_281199c2._.js as it exceeds the max of 
+500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\confident-kirch\.next\dev\static\chunks\64e05_next_dist_compiled_react-dom_b1f535c5._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\server\chunks\09786_next_34fcdb7f._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\server\chunks\09786_next_7233e286._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\server\chunks\09786_next_7495aedb._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\server\chunks\09786_next_9e85ae9d._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\server\chunks\09786_next_cc6436e4._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\server\chunks\ssr\09786_next_bbaf2c57._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\server\chunks\ssr\09786_next_3709d853._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\server\chunks\ssr\09786_next_dist_6d4dca3a._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\server\chunks\ssr\09786_next_dist_cb39372f._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\server\chunks\ssr\09786_next_dist_esm_8f9e3ed2._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\server\chunks\ssr\node_modules__pnpm_422e2bd1._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\server\chunks\ssr\node_modules__pnpm_a536ecb2._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\server\chunks\ssr\[root-of-the-server]__cdac11e8._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\static\chunks\09786_next_dist_client_9d73f478._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\static\chunks\09786_next_dist_compiled_next-devtools_index_db12c662.js as it exceeds the max 
+of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\static\chunks\node_modules__pnpm_a8b8a1b2._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\static\chunks\09786_next_dist_compiled_react-dom_5b97e983._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\static\chunks\node_modules__pnpm_defb2053._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\friendly-curran\.next\dev\static\chunks\_claude_worktrees_friendly-curran_src_a3b83351._.js as it exceeds the max of 
+500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\server\chunks\62b08_next_450e8c7e._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\server\chunks\62b08_next_71d1f001._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\server\chunks\62b08_next_5207f7c2._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\server\chunks\62b08_next_838e9911._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\server\chunks\ssr\0eaa5__pnpm_3215996b._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\server\chunks\ssr\0eaa5__pnpm_fa109708._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\server\chunks\ssr\62b08_next_380404c0._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\server\chunks\ssr\62b08_next_dist_esm_f231d952._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\server\chunks\ssr\62b08_next_dist_f97b1758._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\server\chunks\ssr\[root-of-the-server]__128eae44._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\static\chunks\_claude_worktrees_suspicious-kirch_src_8298b467._.js as it exceeds the max of 
+500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\static\chunks\0eaa5__pnpm_38c654b2._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\static\chunks\0eaa5__pnpm_6e048cad._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\static\chunks\62b08_next_dist_client_84e29822._.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\static\chunks\62b08_next_dist_compiled_next-devtools_index_e870841e.js as it exceeds the max 
+of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of D:\Repos\keon-omega\keon.control.website\.claude\worktrees
+\suspicious-kirch\.next\dev\static\chunks\62b08_next_dist_compiled_react-dom_75e575ba._.js as it exceeds the max of 500KB.

@@ -18,7 +18,7 @@ import { fetchCommandHorizonData } from "@/lib/cockpit/adapters/command-horizon.
 import { unknownFreshness } from "@/lib/cockpit/adapters/shared";
 import type { CausalPulseEvent, DataFreshness } from "@/lib/cockpit/types";
 import { useCockpitRealtime } from "@/lib/cockpit/use-cockpit-realtime";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 
 // ============================================================
 // DATA SHAPE (unchanged — this IS the contract)
@@ -76,6 +76,7 @@ export function useCommandHorizonData(): CommandHorizonData {
     },
     freshness: unknownFreshness(),
   });
+  const [, startTransition] = useTransition();
 
   // Real-time subscription — replaces mock pulse generator
   const { latestPulse } = useCockpitRealtime();
@@ -83,26 +84,32 @@ export function useCommandHorizonData(): CommandHorizonData {
   // When real-time pulse arrives, inject it into horizon data
   useEffect(() => {
     if (latestPulse) {
-      setData((prev) => ({ ...prev, causalPulse: latestPulse }));
+      startTransition(() => {
+        setData((prev) => ({ ...prev, causalPulse: latestPulse }));
+      });
     }
-  }, [latestPulse]);
+  }, [latestPulse, startTransition]);
 
   const refresh = useCallback(async () => {
     try {
       const horizonData = await fetchCommandHorizonData();
-      setData((prev) => ({
-        ...horizonData,
-        // Preserve causal pulse from real-time stream if adapter didn't provide one
-        causalPulse: horizonData.causalPulse ?? prev.causalPulse,
-      }));
+      startTransition(() => {
+        setData((prev) => ({
+          ...horizonData,
+          // Preserve causal pulse from real-time stream if adapter didn't provide one
+          causalPulse: horizonData.causalPulse ?? prev.causalPulse,
+        }));
+      });
     } catch {
       // Adapter already handles fallback — this is a safety net
-      setData((prev) => ({
-        ...prev,
-        freshness: unknownFreshness(),
-      }));
+      startTransition(() => {
+        setData((prev) => ({
+          ...prev,
+          freshness: unknownFreshness(),
+        }));
+      });
     }
-  }, []);
+  }, [startTransition]);
 
   // Initial load + 10s refresh
   useEffect(() => {

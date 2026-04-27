@@ -1,6 +1,5 @@
 "use client";
 
-import { IncidentShell } from "@/components/incident";
 import { CommandPalette } from "@/components/layout/command-palette";
 import { useFocus } from "@/lib/cockpit/use-focus";
 import { useIncidentMode } from "@/lib/incident-mode";
@@ -16,11 +15,10 @@ export function CockpitShell() {
   const { state, dispatch, isForensicOpen } = useFocus();
   const [commandPaletteOpen, setCommandPaletteOpen] = React.useState(false);
 
-  if (incidentState.active) {
-    return <IncidentShell><div /></IncidentShell>;
-  }
-
   React.useEffect(() => {
+    if (incidentState.active) {
+      return;
+    }
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
       if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) {
@@ -108,7 +106,11 @@ export function CockpitShell() {
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [commandPaletteOpen, dispatch, state]);
+  }, [commandPaletteOpen, dispatch, state, incidentState.active]);
+
+  if (incidentState.active) {
+    return <IncidentShell><div /></IncidentShell>;
+  }
 
   return (
     <div className="relative flex h-screen w-full flex-col overflow-hidden bg-[#0B0C10]">

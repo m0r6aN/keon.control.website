@@ -12,7 +12,7 @@ import type { Selection } from "@/lib/cockpit/types";
 import { useCockpitRealtime } from "@/lib/cockpit/use-cockpit-realtime";
 import { useFocusSelection, useSelectionActions } from "@/lib/cockpit/use-focus";
 import { formatHash, formatTimestamp } from "@/lib/format";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; heat: string; dot: string }> = {
   critical: { label: "CRIT", color: "text-[#E94560]", heat: "bg-[#E94560]", dot: "bg-[#E94560] animate-pulse" },
@@ -26,11 +26,14 @@ export function AlertsMode() {
   const { select } = useSelectionActions();
   const [rows, setRows] = useState<AlertRow[]>([]);
   const { streamingAlerts } = useCockpitRealtime();
+  const [, startTransition] = useTransition();
 
   const loadData = useCallback(async () => {
     const result = await fetchAlerts();
-    setRows(result.rows);
-  }, []);
+    startTransition(() => {
+      setRows(result.rows);
+    });
+  }, [startTransition]);
 
   useEffect(() => {
     loadData();

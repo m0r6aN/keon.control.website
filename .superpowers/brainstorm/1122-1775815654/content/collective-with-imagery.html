@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collective + Cortex — Visual Design</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #070d14; color: #C5C6C7; font-family: 'Rajdhani', 'Inter', system-ui, sans-serif; min-height: 100vh; }
+
+  /* ── Shell chrome ── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(15,22,33,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid #263040;
+    height: 48px; display: flex; align-items: center; padding: 0 20px;
+    justify-content: space-between;
+  }
+  .topbar-logo { font-family: monospace; font-size: 13px; font-weight: 700; color: #66FCF1; letter-spacing: 0.12em; }
+  .topbar-ws { font-family: monospace; font-size: 10px; color: #4a5568; }
+  .topbar-acct { font-family: monospace; font-size: 10px; color: #4a5568; border: 1px solid #263040; padding: 3px 10px; border-radius: 3px; }
+
+  .sidebar {
+    position: fixed; top: 48px; left: 0; bottom: 0; width: 200px;
+    background: #0d1520; border-right: 1px solid #1e2d3d;
+    padding: 16px 10px; display: flex; flex-direction: column; gap: 2px; z-index: 90;
+  }
+  .nav-section { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.18em; color: #66FCF1; opacity: 0.4; padding: 10px 8px 4px; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 4px; font-family: monospace; font-size: 11px; color: #5a6a7a; cursor: pointer; }
+  .nav-item.done { color: #8B9BAB; }
+  .nav-item.done .check { color: #66FCF1; }
+  .nav-item.active { background: #1a2a3a; color: #66FCF1; border-left: 2px solid #66FCF1; }
+  .nav-item.next { color: #66FCF1; opacity: 0.7; }
+  .pill-now { background: #66FCF1; color: #061117; font-family: monospace; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 1px 6px; border-radius: 3px; margin-left: auto; }
+
+  .main { margin-left: 200px; margin-top: 48px; }
+
+  /* ── Collective Hero ── */
+  .collective-hero {
+    position: relative; overflow: hidden;
+    min-height: 520px;
+    display: flex; align-items: center;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background-image: url('http://localhost:3000/images/keon-orbit-2.jpg');
+    background-size: cover; background-position: center right;
+    opacity: 0.35;
+  }
+  .hero-bg-gradient {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, #070d14 40%, transparent 75%, #070d14 100%),
+                linear-gradient(180deg, #070d14 0%, transparent 10%, transparent 80%, #070d14 100%);
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    padding: 60px 48px;
+    max-width: 560px;
+  }
+  .hero-eyebrow { font-family: monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.22em; color: #66FCF1; opacity: 0.8; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: #66FCF1; box-shadow: 0 0 10px #66FCF1; display: inline-block; }
+  .hero-title { font-size: 52px; font-weight: 800; color: #ffffff; line-height: 1.0; letter-spacing: -0.02em; margin-bottom: 20px; }
+  .hero-title span { color: #66FCF1; text-shadow: 0 0 40px rgba(102,252,241,0.4); }
+  .hero-desc { font-size: 15px; color: #7ea8b8; line-height: 1.7; margin-bottom: 28px; max-width: 460px; }
+  .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+  .hero-tag { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; padding: 4px 10px; border-radius: 999px; background: rgba(102,252,241,0.08); color: #66FCF1; border: 1px solid rgba(102,252,241,0.2); }
+  .hero-cta { display: inline-flex; align-items: center; gap: 8px; background: #66FCF1; color: #061117; font-family: monospace; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; padding: 12px 24px; border-radius: 4px; border: none; cursor: pointer; }
+  .hero-cta-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #66FCF1; font-family: monospace; font-size: 11px; letter-spacing: 0.08em; padding: 12px 20px; border-radius: 4px; border: 1px solid rgba(102,252,241,0.3); cursor: pointer; margin-left: 12px; }
+
+  /* live deliberation strip */
+  .live-strip {
+    background: rgba(102,252,241,0.04); border-top: 1px solid rgba(102,252,241,0.1); border-bottom: 1px solid rgba(102,252,241,0.1);
+    padding: 12px 48px; display: flex; align-items: center; gap: 32px; overflow: hidden;
+  }
+  .live-indicator { display: flex; align-items: center; gap: 6px; font-family: monospace; font-size: 10px; color: #66FCF1; white-space: nowrap; }
+  .live-pulse { width: 7px; height: 7px; border-radius: 50%; background: #66FCF1; box-shadow: 0 0 8px #66FCF1; }
+  .live-item { font-family: monospace; font-size: 10px; color: #4a6a7a; white-space: nowrap; }
+  .live-item span { color: #8B9BAB; }
+
+  /* Phase lifecycle */
+  .phase-section { padding: 40px 48px; border-bottom: 1px solid #1a2530; }
+  .section-label { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em; color: #66FCF1; opacity: 0.5; margin-bottom: 20px; }
+  .phase-track { display: flex; gap: 0; position: relative; }
+  .phase-track::before { content: ''; position: absolute; top: 20px; left: 20px; right: 20px; height: 1px; background: linear-gradient(90deg, #66FCF1, rgba(102,252,241,0.1)); z-index: 0; }
+  .phase-node { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; z-index: 1; }
+  .phase-circle { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(102,252,241,0.3); display: flex; align-items: center; justify-content: center; font-family: monospace; font-size: 10px; color: #66FCF1; background: #070d14; }
+  .phase-circle.active { background: rgba(102,252,241,0.1); border-color: #66FCF1; box-shadow: 0 0 16px rgba(102,252,241,0.3); }
+  .phase-circle.done { background: rgba(102,252,241,0.08); border-color: rgba(102,252,241,0.4); }
+  .phase-name { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: #4a6a7a; text-align: center; }
+  .phase-name.active { color: #66FCF1; }
+
+  /* Branch diagram */
+  .branch-section { padding: 40px 48px; border-bottom: 1px solid #1a2530; }
+  .branch-row { display: flex; gap: 12px; margin-bottom: 10px; align-items: stretch; }
+  .branch-connector { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 24px; gap: 3px; }
+  .conn-line { flex: 1; width: 1px; background: rgba(102,252,241,0.15); }
+  .conn-dot { width: 5px; height: 5px; border-radius: 50%; border: 1px solid rgba(102,252,241,0.4); }
+  .branch-card { flex: 1; background: #0d1824; border: 1px solid #1e2d3d; border-radius: 6px; padding: 14px 16px; }
+  .branch-card.challenge { border-color: rgba(240,150,60,0.3); background: rgba(240,150,60,0.03); }
+  .branch-card.sealed { border-color: rgba(102,252,241,0.35); background: rgba(102,252,241,0.04); }
+  .branch-card.proposal { border-color: rgba(102,252,241,0.2); }
+  .bcard-label { font-family: monospace; font-size: 8px; text-transform: uppercase; letter-spacing: 0.14em; color: #4a6a7a; margin-bottom: 6px; }
+  .bcard-label.challenge-lbl { color: #f09640; }
+  .bcard-label.sealed-lbl { color: #66FCF1; }
+  .bcard-title { font-size: 12px; color: #C5C6C7; font-weight: 600; margin-bottom: 8px; }
+  .vote-bar { display: flex; gap: 2px; border-radius: 2px; overflow: hidden; height: 4px; }
+  .vote-yes { background: #66FCF1; }
+  .vote-no { background: #263040; }
+  .vote-challenge { background: #f09640; }
+  .vote-labels { display: flex; justify-content: space-between; margin-top: 4px; }
+  .vote-label { font-family: monospace; font-size: 8px; color: #4a6a7a; }
+
+  /* ── Cortex Section ── */
+  .cortex-section {
+    position: relative; overflow: hidden;
+    padding: 60px 48px;
+    border-bottom: 1px solid #1a2530;
+  }
+  .cortex-bg {
+    position: absolute; top: -60px; right: -100px;
+    width: 500px; height: 500px;
+    background-image: url('http://localhost:3000/images/keon-orbit.jpg');
+    background-size: contain; background-repeat: no-repeat; background-position: center;
+    opacity: 0.18;
+    pointer-events: none;
+  }
+  .cortex-content { position: relative; z-index: 2; max-width: 700px; }
+  .cortex-eyebrow { font-family: monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.22em; color: #66FCF1; opacity: 0.7; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .cortex-title { font-size: 40px; font-weight: 800; color: #fff; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 16px; }
+  .cortex-sub { font-size: 14px; color: #7ea8b8; line-height: 1.7; margin-bottom: 32px; max-width: 520px; }
+  .cortex-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cortex-card { background: #0d1824; border: 1px solid #1e2d3d; border-radius: 6px; padding: 16px 18px; }
+  .cortex-card-icon { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.14em; color: #66FCF1; opacity: 0.6; margin-bottom: 6px; }
+  .cortex-card-title { font-size: 13px; color: #E8EAED; font-weight: 700; margin-bottom: 6px; }
+  .cortex-card-body { font-size: 11px; color: #5a7a8a; line-height: 1.5; }
+
+  /* Badges strip */
+  .badges-section {
+    position: relative; overflow: hidden;
+    padding: 48px 48px 56px;
+    background: linear-gradient(180deg, #070d14, #040c12);
+  }
+  .badges-header { margin-bottom: 36px; }
+  .badges-title { font-size: 28px; font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 10px; }
+  .badges-sub { font-size: 13px; color: #7ea8b8; line-height: 1.6; max-width: 560px; }
+  .badges-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .badge-cell { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .badge-img { width: 100%; max-width: 180px; border-radius: 10px; }
+  .badge-label { font-family: monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.16em; color: #66FCF1; text-align: center; }
+  .badge-desc { font-size: 11px; color: #4a6a7a; text-align: center; line-height: 1.5; max-width: 160px; }
+
+  /* Stats bar */
+  .stats-bar { display: flex; gap: 0; border-top: 1px solid #1a2530; border-bottom: 1px solid #1a2530; }
+  .stat-cell { flex: 1; padding: 20px 24px; border-right: 1px solid #1a2530; }
+  .stat-cell:last-child { border-right: none; }
+  .stat-num { font-family: monospace; font-size: 28px; color: #66FCF1; font-weight: 700; line-height: 1; }
+  .stat-lbl { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.14em; color: #4a6a7a; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="topbar-logo">KEON CONTROL</div>
+  <div class="topbar-ws">Keon Internal Test Workspace &nbsp;/&nbsp; sandbox</div>
+  <div class="topbar-acct">Account ▾</div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="nav-section">Setup</div>
+  <div class="nav-item done"><span class="check">✓</span> Guardrails</div>
+  <div class="nav-item done"><span class="check">✓</span> Integrations</div>
+  <div class="nav-section">Operate</div>
+  <div class="nav-item done"><span class="check">✓</span> Receipts</div>
+  <div class="nav-item active">⊙ Collective</div>
+  <div class="nav-section">Platform</div>
+  <div class="nav-item next">⊙ Cortex</div>
+  <div class="nav-section">Advanced</div>
+  <div class="nav-item" style="opacity:0.35;">⊙ Diagnostics</div>
+</div>
+
+<!-- Main content -->
+<div class="main">
+
+  <!-- ═══ COLLECTIVE HERO ═══ -->
+  <div class="collective-hero">
+    <div class="hero-bg"></div>
+    <div class="hero-bg-gradient"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow"><span class="eyebrow-dot"></span> Keon Collective &nbsp;·&nbsp; Group Cognition Layer</div>
+      <h1 class="hero-title">Decisions that<br><span>transcend</span><br>the individual.</h1>
+      <p class="hero-desc">AI proposals don't just execute. They branch across multiple entities, face adversarial challenge, collect votes, and collapse into cryptographically-sealed outcomes — governed decisions no single system could reach alone.</p>
+      <div class="hero-tags">
+        <span class="hero-tag">Temporal branching</span>
+        <span class="hero-tag">Adversarial self-review</span>
+        <span class="hero-tag">Vote + collapse</span>
+        <span class="hero-tag">Cryptographic seal</span>
+        <span class="hero-tag">Append-only ledger</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:0;">
+        <button class="hero-cta">Activate Collective →</button>
+        <button class="hero-cta-secondary">View live runs</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live strip -->
+  <div class="live-strip">
+    <div class="live-indicator"><div class="live-pulse"></div> 3 active deliberations</div>
+    <div class="live-item">⊙ &nbsp;<span>Infra scaling proposal</span> — Branch phase &nbsp;·&nbsp; 3 branches open</div>
+    <div class="live-item">⊙ &nbsp;<span>Model v3.1 deployment</span> — Vote phase &nbsp;·&nbsp; 60% threshold</div>
+    <div class="live-item">⊙ &nbsp;<span>DB migration rollout</span> — Collapsed &nbsp;·&nbsp; receipt #C-4418</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-cell"><div class="stat-num">3</div><div class="stat-lbl">Active branches</div></div>
+    <div class="stat-cell"><div class="stat-num">12</div><div class="stat-lbl">Sealed decisions</div></div>
+    <div class="stat-cell"><div class="stat-num">100%</div><div class="stat-lbl">Governance coverage</div></div>
+    <div class="stat-cell"><div class="stat-num">0</div><div class="stat-lbl">Ungoverned actions</div></div>
+  </div>
+
+  <!-- Phase lifecycle -->
+  <div class="phase-section">
+    <div class="section-label">How Collective works — the deliberation lifecycle</div>
+    <div class="phase-track">
+      <div class="phase-node">
+        <div class="phase-circle done">01</div>
+        <div class="phase-name">Proposal</div>
+      </div>
+      <div class="phase-node">
+        <div class="phase-circle done">02</div>
+        <div class="phase-name">Branch</div>
+      </div>
+      <div class="phase-node">
+        <div class="phase-circle active">03</div>
+        <div class="phase-name active">Adversarial</div>
+      </div>
+      <div class="phase-node">
+        <div class="phase-circle">04</div>
+        <div class="phase-name">Vote</div>
+      </div>
+      <div class="phase-node">
+        <div class="phase-circle">05</div>
+        <div class="phase-name">Collapse</div>
+      </div>
+      <div class="phase-node">
+        <div class="phase-circle">06</div>
+        <div class="phase-name">Sealed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Branch diagram -->
+  <div class="branch-section">
+    <div class="section-label">Live deliberation — Deploy inference model v3.1 to production</div>
+    <div class="branch-row">
+      <div class="branch-card proposal" style="max-width:400px;">
+        <div class="bcard-label">Intent · Submitted 14m ago</div>
+        <div class="bcard-title">Deploy inference model v3.1 to production cluster</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:10px;">
+      <div style="width:4px;margin-left:24px;background:linear-gradient(180deg,rgba(102,252,241,0.3),rgba(102,252,241,0.05));border-radius:2px;"></div>
+      <div style="flex:1;display:flex;gap:12px;">
+        <div class="branch-card" style="flex:1;">
+          <div class="bcard-label">Branch A · Proceed</div>
+          <div class="bcard-title">Drift within acceptable tolerance. Deploy now.</div>
+          <div class="vote-bar" style="margin-top:8px;"><div class="vote-yes" style="width:65%;"></div><div class="vote-no" style="width:35%;"></div></div>
+          <div class="vote-labels"><span class="vote-label" style="color:#66FCF1;">65% for</span><span class="vote-label">35% against</span></div>
+        </div>
+        <div class="branch-card challenge">
+          <div class="bcard-label challenge-lbl">Branch B · Adversarial challenge</div>
+          <div class="bcard-title">p99 latency spike detected in staging. Defer pending investigation.</div>
+          <div class="vote-bar" style="margin-top:8px;"><div class="vote-challenge" style="width:40%;"></div><div class="vote-no" style="width:60%;"></div></div>
+          <div class="vote-labels"><span class="vote-label" style="color:#f09640;">40% challenge</span><span class="vote-label">60% override</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="branch-card sealed" style="max-width:600px;">
+      <div class="bcard-label sealed-lbl">Collapsed · Sealed · Receipt #C-4421</div>
+      <div class="bcard-title">✓ Proceed with latency alert bound attached — monitoring threshold set to p99 &lt; 180ms</div>
+    </div>
+  </div>
+
+  <!-- ═══ CORTEX SECTION ═══ -->
+  <div class="cortex-section">
+    <div class="cortex-bg"></div>
+    <div class="cortex-content">
+      <div class="cortex-eyebrow"><span class="eyebrow-dot"></span> Keon Cortex &nbsp;·&nbsp; Deterministic Memory Substrate</div>
+      <h2 class="cortex-title">Vector databases<br>are not memory.</h2>
+      <p class="cortex-sub">Cortex is a deterministic, outbox-driven memory engine built for autonomous multi-tenant AI systems. Every shard has a canonical SHA-256 identity. Ingestion is idempotent. Tenant isolation is fail-closed — no cross-tenant fallbacks, ever. The vector index is derivative, never primary.</p>
+      <div class="cortex-grid">
+        <div class="cortex-card">
+          <div class="cortex-card-icon">Invariant I1</div>
+          <div class="cortex-card-title">Deterministic Shard Identity</div>
+          <div class="cortex-card-body">Same inputs always produce the same shard ID. No randomness. No timestamps. Memory is canonical.</div>
+        </div>
+        <div class="cortex-card">
+          <div class="cortex-card-icon">Invariant I2</div>
+          <div class="cortex-card-title">Fail-Closed Tenancy</div>
+          <div class="cortex-card-body">Missing, empty, or mismatched tenant IDs raise immediately. No silent pass-through. No cross-tenant bleed.</div>
+        </div>
+        <div class="cortex-card">
+          <div class="cortex-card-icon">Invariant I3</div>
+          <div class="cortex-card-title">Idempotent Ingestion</div>
+          <div class="cortex-card-body">The same event cannot create duplicate shards. Outbox-driven processing guarantees no lost writes, no phantom duplicates.</div>
+        </div>
+        <div class="cortex-card">
+          <div class="cortex-card-icon">Invariant I4</div>
+          <div class="cortex-card-title">Replayable Processing</div>
+          <div class="cortex-card-body">Exclusive leases. Atomic processing. Expired leases recover automatically. The system heals itself.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Badges strip -->
+  <div class="badges-section">
+    <div class="badges-header">
+      <div class="section-label" style="margin-bottom:12px;">The four properties of governed execution</div>
+      <div class="badges-title">Every action. Every property. Enforced.</div>
+      <p class="badges-sub">Policy-bound. Receipt-verified. Append-only. Fail-closed. These aren't aspirations — they're architectural invariants. Violations are bugs. There are no exceptions.</p>
+    </div>
+    <div class="badges-grid">
+      <div class="badge-cell">
+        <img class="badge-img" src="http://localhost:3000/images/badge-policy-bound.png" alt="Policy-bound" />
+        <div class="badge-label">Policy-bound</div>
+        <div class="badge-desc">Every action is evaluated against policy before it executes. No exceptions.</div>
+      </div>
+      <div class="badge-cell">
+        <img class="badge-img" src="http://localhost:3000/images/badge-receipt-verified.png" alt="Receipt-verified" />
+        <div class="badge-label">Receipt-verified</div>
+        <div class="badge-desc">Every decision is cryptographically signed and cannot be altered after issuance.</div>
+      </div>
+      <div class="badge-cell">
+        <img class="badge-img" src="http://localhost:3000/images/badge-append-only.png" alt="Append-only" />
+        <div class="badge-label">Append-only</div>
+        <div class="badge-desc">The ledger is immutable. Events are sequenced and sealed against reordering or deletion.</div>
+      </div>
+      <div class="badge-cell">
+        <img class="badge-img" src="http://localhost:3000/images/badge-fail-closed.png" alt="Fail-closed" />
+        <div class="badge-label">Fail-closed</div>
+        <div class="badge-desc">On error or ambiguity, Keon denies — not permits. Safety is the default state.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

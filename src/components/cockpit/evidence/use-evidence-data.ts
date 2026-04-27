@@ -12,7 +12,7 @@
 import { fetchEvidenceForSelection } from "@/lib/cockpit/adapters/evidence.adapter";
 import type { TrustSummary } from "@/lib/cockpit/types";
 import { useFocusSelection } from "@/lib/cockpit/use-focus";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 // ============================================================
 // DATA SHAPES (unchanged — this IS the contract)
@@ -61,10 +61,13 @@ export function useEvidenceData(): EvidenceData | null {
   const { selection, selectionEpoch, isSelectionActive } = useFocusSelection();
   const [data, setData] = useState<EvidenceData | null>(null);
   const fetchEpochRef = useRef<number>(0);
+  const [, startTransition] = useTransition();
 
   useEffect(() => {
     if (!isSelectionActive || !selection) {
-      setData(null);
+      startTransition(() => {
+        setData(null);
+      });
       return;
     }
 
@@ -73,7 +76,9 @@ export function useEvidenceData(): EvidenceData | null {
     fetchEpochRef.current = currentEpoch;
 
     // Enter loading state immediately — never show stale data
-    setData({ isLoading: true, dataEpoch: currentEpoch, trust: { level: "unverifiable", present: { decisionReceipt: false, outcomeReceipt: false, evidencePack: false, sealVerified: false, signaturesValid: false }, missing: [] }, receipts: [], evidencePack: null, causalLineage: { parentId: null, childCount: 0, correlationId: null } });
+    startTransition(() => {
+      setData({ isLoading: true, dataEpoch: currentEpoch, trust: { level: "unverifiable", present: { decisionReceipt: false, outcomeReceipt: false, evidencePack: false, sealVerified: false, signaturesValid: false }, missing: [] }, receipts: [], evidencePack: null, causalLineage: { parentId: null, childCount: 0, correlationId: null } });
+    });
 
     // Real async fetch via evidence adapter
     let cancelled = false;
@@ -81,11 +86,13 @@ export function useEvidenceData(): EvidenceData | null {
       const evidence = await fetchEvidenceForSelection(selection);
       // Epoch guard: discard if selection changed during fetch
       if (cancelled || fetchEpochRef.current !== currentEpoch) return;
-      setData({ ...evidence, isLoading: false, dataEpoch: currentEpoch });
+      startTransition(() => {
+        setData({ ...evidence, isLoading: false, dataEpoch: currentEpoch });
+      });
     })();
 
     return () => { cancelled = true; };
-  }, [selection, selectionEpoch, isSelectionActive]);
+  }, [selection, selectionEpoch, isSelectionActive, startTransition]);
 
   return data;
 }

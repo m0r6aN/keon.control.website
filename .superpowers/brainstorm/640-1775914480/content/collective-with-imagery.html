@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collective + Cortex — Visual Design</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #070d14; color: #C5C6C7; font-family: 'Rajdhani', 'Inter', system-ui, sans-serif; min-height: 100vh; }
+
+  /* ── Shell chrome ── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(15,22,33,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid #263040;
+    height: 48px; display: flex; align-items: center; padding: 0 20px;
+    justify-content: space-between;
+  }
+  .topbar-logo { display: flex; align-items: center; gap: 10px; }
+  .topbar-logo img { height: 28px; width: auto; object-fit: contain; }
+  .topbar-logo-divider { width: 1px; height: 16px; background: #263040; }
+  .topbar-logo-sub { font-family: monospace; font-size: 10px; font-weight: 600; color: #66FCF1; letter-spacing: 0.18em; text-transform: uppercase; }
+  .topbar-ws { font-family: monospace; font-size: 10px; color: #4a5568; }
+  .topbar-acct { font-family: monospace; font-size: 10px; color: #4a5568; border: 1px solid #263040; padding: 3px 10px; border-radius: 3px; }
+
+  .sidebar {
+    position: fixed; top: 48px; left: 0; bottom: 0; width: 200px;
+    background: #0d1520; border-right: 1px solid #1e2d3d;
+    padding: 16px 10px; display: flex; flex-direction: column; gap: 2px; z-index: 90;
+  }
+  .nav-section { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.18em; color: #66FCF1; opacity: 0.4; padding: 10px 8px 4px; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 4px; font-family: monospace; font-size: 11px; color: #5a6a7a; cursor: pointer; }
+  .nav-item.done { color: #8B9BAB; }
+  .nav-item.done .check { color: #66FCF1; }
+  .nav-item.active { background: #1a2a3a; color: #66FCF1; border-left: 2px solid #66FCF1; }
+  .nav-item.next { color: #66FCF1; opacity: 0.7; }
+  .pill-now { background: #66FCF1; color: #061117; font-family: monospace; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 1px 6px; border-radius: 3px; margin-left: auto; }
+
+  .main { margin-left: 200px; margin-top: 48px; }
+
+  /* ── Collective Hero ── */
+  .collective-hero {
+    position: relative; overflow: hidden;
+    min-height: 520px;
+    display: flex; align-items: center;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background-image: url('./keon-orbit-2.jpg');
+    background-size: cover; background-position: center right;
+    opacity: 0.35;
+  }
+  .hero-bg-gradient {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, #070d14 40%, transparent 75%, #070d14 100%),
+                linear-gradient(180deg, #070d14 0%, transparent 10%, transparent 80%, #070d14 100%);
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    padding: 60px 48px;
+    max-width: 560px;
+  }
+  .hero-eyebrow { font-family: monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.22em; color: #66FCF1; opacity: 0.8; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: #66FCF1; box-shadow: 0 0 10px #66FCF1; display: inline-block; }
+  .hero-title { font-size: 52px; font-weight: 800; color: #ffffff; line-height: 1.0; letter-spacing: -0.02em; margin-bottom: 20px; }
+  .hero-title span { color: #66FCF1; text-shadow: 0 0 40px rgba(102,252,241,0.4); }
+  .hero-desc { font-size: 15px; color: #7ea8b8; line-height: 1.7; margin-bottom: 28px; max-width: 460px; }
+  .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+  .hero-tag { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; padding: 4px 10px; border-radius: 999px; background: rgba(102,252,241,0.08); color: #66FCF1; border: 1px solid rgba(102,252,241,0.2); }
+  .hero-cta { display: inline-flex; align-items: center; gap: 8px; background: #66FCF1; color: #061117; font-family: monospace; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; padding: 12px 24px; border-radius: 4px; border: none; cursor: pointer; }
+  .hero-cta-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #66FCF1; font-family: monospace; font-size: 11px; letter-spacing: 0.08em; padding: 12px 20px; border-radius: 4px; border: 1px solid rgba(102,252,241,0.3); cursor: pointer; margin-left: 12px; }
+
+  /* live deliberation strip */
+  .live-strip {
+    background: rgba(102,252,241,0.04); border-top: 1px solid rgba(102,252,241,0.1); border-bottom: 1px solid rgba(102,252,241,0.1);
+    padding: 12px 48px; display: flex; align-items: center; gap: 32px; overflow: hidden;
+  }
+  .live-indicator { display: flex; align-items: center; gap: 6px; font-family: monospace; font-size: 10px; color: #66FCF1; white-space: nowrap; }
+  .live-pulse { width: 7px; height: 7px; border-radius: 50%; background: #66FCF1; box-shadow: 0 0 8px #66FCF1; }
+  .live-item { font-family: monospace; font-size: 10px; color: #4a6a7a; white-space: nowrap; }
+  .live-item span { color: #8B9BAB; }
+
+  /* Phase lifecycle */
+  .phase-section { padding: 40px 48px; border-bottom: 1px solid #1a2530; }
+  .section-label { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em; color: #66FCF1; opacity: 0.5; margin-bottom: 20px; }
+  .phase-track { display: flex; gap: 0; position: relative; }
+  .phase-track::before { content: ''; position: absolute; top: 20px; left: 20px; right: 20px; height: 1px; background: linear-gradient(90deg, #66FCF1, rgba(102,252,241,0.1)); z-index: 0; }
+  .phase-node { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; z-index: 1; }
+  .phase-circle { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(102,252,241,0.3); display: flex; align-items: center; justify-content: center; font-family: monospace; font-size: 10px; color: #66FCF1; background: #070d14; }
+  .phase-circle.active { background: rgba(102,252,241,0.1); border-color: #66FCF1; box-shadow: 0 0 16px rgba(102,252,241,0.3); }
+  .phase-circle.done { background: rgba(102,252,241,0.08); border-color: rgba(102,252,241,0.4); }
+  .phase-name { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: #4a6a7a; text-align: center; }
+  .phase-name.active { color: #66FCF1; }
+
+  /* Branch flow diagram */
+  .branch-section { padding: 40px 48px 48px; border-bottom: 1px solid #1a2530; }
+  .flow-container { display: flex; flex-direction: column; align-items: center; width: 100%; }
+  .flow-tier-branches { display: flex; gap: 14px; width: 100%; }
+  .flow-svg { width: 100%; display: block; flex-shrink: 0; }
+  .flow-proposal-card {
+    background: rgba(102,252,241,0.04); border: 1px solid rgba(102,252,241,0.3);
+    border-radius: 8px; padding: 16px 24px; max-width: 460px; width: 100%;
+  }
+  .flow-proposal-eyebrow { font-family: monospace; font-size: 8px; text-transform: uppercase; letter-spacing: 0.18em; color: #66FCF1; opacity: 0.6; margin-bottom: 6px; }
+  .flow-proposal-title { font-size: 13px; color: #E8EAED; font-weight: 700; }
+  .branch-card { flex: 1; background: #0d1824; border: 1px solid #1e2d3d; border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+  .branch-card.challenge { border-color: rgba(240,150,60,0.35); background: rgba(20,10,0,0.6); }
+  .branch-card.winner { border-color: rgba(102,252,241,0.4); background: rgba(102,252,241,0.03); box-shadow: 0 0 20px rgba(102,252,241,0.06); }
+  .branch-card.sealed { border-color: rgba(102,252,241,0.45); background: rgba(102,252,241,0.05); box-shadow: 0 0 28px rgba(102,252,241,0.1); max-width: 520px; width: 100%; }
+  .bcard-label { font-family: monospace; font-size: 8px; text-transform: uppercase; letter-spacing: 0.14em; color: #4a6a7a; }
+  .bcard-label.challenge-lbl { color: #f09640; }
+  .bcard-label.sealed-lbl { color: #66FCF1; }
+  .bcard-label.winner-lbl { color: #66FCF1; opacity: 0.8; }
+  .bcard-title { font-size: 11px; color: #C5C6C7; font-weight: 600; line-height: 1.4; }
+  .bcard-title.winner-title { color: #E8EAED; }
+  .vote-bar { display: flex; gap: 2px; border-radius: 2px; overflow: hidden; height: 4px; }
+  .vote-yes { background: #66FCF1; }
+  .vote-no { background: #1e2d3d; }
+  .vote-challenge { background: #f09640; }
+  .vote-labels { display: flex; justify-content: space-between; }
+  .vote-label { font-family: monospace; font-size: 8px; color: #4a6a7a; }
+  .sealed-check { font-size: 14px; color: #66FCF1; margin-right: 6px; }
+  @keyframes seal-pulse { 0%,100% { box-shadow: 0 0 28px rgba(102,252,241,0.1); } 50% { box-shadow: 0 0 40px rgba(102,252,241,0.18); } }
+  .branch-card.sealed { animation: seal-pulse 3s ease-in-out infinite; }
+
+  /* ── Cortex Section ── */
+  .cortex-section {
+    position: relative; overflow: hidden;
+    padding: 60px 48px 0;
+    border-bottom: 1px solid #1a2530;
+    background: linear-gradient(180deg, #070d14 0%, #04111a 100%);
+  }
+  .cortex-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  .cortex-eyebrow { font-family: monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.22em; color: #66FCF1; opacity: 0.7; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .cortex-title { font-size: 40px; font-weight: 800; color: #fff; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 16px; }
+  .cortex-sub { font-size: 13px; color: #7ea8b8; line-height: 1.7; margin-bottom: 24px; }
+  .cortex-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .cortex-foot { font-family: monospace; font-size: 11px; color: #66FCF1; opacity: 0.5; line-height: 1.6; margin-bottom: 48px; padding-left: 2px; border-left: 2px solid rgba(102,252,241,0.2); padding-left: 12px; }
+  .cortex-card { background: #0d1824; border: 1px solid #1e2d3d; border-radius: 6px; padding: 14px 16px; }
+  .cortex-card-icon { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.14em; color: #66FCF1; opacity: 0.6; margin-bottom: 5px; }
+  .cortex-card-title { font-size: 12px; color: #E8EAED; font-weight: 700; margin-bottom: 5px; }
+  .cortex-card-body { font-size: 11px; color: #5a7a8a; line-height: 1.5; }
+
+  /* ── Spine animation ── */
+  .spine-panel {
+    position: relative;
+    display: flex; flex-direction: column; align-items: center;
+    padding-bottom: 0;
+  }
+  .spine-label { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.18em; color: #66FCF1; opacity: 0.5; margin-bottom: 20px; align-self: flex-start; }
+  .spine-container {
+    position: relative; width: 100%;
+    display: flex; flex-direction: column; gap: 0;
+    padding-bottom: 0;
+  }
+  /* The vertical line (spine) */
+  .spine-track {
+    position: absolute; left: 50%; top: 0; bottom: 0;
+    width: 2px; transform: translateX(-50%);
+    background: linear-gradient(180deg, rgba(102,252,241,0.05) 0%, rgba(102,252,241,0.2) 50%, rgba(102,252,241,0.05) 100%);
+  }
+  /* Animated pulse travelling down the spine */
+  .spine-pulse {
+    position: absolute; left: 50%; width: 2px; height: 60px;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, transparent, #66FCF1, transparent);
+    animation: spine-flow 3s ease-in-out infinite;
+    border-radius: 1px;
+  }
+  @keyframes spine-flow {
+    0%   { top: -60px; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+  /* Each shard node */
+  .shard {
+    position: relative; display: flex; align-items: center; gap: 0;
+    padding: 12px 0;
+    cursor: default;
+  }
+  .shard:nth-child(odd)  { flex-direction: row; }
+  .shard:nth-child(even) { flex-direction: row-reverse; }
+  /* connector arm from spine to card */
+  .shard-arm {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, rgba(102,252,241,0.08), rgba(102,252,241,0.25));
+    position: relative; top: 0;
+    transition: background 0.3s;
+  }
+  .shard:nth-child(even) .shard-arm {
+    background: linear-gradient(270deg, rgba(102,252,241,0.08), rgba(102,252,241,0.25));
+  }
+  /* spine node dot */
+  .shard-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 1.5px solid rgba(102,252,241,0.4);
+    background: #070d14; flex-shrink: 0; z-index: 2;
+    transition: all 0.3s;
+    box-shadow: 0 0 0 0 rgba(102,252,241,0);
+  }
+  .shard:hover .shard-dot {
+    border-color: #66FCF1;
+    background: rgba(102,252,241,0.15);
+    box-shadow: 0 0 12px rgba(102,252,241,0.5);
+  }
+  .shard:hover .shard-arm { background: linear-gradient(90deg, rgba(102,252,241,0.2), rgba(102,252,241,0.6)); }
+  .shard:nth-child(even):hover .shard-arm { background: linear-gradient(270deg, rgba(102,252,241,0.2), rgba(102,252,241,0.6)); }
+  /* shard card */
+  .shard-card {
+    background: #0a1820; border: 1px solid #1a2d3d;
+    border-radius: 6px; padding: 10px 14px;
+    width: 42%; flex-shrink: 0;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .shard:hover .shard-card {
+    border-color: rgba(102,252,241,0.35);
+    box-shadow: 0 0 20px rgba(102,252,241,0.08);
+  }
+  .shard-hash {
+    font-family: monospace; font-size: 9px; color: #66FCF1; opacity: 0.5;
+    margin-bottom: 4px; letter-spacing: 0.04em;
+    transition: opacity 0.3s;
+  }
+  .shard:hover .shard-hash { opacity: 1; }
+  .shard-content-label { font-family: monospace; font-size: 8px; text-transform: uppercase; letter-spacing: 0.12em; color: #4a6a7a; margin-bottom: 3px; }
+  .shard-content-val { font-size: 11px; color: #C5C6C7; line-height: 1.4; }
+  .shard-meta { margin-top: 5px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .shard-tenant { font-family: monospace; font-size: 8px; background: rgba(102,252,241,0.06); color: #66FCF1; border: 1px solid rgba(102,252,241,0.15); padding: 1px 5px; border-radius: 2px; }
+  .shard-seq { font-family: monospace; font-size: 8px; color: #2a4a5a; }
+  .shard-decay { font-family: monospace; font-size: 8px; color: #f09640; opacity: 0.7; }
+  .shard-state { font-family: monospace; font-size: 8px; color: #4a8a6a; }
+  /* incoming animation: new shard materialises */
+  @keyframes shard-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .shard { animation: shard-in 0.5s ease forwards; }
+  .shard:nth-child(1) { animation-delay: 0.0s; }
+  .shard:nth-child(2) { animation-delay: 0.15s; }
+  .shard:nth-child(3) { animation-delay: 0.30s; }
+  .shard:nth-child(4) { animation-delay: 0.45s; }
+  .shard:nth-child(5) { animation-delay: 0.60s; }
+
+  /* new shard appearing live */
+  .shard-new .shard-card {
+    border-color: rgba(102,252,241,0.5);
+    box-shadow: 0 0 24px rgba(102,252,241,0.12);
+    animation: shard-in 0.5s ease forwards 0.75s;
+    opacity: 0;
+  }
+  .shard-new .shard-hash { opacity: 1; color: #66FCF1; }
+  .shard-new .shard-dot {
+    border-color: #66FCF1; background: rgba(102,252,241,0.2);
+    box-shadow: 0 0 14px rgba(102,252,241,0.6);
+    animation: dot-pulse 1.5s ease-in-out infinite 0.75s;
+  }
+  @keyframes dot-pulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(102,252,241,0.4); }
+    50%       { box-shadow: 0 0 20px rgba(102,252,241,0.8); }
+  }
+  .new-badge {
+    font-family: monospace; font-size: 8px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    background: #66FCF1; color: #061117;
+    padding: 1px 5px; border-radius: 2px; margin-left: 6px;
+  }
+  /* Spine-specific labels */
+  .shard-type {
+    font-family: monospace; font-size: 9px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: #66FCF1; opacity: 0.9; margin-bottom: 3px;
+  }
+  .shard-type.trigger  { color: #7eb8ff; }
+  .shard-type.intent   { color: #a0cfff; }
+  .shard-type.decision { color: #66FCF1; }
+  .shard-type.action   { color: #f0c060; }
+  .shard-type.outcome  { color: #66FCF1; }
+  .shard-lineage { font-family: monospace; font-size: 8px; color: #2a4a5a; margin-top: 2px; }
+  .shard-lineage span { color: #4a7a8a; }
+  .gov-badge {
+    display: inline-block; font-family: monospace; font-size: 8px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 2px 6px; border-radius: 3px; margin-top: 4px;
+  }
+  .gov-approve { background: rgba(102,252,241,0.12); color: #66FCF1; border: 1px solid rgba(102,252,241,0.3); }
+  .gov-block   { background: rgba(220,60,60,0.1); color: #ff6b6b; border: 1px solid rgba(220,60,60,0.3); }
+  .effect-boundary {
+    font-family: monospace; font-size: 8px; color: #f0c060; opacity: 0.8;
+    border: 1px solid rgba(240,192,96,0.2); padding: 1px 5px; border-radius: 2px; margin-top: 2px; display: inline-block;
+  }
+  .hash-formula { font-family: monospace; font-size: 8px; color: #4a7a8a; margin-top: 3px; line-height: 1.5; }
+  .hash-formula .hl { color: #66FCF1; opacity: 0.7; }
+
+  /* ── Contrast strip ── */
+  .contrast-strip {
+    background: #04080f;
+    border-top: 1px solid #1a2530;
+    border-bottom: 1px solid #1a2530;
+    padding: 48px 48px 52px;
+  }
+  .contrast-eyebrow {
+    font-family: monospace; font-size: 9px; text-transform: uppercase;
+    letter-spacing: 0.22em; color: #ff6b6b; opacity: 0.8; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .contrast-eyebrow::before { content: ''; display: block; width: 24px; height: 1px; background: #ff6b6b; opacity: 0.5; }
+  .contrast-title {
+    font-size: 32px; font-weight: 800; color: #fff; line-height: 1.1;
+    letter-spacing: -0.02em; margin-bottom: 36px; max-width: 640px;
+  }
+  .contrast-title em { color: #ff6b6b; font-style: normal; }
+  .contrast-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .contrast-card {
+    background: #080d14; border: 1px solid #1e1a1a;
+    border-radius: 8px; padding: 20px 22px;
+    position: relative; overflow: hidden;
+  }
+  .contrast-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, #ff6b6b, transparent);
+  }
+  .contrast-card-label {
+    font-family: monospace; font-size: 8px; text-transform: uppercase;
+    letter-spacing: 0.16em; color: #ff6b6b; opacity: 0.7; margin-bottom: 10px;
+  }
+  .contrast-code {
+    font-family: monospace; font-size: 11px; color: #ff9090;
+    background: rgba(255,80,80,0.06); border: 1px solid rgba(255,80,80,0.15);
+    border-radius: 4px; padding: 6px 10px; margin-bottom: 10px;
+    line-height: 1.6; display: block;
+  }
+  .contrast-code .dim { color: #4a3a3a; }
+  .contrast-body { font-size: 12px; color: #5a4a4a; line-height: 1.6; }
+  .contrast-body strong { color: #8a6060; }
+  .contrast-arrow {
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    margin: 36px 0 0; font-family: monospace; font-size: 11px;
+    color: #2a4a4a;
+  }
+  .contrast-arrow .arrow-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #1e3a3a, transparent); }
+  .contrast-arrow .arrow-label { color: #66FCF1; opacity: 0.6; letter-spacing: 0.12em; text-transform: uppercase; font-size: 9px; }
+
+  /* Badges strip */
+  .badges-section {
+    position: relative; overflow: hidden;
+    padding: 48px 48px 56px;
+    background: linear-gradient(180deg, #070d14, #040c12);
+  }
+  .badges-header { margin-bottom: 36px; }
+  .badges-title { font-size: 28px; font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 10px; }
+  .badges-sub { font-size: 13px; color: #7ea8b8; line-height: 1.6; max-width: 560px; }
+  .badges-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .badge-cell { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .badge-img { width: 100%; max-width: 180px; border-radius: 10px; }
+  .badge-label { font-family: monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.16em; color: #66FCF1; text-align: center; }
+  .badge-desc { font-size: 11px; color: #4a6a7a; text-align: center; line-height: 1.5; max-width: 160px; }
+
+  /* Stats bar */
+  .stats-bar { display: flex; gap: 0; border-top: 1px solid #1a2530; border-bottom: 1px solid #1a2530; }
+  .stat-cell { flex: 1; padding: 20px 24px; border-right: 1px solid #1a2530; }
+  .stat-cell:last-child { border-right: none; }
+  .stat-num { font-family: monospace; font-size: 28px; color: #66FCF1; font-weight: 700; line-height: 1; }
+  .stat-lbl { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.14em; color: #4a6a7a; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <img src="./keon-logo-wide.jpg" alt="Keon Systems" />
+    <div class="topbar-logo-divider"></div>
+    <span class="topbar-logo-sub">Control</span>
+  </div>
+
+  <div class="topbar-ws">Keon Internal Test Workspace &nbsp;/&nbsp; sandbox</div>
+  <div class="topbar-acct">Account ▾</div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="nav-section">Setup</div>
+  <div class="nav-item done"><span class="check">✓</span> Guardrails</div>
+  <div class="nav-item done"><span class="check">✓</span> Integrations</div>
+  <div class="nav-section">Operate</div>
+  <div class="nav-item done"><span class="check">✓</span> Receipts</div>
+  <div class="nav-item active" onclick="document.querySelector('.collective-hero').scrollIntoView({behavior:'smooth'})" style="cursor:pointer;">⊙ Collective</div>
+  <div class="nav-section">Platform</div>
+  <div class="nav-item next" onclick="document.getElementById('cortex-section').scrollIntoView({behavior:'smooth'})" style="cursor:pointer;">⊙ Cortex</div>
+  <div class="nav-section">Advanced</div>
+  <div class="nav-item" style="opacity:0.35;">⊙ Diagnostics</div>
+</div>
+
+<!-- Main content -->
+<div class="main">
+
+  <!-- ═══ COLLECTIVE HERO ═══ -->
+  <div class="collective-hero">
+    <div class="hero-bg"></div>
+    <div class="hero-bg-gradient"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow"><span class="eyebrow-dot"></span> Keon Collective &nbsp;·&nbsp; Group Cognition Layer</div>
+      <h1 class="hero-title">Decisions that<br><span>transcend</span><br>the individual.</h1>
+      <p class="hero-desc">AI proposals don't just execute. They branch across multiple entities, face adversarial challenge, collect votes, and collapse into cryptographically-sealed outcomes — governed decisions no single system could reach alone.</p>
+      <div class="hero-tags">
+        <span class="hero-tag">Temporal branching</span>
+        <span class="hero-tag">Adversarial self-review</span>
+        <span class="hero-tag">Vote + collapse</span>
+        <span class="hero-tag">Cryptographic seal</span>
+        <span class="hero-tag">Append-only ledger</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:0;">
+        <button class="hero-cta">Activate Collective →</button>
+        <button class="hero-cta-secondary">View live runs</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live strip -->
+  <div class="live-strip">
+    <div class="live-indicator"><div class="live-pulse"></div> 3 active deliberations</div>
+    <div class="live-item">⊙ &nbsp;<span>Infra scaling proposal</span> — Branch phase &nbsp;·&nbsp; 3 branches open</div>
+    <div class="live-item">⊙ &nbsp;<span>Model v3.1 deployment</span> — Vote phase &nbsp;·&nbsp; 60% threshold</div>
+    <div class="live-item">⊙ &nbsp;<span>DB migration rollout</span> — Collapsed &nbsp;·&nbsp; receipt #C-4418</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-cell"><div class="stat-num">3</div><div class="stat-lbl">Active branches</div></div>
+    <div class="stat-cell"><div class="stat-num">12</div><div class="stat-lbl">Sealed decisions</div></div>
+    <div class="stat-cell"><div class="stat-num">100%</div><div class="stat-lbl">Governance coverage</div></div>
+    <div class="stat-cell"><div class="stat-num">0</div><div class="stat-lbl">Ungoverned actions</div></div>
+  </div>
+
+  <!-- Phase lifecycle -->
+  <div class="phase-section">
+    <div class="section-label">How Collective works — the deliberation lifecycle</div>
+    <div class="phase-track">
+      <div class="phase-node">
+        <div class="phase-circle done">01</div>
+        <div class="phase-name">Proposal</div>
+      </div>
+      <div class="phase-node">
+        <div class="phase-circle done">02</div>
+        <div class="phase-name">Branch</div>
+      </div>
+      <div class="phase-node">
+        <div class="phase-circle active">03</div>
+        <div class="phase-name active">Adversarial</div>
+      </div>
+      <div class="phase-node">
+        <div class="phase-circle">04</div>
+        <div class="phase-name">Vote</div>
+      </div>
+      <div class="phase-node">
+        <div class="phase-circle">05</div>
+        <div class="phase-name">Collapse</div>
+      </div>
+      <div class="phase-node">
+        <div class="phase-circle">06</div>
+        <div class="phase-name">Sealed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Branch flow diagram -->
+  <div class="branch-section">
+    <div class="section-label" style="text-align:center; margin-bottom:28px;">Live deliberation — Deploy inference model v3.1 to production</div>
+
+    <div class="flow-container">
+
+      <!-- Origin: single proposal, centered -->
+      <div class="flow-tier" style="display:flex;justify-content:center;width:100%;">
+        <div class="flow-proposal-card">
+          <div class="flow-proposal-eyebrow">Intent · Submitted 14m ago</div>
+          <div class="flow-proposal-title">Deploy inference model v3.1 to production cluster</div>
+        </div>
+      </div>
+
+      <!-- Branching lines: trunk fans out to 3 branches -->
+      <svg class="flow-svg" viewBox="0 0 900 64" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="height:64px;">
+        <!-- trunk dot -->
+        <circle cx="450" cy="0" r="4" fill="none" stroke="rgba(102,252,241,0.5)" stroke-width="1.5"/>
+        <!-- left branch -->
+        <path d="M 450 4 C 450 32, 148 32, 148 64" stroke="rgba(102,252,241,0.2)" stroke-width="1.5" fill="none" stroke-dasharray="none"/>
+        <!-- center branch -->
+        <path d="M 450 4 L 450 64" stroke="rgba(240,150,60,0.3)" stroke-width="1.5" fill="none"/>
+        <!-- right branch -->
+        <path d="M 450 4 C 450 32, 752 32, 752 64" stroke="rgba(102,252,241,0.25)" stroke-width="1.5" fill="none"/>
+        <!-- branch tip dots -->
+        <circle cx="148" cy="64" r="3.5" fill="none" stroke="rgba(102,252,241,0.35)" stroke-width="1.5"/>
+        <circle cx="450" cy="64" r="3.5" fill="none" stroke="rgba(240,150,60,0.4)" stroke-width="1.5"/>
+        <circle cx="752" cy="64" r="3.5" fill="none" stroke="rgba(102,252,241,0.35)" stroke-width="1.5"/>
+      </svg>
+
+      <!-- Three temporal branches -->
+      <div class="flow-tier-branches">
+
+        <!-- Branch A: proceed -->
+        <div class="branch-card">
+          <div class="bcard-label">Branch A · Proceed</div>
+          <div class="bcard-title">Drift within acceptable tolerance. Deploy immediately.</div>
+          <div class="vote-bar"><div class="vote-yes" style="width:62%;"></div><div class="vote-no" style="width:38%;"></div></div>
+          <div class="vote-labels"><span class="vote-label" style="color:#66FCF1;">62% proceed</span><span class="vote-label">38% hold</span></div>
+        </div>
+
+        <!-- Branch B: adversarial challenge (center, orange) -->
+        <div class="branch-card challenge">
+          <div class="bcard-label challenge-lbl">Branch B · Adversarial challenge</div>
+          <div class="bcard-title">p99 latency spike in staging. Risk score 0.74 — defer pending investigation.</div>
+          <div class="vote-bar"><div class="vote-challenge" style="width:44%;"></div><div class="vote-no" style="width:56%;"></div></div>
+          <div class="vote-labels"><span class="vote-label" style="color:#f09640;">44% challenge</span><span class="vote-label">56% override</span></div>
+        </div>
+
+        <!-- Branch C: synthesized winner -->
+        <div class="branch-card winner">
+          <div class="bcard-label winner-lbl">Branch C · Synthesized</div>
+          <div class="bcard-title bcard-title winner-title">Proceed — bind p99 &lt; 180ms monitoring alert as execution condition.</div>
+          <div class="vote-bar"><div class="vote-yes" style="width:81%;"></div><div class="vote-no" style="width:19%;"></div></div>
+          <div class="vote-labels"><span class="vote-label" style="color:#66FCF1;">81% proceed</span><span class="vote-label">19% hold</span></div>
+        </div>
+
+      </div>
+
+      <!-- Converging lines: 3 branches collapse to center -->
+      <svg class="flow-svg" viewBox="0 0 900 64" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="height:64px;">
+        <!-- branch tip dots -->
+        <circle cx="148" cy="0" r="3.5" fill="none" stroke="rgba(102,252,241,0.25)" stroke-width="1.5"/>
+        <circle cx="450" cy="0" r="3.5" fill="none" stroke="rgba(240,150,60,0.25)" stroke-width="1.5"/>
+        <circle cx="752" cy="0" r="3.5" fill="none" stroke="rgba(102,252,241,0.5)" stroke-width="1.5"/>
+        <!-- left converges -->
+        <path d="M 148 0 C 148 32, 450 32, 450 60" stroke="rgba(102,252,241,0.15)" stroke-width="1.5" fill="none"/>
+        <!-- center converges (challenge fades) -->
+        <path d="M 450 0 L 450 60" stroke="rgba(102,252,241,0.12)" stroke-width="1" fill="none" stroke-dasharray="4 3"/>
+        <!-- right (winner) converges bright -->
+        <path d="M 752 0 C 752 32, 450 32, 450 60" stroke="rgba(102,252,241,0.4)" stroke-width="2" fill="none"/>
+        <!-- collapse dot glows -->
+        <circle cx="450" cy="60" r="5" fill="rgba(102,252,241,0.08)" stroke="#66FCF1" stroke-width="1.5" opacity="0.8"/>
+        <circle cx="450" cy="60" r="9" fill="none" stroke="rgba(102,252,241,0.15)" stroke-width="1"/>
+      </svg>
+
+      <!-- Sealed decision, centered -->
+      <div class="flow-tier" style="display:flex;justify-content:center;width:100%;">
+        <div class="branch-card sealed">
+          <div class="bcard-label sealed-lbl">Collapsed · Sealed · Receipt #C-4421</div>
+          <div class="bcard-title" style="font-size:13px;color:#E8EAED;"><span class="sealed-check">✓</span>Proceed with p99 &lt; 180ms monitoring alert bound. Branch C adopted. Execution authorized.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ CONTRAST STRIP ═══ -->
+  <div class="contrast-strip">
+    <div class="contrast-eyebrow">What your current stack is actually doing</div>
+    <h2 class="contrast-title">Your governance layer is <em>faking it.</em></h2>
+    <div class="contrast-grid">
+
+      <div class="contrast-card">
+        <div class="contrast-card-label">Governance verification</div>
+        <code class="contrast-code"><span class="dim">public bool</span> VerifySignature<span class="dim">()</span><br>{<br>&nbsp;&nbsp;<span class="dim">// TODO: implement</span><br>&nbsp;&nbsp;<span style="color:#ff6b6b;">return true;</span><br>}</code>
+        <div class="contrast-body">Your governance firewall verifies every signature — and approves all of them. <strong>The check is real. The verification isn't.</strong></div>
+      </div>
+
+      <div class="contrast-card">
+        <div class="contrast-card-label">Receipt persistence</div>
+        <code class="contrast-code"><span style="color:#ff6b6b;">INSERT OR REPLACE</span><br><span class="dim">INTO decision_receipts</span><br><span class="dim">(id, payload, hash)</span><br><span class="dim">VALUES (@id, @payload, @hash)</span></code>
+        <div class="contrast-body">Your audit trail is being silently overwritten. The record of what was decided and why? <strong>Last write wins. Always.</strong></div>
+      </div>
+
+      <div class="contrast-card">
+        <div class="contrast-card-label">Spine reconstruction</div>
+        <code class="contrast-code"><span class="dim">// fallback: empty spine</span><br><span style="color:#ff6b6b;">catch</span> <span class="dim">(Exception)</span><br>{<br>&nbsp;&nbsp;<span style="color:#ff6b6b;">return Array.Empty</span><span class="dim">&lt;Receipt&gt;();</span><br>}</code>
+        <div class="contrast-body">When forensic reconstruction fails, the system returns an empty spine and continues. <strong>You don't know what you don't know.</strong></div>
+      </div>
+
+    </div>
+    <div class="contrast-arrow">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">Keon enforces what others stub</div>
+      <div class="arrow-line"></div>
+    </div>
+  </div>
+
+  <!-- ═══ CORTEX SECTION ═══ -->
+  <div class="cortex-section" id="cortex-section">
+    <div class="cortex-layout">
+
+      <!-- Left: copy + invariant cards -->
+      <div>
+        <div class="cortex-eyebrow"><span class="eyebrow-dot"></span> Keon Cortex &nbsp;·&nbsp; Deterministic Memory Substrate</div>
+        <h2 class="cortex-title">Vector databases<br>are not memory.</h2>
+        <p class="cortex-sub">Most memory systems optimize for retrieval speed. Cortex optimizes for correctness — under restart, under failure, under multi-tenancy, under adversarial conditions. Ten non-negotiable invariants. Violations are bugs. There are no exceptions.</p>
+        <div class="cortex-grid">
+          <div class="cortex-card" style="grid-column: 1 / -1; border-color: rgba(102,252,241,0.2);">
+            <div class="cortex-card-icon">I1 — Deterministic IDs</div>
+            <div class="cortex-card-title">Same inputs. Same shard. Every time.</div>
+            <div class="cortex-card-body" style="font-family:monospace; font-size:9px; color:#66FCF1; opacity:0.85; margin-top:6px; line-height:1.8;">shard_id = sha256(tenant_id + ":" + source + ":" + content + ":" + extractor_version)</div>
+            <div class="cortex-card-body" style="margin-top:6px;">No randomness. No timestamps. The same memory is always the same shard.</div>
+          </div>
+          <div class="cortex-card">
+            <div class="cortex-card-icon">I2 — Fail-Closed Tenancy</div>
+            <div class="cortex-card-title">Missing tenant → <span style="color:#ff6b6b;font-family:monospace;font-size:10px;">ValueError</span></div>
+            <div class="cortex-card-body">Mismatched tenant → <span style="color:#ff6b6b;font-family:monospace;font-size:9px;">PermissionError</span>. No silent pass-through. No cross-tenant bleed.</div>
+          </div>
+          <div class="cortex-card">
+            <div class="cortex-card-icon">I3 — Idempotent Enqueue</div>
+            <div class="cortex-card-title">Same key. One write. Always.</div>
+            <div class="cortex-card-body">Same <span style="font-family:monospace;font-size:9px;color:#66FCF1;">idempotency_key</span> → subsequent enqueues are silent no-ops. Outbox: <span style="font-family:monospace;font-size:9px;color:#66FCF1;">pending → leased → processed</span>.</div>
+          </div>
+          <div class="cortex-card">
+            <div class="cortex-card-icon">I4+I5 — Exclusive Lease + Recovery</div>
+            <div class="cortex-card-title">Atomic. No two workers. Ever.</div>
+            <div class="cortex-card-body"><span style="font-family:monospace;font-size:9px;color:#66FCF1;">lease_next()</span> is atomic. Expired leases recover automatically, preserving the attempt counter. No lost work.</div>
+          </div>
+          <div class="cortex-card">
+            <div class="cortex-card-icon">I7 — Tenant Pre-Filter</div>
+            <div class="cortex-card-title">Hard filter before the vector query.</div>
+            <div class="cortex-card-body">A second post-filter catches any provider bug. Cross-tenant results are logged as errors and discarded. Two layers. Zero bleed.</div>
+          </div>
+          <div class="cortex-card">
+            <div class="cortex-card-icon">I9+I10 — Decay Determinism + Bounded Scores</div>
+            <div class="cortex-card-title">Pure function. Clamped output.</div>
+            <div class="cortex-card-body"><span style="font-family:monospace;font-size:9px;color:#66FCF1;">exponential_decay(initial, elapsed, half_life)</span> — same inputs, same float. All composite scores clamped to <span style="font-family:monospace;font-size:9px;color:#66FCF1;">[0.0, 1.0]</span>.</div>
+          </div>
+        </div>
+        <div class="cortex-foot">Memory is infrastructure.<br>Infrastructure must be deterministic.</div>
+      </div>
+
+      <!-- Right: animated memory spine -->
+      <div class="spine-panel">
+        <div class="spine-label">ITrigger → IIntent → IDecision → IAction → IOutcome</div>
+        <div class="spine-container">
+          <div class="spine-track"></div>
+          <div class="spine-pulse"></div>
+
+          <!-- ITrigger (left) — decayed, root of causal chain -->
+          <div class="shard">
+            <div class="shard-card" style="opacity:0.65;">
+              <div class="shard-type trigger">ITrigger</div>
+              <div class="shard-hash">sha256: a3f9c2e1…</div>
+              <div class="shard-content-val">External API request — deploy inference model v3.1 to production cluster</div>
+              <div class="hash-formula">sha256(<span class="hl">acme</span>:trigger.external_api:<span class="hl">content</span>:v1.0)</div>
+              <div class="shard-meta">
+                <span class="shard-tenant">tenant:acme</span>
+                <span class="shard-seq">seq:0001</span>
+                <span class="shard-decay">decay: 0.41</span>
+              </div>
+              <div class="shard-lineage">lineage_parent_id: <span>null (root)</span></div>
+            </div>
+            <div class="shard-arm" style="opacity:0.4;"></div>
+            <div class="shard-dot" style="opacity:0.45;"></div>
+            <div style="width:42%;"></div>
+          </div>
+
+          <!-- IIntent (right) — processed -->
+          <div class="shard">
+            <div style="width:42%;"></div>
+            <div class="shard-dot"></div>
+            <div class="shard-arm"></div>
+            <div class="shard-card">
+              <div class="shard-type intent">IIntent</div>
+              <div class="shard-hash">sha256: b7d14f8a…</div>
+              <div class="shard-content-val">Deploy v3.1 to prod — staging drift within tolerance, risk pre-screened</div>
+              <div class="shard-meta">
+                <span class="shard-tenant">tenant:acme</span>
+                <span class="shard-seq">seq:0002</span>
+                <span class="shard-state">processed</span>
+              </div>
+              <div class="shard-lineage">lineage_parent_id: <span>a3f9c2e1</span></div>
+            </div>
+          </div>
+
+          <!-- IDecision (left) — governance gate, reinforced -->
+          <div class="shard">
+            <div class="shard-card">
+              <div class="shard-type decision">IDecision</div>
+              <div class="shard-hash">sha256: c2a88b3d…</div>
+              <div class="shard-content-val">Proceed with deployment — risk score 0.12, policy PERMIT, Ed25519 verified</div>
+              <div style="margin-top:4px;"><span class="gov-badge gov-approve">Approved · Ed25519 ✓</span></div>
+              <div class="shard-meta">
+                <span class="shard-tenant">tenant:acme</span>
+                <span class="shard-seq">seq:0003</span>
+                <span class="shard-state" style="color:#66FCF1;">reinforced ×4</span>
+              </div>
+              <div class="shard-lineage">lineage_parent_id: <span>b7d14f8a</span></div>
+            </div>
+            <div class="shard-arm"></div>
+            <div class="shard-dot"></div>
+            <div style="width:42%;"></div>
+          </div>
+
+          <!-- IAction (right) — leased, effect boundary -->
+          <div class="shard">
+            <div style="width:42%;"></div>
+            <div class="shard-dot"></div>
+            <div class="shard-arm"></div>
+            <div class="shard-card">
+              <div class="shard-type action">IAction</div>
+              <div class="shard-hash">sha256: e9f03c72…</div>
+              <div class="shard-content-val">Scale inference pod — 3 replicas requested, p99 monitor bound attached</div>
+              <div><span class="effect-boundary">ExternalSideEffect</span></div>
+              <div class="shard-meta">
+                <span class="shard-tenant">tenant:acme</span>
+                <span class="shard-seq">seq:0004</span>
+                <span class="shard-state">leased · attempt:1</span>
+              </div>
+              <div class="shard-lineage">lineage_parent_id: <span>c2a88b3d</span></div>
+            </div>
+          </div>
+
+          <!-- IOutcome (left) — terminal, materialising -->
+          <div class="shard shard-new">
+            <div class="shard-card">
+              <div class="shard-type outcome">IOutcome <span class="new-badge">ingesting</span></div>
+              <div class="shard-hash">sha256: f1b62d09…</div>
+              <div class="shard-content-val">Deployment complete — 3 replicas live, p99 within bound. Terminal.</div>
+              <div class="hash-formula">hash_commitment: <span class="hl">computing…</span></div>
+              <div class="shard-meta">
+                <span class="shard-tenant">tenant:acme</span>
+                <span class="shard-seq">seq:0005</span>
+                <span class="shard-state" style="color:#f09640;">pending → outbox</span>
+              </div>
+              <div class="shard-lineage">lineage_parent_id: <span>e9f03c72</span></div>
+            </div>
+            <div class="shard-arm"></div>
+            <div class="shard-dot"></div>
+            <div style="width:42%;"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Badges strip -->
+  <div class="badges-section">
+    <div class="badges-header">
+      <div class="section-label" style="margin-bottom:12px;">The four properties of governed execution</div>
+      <div class="badges-title">Every action. Every property. Enforced.</div>
+      <p class="badges-sub">Policy-bound. Receipt-verified. Append-only. Fail-closed. These aren't aspirations — they're architectural invariants. Violations are bugs. There are no exceptions.</p>
+    </div>
+    <div class="badges-grid">
+      <div class="badge-cell">
+        <img class="badge-img" src="./badge-policy-bound.png" alt="Policy-bound" />
+        <div class="badge-label">Policy-bound</div>
+        <div class="badge-desc">Every action is evaluated against policy before it executes. No exceptions.</div>
+      </div>
+      <div class="badge-cell">
+        <img class="badge-img" src="./badge-receipt-verified.png" alt="Receipt-verified" />
+        <div class="badge-label">Receipt-verified</div>
+        <div class="badge-desc">Every decision is cryptographically signed and cannot be altered after issuance.</div>
+      </div>
+      <div class="badge-cell">
+        <img class="badge-img" src="./badge-append-only.png" alt="Append-only" />
+        <div class="badge-label">Append-only</div>
+        <div class="badge-desc">The ledger is immutable. Events are sequenced and sealed against reordering or deletion.</div>
+      </div>
+      <div class="badge-cell">
+        <img class="badge-img" src="./badge-fail-closed.png" alt="Fail-closed" />
+        <div class="badge-label">Fail-closed</div>
+        <div class="badge-desc">On error or ambiguity, Keon denies — not permits. Safety is the default state.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

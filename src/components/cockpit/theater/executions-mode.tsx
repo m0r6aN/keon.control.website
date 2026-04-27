@@ -15,7 +15,7 @@ import { computeExecutionAnchorType, fetchExecutions, type ExecutionRow } from "
 import type { Selection } from "@/lib/cockpit/types";
 import { useFocusSelection, useSelectionActions } from "@/lib/cockpit/use-focus";
 import { formatDuration, formatHash } from "@/lib/format";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 
 // ============================================================
 // STATUS → VISUAL MAPPING
@@ -33,12 +33,15 @@ export function ExecutionsMode() {
   const { select } = useSelectionActions();
   const [rows, setRows] = useState<ExecutionRow[]>([]);
   const [dataSource, setDataSource] = useState<"live" | "mock">("mock");
+  const [, startTransition] = useTransition();
 
   const loadData = useCallback(async () => {
     const result = await fetchExecutions();
-    setRows(result.rows);
-    setDataSource(result.source);
-  }, []);
+    startTransition(() => {
+      setRows(result.rows);
+      setDataSource(result.source);
+    });
+  }, [startTransition]);
 
   // Initial load + periodic refresh (15s)
   useEffect(() => {

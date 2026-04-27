@@ -9,9 +9,9 @@
  * Fades to "System calm" when no transitions for >60s.
  */
 
-import { useState, useEffect, useRef } from "react";
-import { useSelectionActions } from "@/lib/cockpit/use-focus";
 import type { CausalPulseEvent } from "@/lib/cockpit/types";
+import { useSelectionActions } from "@/lib/cockpit/use-focus";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 const SEVERITY_STYLES: Record<string, { text: string; bg: string; pulse: boolean }> = {
   info:     { text: "text-[#45A29E]", bg: "bg-[#45A29E]/5", pulse: false },
@@ -28,29 +28,36 @@ export function CausalPulse({ event }: CausalPulseProps) {
   const [ageSeconds, setAgeSeconds] = useState(0);
   const [isCalm, setIsCalm] = useState(true);
   const lastEventRef = useRef<string | null>(null);
+  const [, startTransition] = useTransition();
 
   // Track age of current pulse
   useEffect(() => {
     if (!event) {
-      setIsCalm(true);
+      startTransition(() => {
+        setIsCalm(true);
+      });
       return;
     }
 
     // New event arrived
     if (event.timestamp !== lastEventRef.current) {
       lastEventRef.current = event.timestamp;
-      setAgeSeconds(0);
-      setIsCalm(false);
+      startTransition(() => {
+        setAgeSeconds(0);
+        setIsCalm(false);
+      });
     }
 
     const interval = setInterval(() => {
       const age = Math.floor((Date.now() - new Date(event.timestamp).getTime()) / 1000);
-      setAgeSeconds(age);
-      if (age > 60) setIsCalm(true);
+      startTransition(() => {
+        setAgeSeconds(age);
+        if (age > 60) setIsCalm(true);
+      });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [event]);
+  }, [event, startTransition]);
 
   // Calm state — no recent transitions
   if (isCalm || !event) {

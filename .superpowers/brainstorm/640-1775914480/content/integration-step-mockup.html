@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integration Selection Step — Mockup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #070d14;
+    color: #C5C6C7;
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 48px 24px 80px;
+  }
+
+  .shell {
+    width: 100%;
+    max-width: 860px;
+  }
+
+  /* Step shell header */
+  .eyebrow {
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #7EE8E0;
+    margin-bottom: 14px;
+  }
+
+  .step-title {
+    font-size: 30px;
+    font-weight: 700;
+    color: #F3F5F7;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+
+  .step-desc {
+    font-size: 14px;
+    line-height: 1.75;
+    color: rgba(197,198,199,0.72);
+    max-width: 600px;
+    margin-bottom: 36px;
+  }
+
+  /* Cards grid */
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .card {
+    border-radius: 24px;
+    padding: 28px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    transition: border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  .card-byo {
+    border-color: rgba(255,255,255,0.1);
+  }
+
+  .card-collective {
+    border-color: rgba(126,232,224,0.25);
+    background: linear-gradient(180deg, rgba(126,232,224,0.06) 0%, rgba(126,232,224,0.02) 100%);
+  }
+
+  .card-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .tag-dot-byo { background: #B6F09C; }
+  .tag-dot-collective { background: #7EE8E0; }
+
+  .tag-byo { color: #B6F09C; }
+  .tag-collective { color: #7EE8E0; }
+
+  .card-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #F3F5F7;
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+  }
+
+  .card-body {
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(197,198,199,0.65);
+    margin-bottom: 20px;
+    flex: 1;
+  }
+
+  /* Feature list */
+  .features {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px;
+    color: rgba(197,198,199,0.7);
+    line-height: 1.5;
+  }
+
+  .feature-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(197,198,199,0.3);
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+
+  .feature-dot-teal { background: rgba(126,232,224,0.5); }
+
+  /* ── Micro-preview: deliberation flow ── */
+  .micro-preview {
+    border-radius: 14px;
+    border: 1px solid rgba(126,232,224,0.15);
+    background: rgba(6,17,23,0.6);
+    padding: 16px 14px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .micro-label {
+    font-family: monospace;
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(126,232,224,0.45);
+    margin-bottom: 12px;
+  }
+
+  /* Mini flow diagram */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+
+  /* Intent node */
+  .f-intent {
+    background: rgba(126,232,224,0.12);
+    border: 1px solid rgba(126,232,224,0.35);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-family: monospace;
+    font-size: 9px;
+    color: rgba(126,232,224,0.8);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Connector lines */
+  .f-line-down {
+    width: 1px;
+    height: 10px;
+    background: rgba(126,232,224,0.2);
+  }
+
+  .f-branches {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    position: relative;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Branch bar connecting the three branches */
+  .f-branches::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 160px;
+    height: 1px;
+    background: rgba(126,232,224,0.2);
+  }
+
+  .f-branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+    max-width: 80px;
+  }
+
+  .f-branch-line {
+    width: 1px;
+    height: 8px;
+    background: rgba(126,232,224,0.2);
+  }
+
+  .f-branch-node {
+    border-radius: 5px;
+    padding: 4px 7px;
+    font-family: monospace;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+    white-space: nowrap;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(197,198,199,0.55);
+  }
+
+  .f-branch-node.adversarial {
+    border-color: rgba(244,211,94,0.4);
+    color: rgba(244,211,94,0.8);
+    background: rgba(244,211,94,0.06);
+    animation: adversarial-pulse 2.8s ease-in-out infinite;
+  }
+
+  @keyframes adversarial-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(244,211,94,0); }
+    50% { box-shadow: 0 0 0 3px rgba(244,211,94,0.12); }
+  }
+
+  .f-converge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .f-converge-bar {
+    width: 160px;
+    height: 1px;
+    background: rgba(126,232,224,0.2);
+  }
+
+  .f-collapse-line {
+    width: 1px;
+    height: 8px;
+    background: rgba(126,232,224,0.2);
+  }
+
+  /* Sealed node */
+  .f-sealed {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(126,232,224,0.1);
+    border: 1px solid rgba(126,232,224,0.4);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-family: monospace;
+    font-size: 9px;
+    color: rgba(126,232,224,0.9);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    animation: sealed-glow 3.2s ease-in-out infinite;
+  }
+
+  @keyframes sealed-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(126,232,224,0); }
+    60% { box-shadow: 0 0 8px 2px rgba(126,232,224,0.15); }
+  }
+
+  .f-sealed-icon {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #7EE8E0;
+    animation: sealed-dot 3.2s ease-in-out infinite;
+  }
+
+  @keyframes sealed-dot {
+    0%, 40% { opacity: 0.4; transform: scale(0.8); }
+    60%, 100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Traveling dot animation on the flow lines */
+  .f-travel-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #7EE8E0;
+    opacity: 0;
+    margin: -2px auto;
+    animation: travel 3.5s ease-in-out infinite;
+  }
+
+  @keyframes travel {
+    0% { opacity: 0; transform: translateY(0); }
+    10% { opacity: 1; }
+    80% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(2px); }
+  }
+
+  /* CTA */
+  .cta-learn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #7EE8E0;
+    border: 1px solid rgba(126,232,224,0.3);
+    border-radius: 6px;
+    padding: 7px 14px;
+    background: rgba(126,232,224,0.06);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    text-decoration: none;
+    margin-bottom: 0;
+  }
+
+  .cta-learn:hover {
+    background: rgba(126,232,224,0.12);
+    border-color: rgba(126,232,224,0.5);
+  }
+
+  .cta-arrow { font-size: 11px; }
+
+  /* Continue button */
+  .footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 4px;
+  }
+
+  .btn-continue {
+    display: inline-flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 28px;
+    border-radius: 8px;
+    background: #F3F5F7;
+    color: #070d14;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-continue:hover { background: #fff; }
+
+  .footer-hint {
+    font-family: monospace;
+    font-size: 11px;
+    color: rgba(197,198,199,0.35);
+    letter-spacing: 0.05em;
+  }
+
+  /* Divider between cards */
+  .card-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: rgba(197,198,199,0.25);
+    text-transform: uppercase;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0 4px;
+  }
+
+  .divider-line {
+    width: 1px;
+    height: 40px;
+    background: rgba(197,198,199,0.1);
+  }
+
+  /* Stack grid to include divider */
+  .cards-with-divider {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    align-items: stretch;
+    margin-bottom: 32px;
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="eyebrow">Step 3 of 5</div>
+  <h1 class="step-title">How do you want governed decisions to happen?</h1>
+  <p class="step-desc">
+    Choose the operating model that fits your organization. This is not a vendor choice —
+    it determines how Keon intercepts, evaluates, and seals decisions.
+  </p>
+
+  <div class="cards-with-divider">
+    <!-- BYO AI -->
+    <div class="card card-byo">
+      <div class="card-tag">
+        <span class="tag-dot tag-dot-byo"></span>
+        <span class="tag-byo">BYO AI</span>
+      </div>
+      <div class="card-title">Govern the AI you already use</div>
+      <div class="card-body">
+        Route your existing models and providers through Keon's governance layer via MCP Gateway.
+        Every action is intercepted, policy-evaluated, and receipted — without replacing your stack.
+      </div>
+      <div class="features">
+        <div class="feature">
+          <span class="feature-dot"></span>
+          Connect existing providers via MCP Gateway
+        </div>
+        <div class="feature">
+          <span class="feature-dot"></span>
+          Fastest path to governed execution
+        </div>
+        <div class="feature">
+          <span class="feature-dot"></span>
+          No changes to your model setup
+        </div>
+        <div class="feature">
+          <span class="feature-dot"></span>
+          Policy-bound, receipt-verified output
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="card-divider" style="padding: 0 16px;">
+      <div class="divider-line"></div>
+      <span>or</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- Keon Collective -->
+    <div class="card card-collective">
+      <div class="card-tag">
+        <span class="tag-dot tag-dot-collective"></span>
+        <span class="tag-collective">Keon Collective</span>
+      </div>
+      <div class="card-title">Multi-agent decision architecture</div>
+      <div class="card-body">
+        Replace single-model output with a governed deliberation process. Proposals branch,
+        face adversarial challenge, converge through voting, and collapse into a
+        cryptographically sealed outcome.
+      </div>
+      <div class="features">
+        <div class="feature">
+          <span class="feature-dot feature-dot-teal"></span>
+          Branching analysis across multiple agents
+        </div>
+        <div class="feature">
+          <span class="feature-dot feature-dot-teal"></span>
+          Built-in adversarial challenge phase
+        </div>
+        <div class="feature">
+          <span class="feature-dot feature-dot-teal"></span>
+          Convergence via weighted vote
+        </div>
+        <div class="feature">
+          <span class="feature-dot feature-dot-teal"></span>
+          Cryptographically sealed, append-only outcome
+        </div>
+      </div>
+
+      <!-- Micro-preview -->
+      <div class="micro-preview">
+        <div class="micro-label">Deliberation lifecycle</div>
+        <div class="flow">
+          <div class="f-intent">Intent submitted</div>
+          <div class="f-line-down"></div>
+          <div class="f-travel-dot"></div>
+
+          <div class="f-branches">
+            <div class="f-branch">
+              <div class="f-branch-line"></div>
+              <div class="f-branch-node">Branch A<br>Proceed</div>
+            </div>
+            <div class="f-branch">
+              <div class="f-branch-line"></div>
+              <div class="f-branch-node adversarial">Branch B<br>Challenge</div>
+            </div>
+            <div class="f-branch">
+              <div class="f-branch-line"></div>
+              <div class="f-branch-node">Branch C<br>Synthesize</div>
+            </div>
+          </div>
+
+          <div class="f-converge">
+            <div class="f-converge-bar"></div>
+            <div class="f-collapse-line"></div>
+            <div class="f-sealed">
+              <div class="f-sealed-icon"></div>
+              Sealed · Receipt issued
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <a class="cta-learn" href="#" onclick="return false;" title="Opens in new tab">
+        Watch decision flow <span class="cta-arrow">↗</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button class="btn-continue">Continue</button>
+    <span class="footer-hint">No selection required — this step is informational</span>
+  </div>
+</div>
+</body>
+</html>

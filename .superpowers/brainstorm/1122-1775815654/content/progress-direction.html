@@ -1,0 +1,183 @@
+<style>
+  body { background: #0B0E17; color: #C5C6C7; font-family: 'Rajdhani', 'Inter', sans-serif; }
+  .mock-shell {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #384656;
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 12px;
+  }
+  .mock-topbar {
+    background: #1F2833;
+    border-bottom: 1px solid #384656;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .mock-body { display: flex; min-height: 260px; }
+  .mock-sidebar {
+    background: #1A2230;
+    border-right: 1px solid #384656;
+    width: 160px;
+    flex-shrink: 0;
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .mock-content { flex: 1; padding: 16px; background: #0B0E17; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 11px;
+    color: #8B8C8D;
+    position: relative;
+  }
+  .nav-item.active { background: #263040; color: #66FCF1; border-left: 2px solid #66FCF1; }
+  .nav-item.done { color: #C5C6C7; }
+  .check { color: #66FCF1; font-size: 10px; margin-left: auto; }
+  .nav-section-label { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: #66FCF1; opacity: 0.5; padding: 8px 8px 2px; }
+  .step-badge {
+    background: #66FCF1;
+    color: #061117;
+    font-family: monospace;
+    font-size: 9px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .cta-bar {
+    background: rgba(102, 252, 241, 0.07);
+    border: 1px solid rgba(102, 252, 241, 0.2);
+    border-radius: 6px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    font-size: 12px;
+  }
+  .cta-btn {
+    background: #66FCF1;
+    color: #061117;
+    font-family: monospace;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    white-space: nowrap;
+  }
+  .label-xs { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: #66FCF1; opacity: 0.7; }
+  .progress-bar-track { background: #263040; border-radius: 999px; height: 3px; width: 120px; overflow: hidden; }
+  .progress-bar-fill { background: #66FCF1; height: 100%; border-radius: 999px; }
+  .mock-card { background: #111823; border: 1px solid #263040; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px; font-size: 11px; }
+  .description-text { font-size: 11px; color: #8B8C8D; margin-top: 2px; }
+</style>
+
+<h2>How should setup progress guide users after onboarding?</h2>
+<p class="subtitle">Both options show the same three milestones — Set Guardrails → Connect Integration → Review Receipts. Pick the feel that fits Keon Control best.</p>
+
+<div class="cards">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px;">
+      <div class="mock-shell">
+        <div class="mock-topbar">
+          <span style="color:#66FCF1; font-family:monospace; font-size:11px; font-weight:bold;">KEON CONTROL</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="label-xs">Next:</span>
+            <span class="step-badge">Set Guardrails</span>
+            <div class="progress-bar-track"><div class="progress-bar-fill" style="width:33%"></div></div>
+            <span style="font-family:monospace;font-size:9px;color:#66FCF1;opacity:0.7;">1 / 3</span>
+          </div>
+          <span style="font-family:monospace;font-size:10px;color:#8B8C8D;">Account ▾</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-sidebar">
+            <div class="nav-section-label">Start</div>
+            <div class="nav-item active">⌂ Overview</div>
+            <div class="nav-section-label" style="margin-top:6px;">Setup</div>
+            <div class="nav-item" style="color:#66FCF1;">⊙ Guardrails</div>
+            <div class="nav-item" style="opacity:0.4;">⊙ Integrations</div>
+            <div class="nav-section-label" style="margin-top:6px;">Operate</div>
+            <div class="nav-item" style="opacity:0.3;">⊙ Receipts</div>
+          </div>
+          <div class="mock-content">
+            <div class="mock-card">
+              <div style="color:#C5C6C7;font-weight:600;">Workspace ready</div>
+              <div class="description-text">Your workspace is configured. Complete the remaining steps to go live.</div>
+            </div>
+            <div class="mock-card" style="border-color:#66FCF128;">
+              <div class="label-xs">Step 1 of 3</div>
+              <div style="color:#C5C6C7;font-weight:600;margin-top:4px;">Set your guardrails</div>
+              <div class="description-text">Choose how Keon evaluates AI actions before connecting a runtime.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Progress bar in topbar + dimmed nav</h3>
+      <p>A "Next: [Step]" badge with 1/3 counter lives in the topbar. Upcoming nav items are dimmed until their predecessor is done. Focused and linear — users can't miss what's next.</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px;">
+      <div class="mock-shell">
+        <div class="mock-topbar">
+          <span style="color:#66FCF1; font-family:monospace; font-size:11px; font-weight:bold;">KEON CONTROL</span>
+          <span style="font-family:monospace;font-size:10px;color:#8B8C8D;">Keon Internal Test Workspace / sandbox</span>
+          <span style="font-family:monospace;font-size:10px;color:#8B8C8D;">Account ▾</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-sidebar">
+            <div class="nav-section-label">Start</div>
+            <div class="nav-item active">⌂ Overview</div>
+            <div class="nav-section-label" style="margin-top:6px;">Setup</div>
+            <div class="nav-item done">
+              <span style="color:#66FCF1;">✓</span> Guardrails
+              <span class="check">✓</span>
+            </div>
+            <div class="nav-item" style="color:#66FCF1; background:#1e2f3f;">⊙ Integrations <span style="margin-left:auto;font-size:9px;background:#66FCF1;color:#061117;padding:1px 5px;border-radius:3px;">Now</span></div>
+            <div class="nav-item" style="opacity:0.4;">⊙ Receipts</div>
+            <div class="nav-section-label" style="margin-top:6px;">Operate</div>
+            <div class="nav-item" style="opacity:0.4;">⊙ Reviews</div>
+          </div>
+          <div class="mock-content">
+            <div class="cta-bar">
+              <div>
+                <div style="color:#C5C6C7;font-weight:600;font-size:12px;">Connect your first integration</div>
+                <div class="description-text">Guardrails are set. Route an AI agent or API through Keon to start governing actions.</div>
+              </div>
+              <button class="cta-btn">Connect →</button>
+            </div>
+            <div class="mock-card">
+              <div style="color:#C5C6C7;font-weight:600;">Workspace ready</div>
+              <div class="description-text" style="margin-top:4px;">Guardrails: <span style="color:#66FCF1;">Balanced</span> · Environment: sandbox</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Cyan checkmarks in nav + contextual header card</h3>
+      <p>Completed items get a cyan ✓ check in the sidebar. The current step gets a "Now" pill. The sticky header card (replacing NextStepCard) shows rich context about what's next and why. More ambient — users can still browse freely.</p>
+    </div>
+  </div>
+
+</div>

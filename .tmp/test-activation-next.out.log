@@ -1,0 +1,22 @@
+▲ Next.js 16.1.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.5.0.2:3000
+- Environments: .env.local
+
+✓ Starting...
+✓ Ready in 1650ms
+ GET / 200 in 2.6s (compile: 2.4s, render: 159ms)
+ GET / 200 in 49ms (compile: 8ms, render: 41ms)
+ GET /activate?token=internal-test-token 200 in 303ms (compile: 209ms, render: 94ms)
+ OPTIONS /v1/me/tenants 404 in 485ms (compile: 293ms, render: 192ms)
+ OPTIONS /v1/me 404 in 459ms (compile: 289ms, render: 170ms)
+○ Compiling /api/activation/provision ...
+✓ Finished filesystem cache database compaction in 12.0s
+ GET / 200 in 73ms (compile: 10ms, render: 62ms)
+ GET / 200 in 30ms (compile: 4ms, render: 25ms)
+○ Compiling /_error ...
+ OPTIONS /v1/me/tenants 404 in 7.7s (compile: 7.6s, render: 90ms)
+ OPTIONS /v1/me 404 in 7.5s (compile: 7.5s, render: 15ms)
+ GET /activate 200 in 76ms (compile: 7ms, render: 69ms)
+ GET / 200 in 94ms (compile: 7ms, render: 86ms)
+[?25h

@@ -1,0 +1,158 @@
+<style>
+  body { background: #0B0E17; color: #C5C6C7; font-family: 'Rajdhani', 'Inter', sans-serif; }
+  .mock-shell { border: 1px solid #384656; border-radius: 8px; overflow: hidden; font-size: 12px; }
+  .mock-topbar { background: #1F2833; border-bottom: 1px solid #384656; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .mock-body { display: flex; min-height: 320px; }
+  .mock-sidebar { background: #1A2230; border-right: 1px solid #384656; width: 140px; flex-shrink: 0; padding: 10px 8px; display: flex; flex-direction: column; gap: 3px; }
+  .mock-content { flex: 1; padding: 16px; background: #0B0E17; overflow: hidden; }
+  .nav-item { display: flex; align-items: center; gap: 6px; padding: 5px 8px; border-radius: 4px; font-family: monospace; font-size: 10px; color: #8B8C8D; }
+  .nav-item.done { color: #C5C6C7; }
+  .nav-item.active { background: #263040; color: #66FCF1; border-left: 2px solid #66FCF1; }
+  .nav-item.current { color: #66FCF1; }
+  .check { color: #66FCF1; }
+  .pill { font-family: monospace; font-size: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.08em; padding: 1px 5px; border-radius: 3px; margin-left: auto; }
+  .pill-now { background: #66FCF1; color: #061117; }
+  .nav-section { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: #66FCF1; opacity: 0.4; padding: 8px 8px 2px; }
+  .label-xs { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: #66FCF1; opacity: 0.7; }
+  .cta-bar { background: rgba(102,252,241,0.06); border: 1px solid rgba(102,252,241,0.18); border-radius: 6px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .cta-btn { background: #66FCF1; color: #061117; font-family: monospace; font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; border: none; border-radius: 4px; padding: 5px 10px; white-space: nowrap; cursor: pointer; }
+  .path-card { border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .path-card-byoai { background: #111823; border: 1px solid #263040; }
+  .path-card-collective { background: linear-gradient(135deg, #061a24, #0d2533); border: 1px solid rgba(102,252,241,0.25); }
+  .path-title { font-weight: 700; font-size: 13px; color: #E8EAED; }
+  .path-sub { font-size: 10px; color: #8B8C8D; line-height: 1.5; }
+  .path-tag { font-family: monospace; font-size: 8px; text-transform: uppercase; letter-spacing: 0.12em; padding: 2px 7px; border-radius: 999px; }
+  .tag-byoai { background: #1e2f3f; color: #66FCF1; border: 1px solid #263040; }
+  .tag-collective { background: rgba(102,252,241,0.12); color: #66FCF1; border: 1px solid rgba(102,252,241,0.3); }
+  .feature-dot { color: #66FCF1; margin-right: 5px; }
+  .feature-item { font-size: 10px; color: #9BA0A8; display: flex; align-items: flex-start; gap: 4px; }
+  .divider { text-align: center; font-family: monospace; font-size: 10px; color: #384656; padding: 4px 0; }
+  .api-key-ui { background: #0B0E17; border: 1px solid #263040; border-radius: 5px; padding: 8px 10px; font-family: monospace; font-size: 10px; }
+  .key-row { display: flex; align-items: center; gap: 6px; }
+  .key-input { background: #111823; border: 1px solid #384656; border-radius: 3px; padding: 3px 8px; color: #66FCF1; font-family: monospace; font-size: 10px; flex: 1; }
+  .key-btn { background: #263040; border: 1px solid #384656; color: #C5C6C7; font-family: monospace; font-size: 9px; border-radius: 3px; padding: 3px 8px; white-space: nowrap; }
+  .collective-feature { display: flex; align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1px solid rgba(102,252,241,0.08); font-size: 10px; }
+  .collective-feature:last-child { border-bottom: none; }
+  .glow-dot { width: 6px; height: 6px; background: #66FCF1; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 6px #66FCF1; }
+</style>
+
+<h2>How should the Integrations page present the two paths?</h2>
+<p class="subtitle">Users need to choose: connect their own AI via API key, or activate Keon Collective. Pick the layout that sells both options compellingly.</p>
+
+<div class="cards">
+
+  <!-- Option A: Sequential steps with path fork -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 14px;">
+      <div class="mock-shell">
+        <div class="mock-topbar">
+          <span style="color:#66FCF1;font-family:monospace;font-size:10px;font-weight:bold;">KEON CONTROL</span>
+          <span style="font-family:monospace;font-size:10px;color:#8B8C8D;">Workspace / sandbox</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-sidebar">
+            <div class="nav-section">Start</div>
+            <div class="nav-item done"><span class="check">✓</span> Overview</div>
+            <div class="nav-section">Setup</div>
+            <div class="nav-item done"><span class="check">✓</span> Guardrails</div>
+            <div class="nav-item active">⊙ Integrations <span class="pill pill-now">Now</span></div>
+            <div class="nav-item" style="opacity:0.35;">⊙ Receipts</div>
+            <div class="nav-section">Operate</div>
+            <div class="nav-item" style="opacity:0.35;">⊙ Reviews</div>
+          </div>
+          <div class="mock-content">
+            <div class="cta-bar">
+              <div><div style="color:#C5C6C7;font-weight:600;font-size:11px;">Choose how to connect</div><div style="font-size:10px;color:#8B8C8D;margin-top:2px;">Route AI actions through Keon — pick the path that fits your stack.</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div class="path-card path-card-byoai">
+                <span class="path-tag tag-byoai">BYOAI</span>
+                <div class="path-title" style="font-size:12px;">API Key</div>
+                <div class="path-sub">Generate credentials. Wire Keon's governance endpoint into your existing agent or service.</div>
+                <div class="api-key-ui" style="margin-top:4px;">
+                  <div class="key-row">
+                    <div class="key-input">keon_live_••••••••••••••••</div>
+                    <button class="key-btn">Generate</button>
+                  </div>
+                  <div style="margin-top:5px;display:flex;gap:4px;">
+                    <button class="key-btn">Copy</button>
+                    <button class="key-btn">Test</button>
+                  </div>
+                </div>
+              </div>
+              <div class="path-card path-card-collective">
+                <span class="path-tag tag-collective">FLAGSHIP</span>
+                <div class="path-title" style="font-size:12px;color:#66FCF1;">Keon Collective</div>
+                <div class="path-sub" style="color:#7ec8c4;">Multi-entity temporal governance. Proposals branch, face adversarial challenge, vote, and collapse into decisions no single system could reach alone.</div>
+                <div style="display:flex;flex-direction:column;gap:3px;margin-top:4px;">
+                  <div class="collective-feature"><div class="glow-dot"></div><span style="color:#9BA0A8;">Temporal branching</span></div>
+                  <div class="collective-feature"><div class="glow-dot"></div><span style="color:#9BA0A8;">Adversarial self-review</span></div>
+                  <div class="collective-feature"><div class="glow-dot"></div><span style="color:#9BA0A8;">Vote + collapse</span></div>
+                </div>
+                <button class="cta-btn" style="align-self:flex-start;margin-top:4px;">Activate →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Side-by-side path cards</h3>
+      <p>Both options shown simultaneously as equal-weight cards. API key is functional inline (generate, copy, test). Collective card leads with differentiators and an Activate CTA. User can pick either or both.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Tabbed / stepped with Collective as hero -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 14px;">
+      <div class="mock-shell">
+        <div class="mock-topbar">
+          <span style="color:#66FCF1;font-family:monospace;font-size:10px;font-weight:bold;">KEON CONTROL</span>
+          <span style="font-family:monospace;font-size:10px;color:#8B8C8D;">Workspace / sandbox</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-sidebar">
+            <div class="nav-section">Start</div>
+            <div class="nav-item done"><span class="check">✓</span> Overview</div>
+            <div class="nav-section">Setup</div>
+            <div class="nav-item done"><span class="check">✓</span> Guardrails</div>
+            <div class="nav-item active">⊙ Integrations <span class="pill pill-now">Now</span></div>
+            <div class="nav-item" style="opacity:0.35;">⊙ Receipts</div>
+            <div class="nav-section">Operate</div>
+            <div class="nav-item" style="opacity:0.35;">⊙ Reviews</div>
+          </div>
+          <div class="mock-content">
+            <!-- Collective hero -->
+            <div style="background:linear-gradient(135deg,#061a24,#0a2535);border:1px solid rgba(102,252,241,0.3);border-radius:8px;padding:14px;margin-bottom:8px;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                <span class="path-tag tag-collective" style="font-size:9px;">FLAGSHIP · RECOMMENDED</span>
+              </div>
+              <div style="color:#66FCF1;font-size:14px;font-weight:700;margin-bottom:4px;">Keon Collective</div>
+              <div style="font-size:10px;color:#7ec8c4;line-height:1.5;margin-bottom:8px;">Temporal branching governance. AI proposals diverge, get challenged, vote, and collapse into cryptographically-sealed decisions. Group cognition that transcends individual contributors.</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+                <span style="font-family:monospace;font-size:8px;background:rgba(102,252,241,0.1);color:#66FCF1;border:1px solid rgba(102,252,241,0.2);padding:2px 6px;border-radius:3px;">Temporal branching</span>
+                <span style="font-family:monospace;font-size:8px;background:rgba(102,252,241,0.1);color:#66FCF1;border:1px solid rgba(102,252,241,0.2);padding:2px 6px;border-radius:3px;">Adversarial challenge</span>
+                <span style="font-family:monospace;font-size:8px;background:rgba(102,252,241,0.1);color:#66FCF1;border:1px solid rgba(102,252,241,0.2);padding:2px 6px;border-radius:3px;">Vote + collapse</span>
+                <span style="font-family:monospace;font-size:8px;background:rgba(102,252,241,0.1);color:#66FCF1;border:1px solid rgba(102,252,241,0.2);padding:2px 6px;border-radius:3px;">Cryptographic seal</span>
+              </div>
+              <button class="cta-btn">Activate Collective →</button>
+            </div>
+            <!-- BYOAI below -->
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#111823;border:1px solid #263040;border-radius:6px;">
+              <div style="flex:1;">
+                <div style="font-size:10px;color:#C5C6C7;font-weight:600;">Using your own agent or runtime? <span style="font-family:monospace;font-size:9px;color:#66FCF1;margin-left:6px;">Generate API key →</span></div>
+                <div style="font-size:9px;color:#8B8C8D;margin-top:2px;">Wire Keon's governance endpoint into your existing stack. keon_live_••••••••</div>
+              </div>
+              <button class="key-btn" style="font-size:9px;">Generate</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Collective as hero, API key as secondary</h3>
+      <p>Collective gets a large hero card with feature tags and the primary CTA. API key is a compact secondary row beneath — always accessible but not competing for attention. Sells Collective first.</p>
+    </div>
+  </div>
+
+</div>

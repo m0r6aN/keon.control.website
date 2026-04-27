@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integration Selection Step v2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #070d14;
+    color: #C5C6C7;
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 48px 24px 80px;
+  }
+
+  .shell { width: 100%; max-width: 860px; }
+
+  .eyebrow {
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #7EE8E0;
+    margin-bottom: 14px;
+  }
+
+  .step-title {
+    font-size: 30px;
+    font-weight: 700;
+    color: #F3F5F7;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+
+  .step-desc {
+    font-size: 14px;
+    line-height: 1.75;
+    color: rgba(197,198,199,0.68);
+    max-width: 600px;
+    margin-bottom: 36px;
+  }
+
+  /* Card super-labels */
+  .cards-super-labels {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    margin-bottom: 8px;
+  }
+
+  .super-label {
+    font-family: monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(197,198,199,0.28);
+    padding-left: 2px;
+  }
+
+  /* Cards */
+  .cards-with-divider {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: stretch;
+    margin-bottom: 32px;
+  }
+
+  .card {
+    border-radius: 24px;
+    padding: 28px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-byo { border-color: rgba(255,255,255,0.1); }
+
+  .card-collective {
+    border-color: rgba(126,232,224,0.28);
+    background: linear-gradient(175deg, rgba(126,232,224,0.07) 0%, rgba(126,232,224,0.02) 60%, rgba(6,17,23,0.2) 100%);
+  }
+
+  .card-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .tag-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .tag-dot-byo { background: #B6F09C; }
+  .tag-dot-collective { background: #7EE8E0; }
+  .tag-byo { color: #B6F09C; }
+  .tag-collective { color: #7EE8E0; }
+
+  .card-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #F3F5F7;
+    letter-spacing: -0.015em;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  .card-anchor {
+    font-family: monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(182,240,156,0.55);
+    margin-bottom: 14px;
+  }
+
+  .card-anchor-collective {
+    font-family: monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(126,232,224,0.45);
+    margin-bottom: 14px;
+  }
+
+  .card-body {
+    font-size: 13px;
+    line-height: 1.72;
+    color: rgba(197,198,199,0.62);
+    margin-bottom: 20px;
+    flex: 1;
+  }
+
+  .features {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 20px;
+  }
+
+  .feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 12px;
+    color: rgba(197,198,199,0.65);
+    line-height: 1.5;
+  }
+
+  .feature-dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: rgba(197,198,199,0.25);
+    margin-top: 6px; flex-shrink: 0;
+  }
+  .feature-dot-teal { background: rgba(126,232,224,0.45); }
+
+  /* ── Micro-preview ── */
+  .micro-preview {
+    border-radius: 14px;
+    border: 1px solid rgba(126,232,224,0.14);
+    background: rgba(4,12,18,0.7);
+    padding: 14px 14px 16px;
+    margin-bottom: 20px;
+  }
+
+  .micro-label {
+    font-family: monospace;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(126,232,224,0.38);
+    margin-bottom: 14px;
+  }
+
+  /* Flow */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .f-intent {
+    background: rgba(126,232,224,0.1);
+    border: 1px solid rgba(126,232,224,0.3);
+    border-radius: 6px;
+    padding: 5px 14px;
+    font-family: monospace;
+    font-size: 8.5px;
+    color: rgba(126,232,224,0.75);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    z-index: 2;
+  }
+
+  .f-vline { width: 1px; height: 10px; background: rgba(126,232,224,0.18); }
+
+  /* Travel dot coming down from intent */
+  .f-travel {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: #7EE8E0;
+    margin: -2px auto;
+    animation: travel-down 3.6s ease-in-out infinite;
+  }
+  @keyframes travel-down {
+    0%   { opacity: 0; transform: translateY(-6px); }
+    15%  { opacity: 0.9; transform: translateY(0); }
+    70%  { opacity: 0.9; transform: translateY(0); }
+    90%  { opacity: 0; transform: translateY(4px); }
+    100% { opacity: 0; }
+  }
+
+  .f-hbar {
+    width: 180px; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(126,232,224,0.2) 20%, rgba(126,232,224,0.2) 80%, transparent);
+  }
+
+  .f-branches {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .f-branch {
+    display: flex; flex-direction: column; align-items: center;
+    flex: 1; max-width: 78px;
+  }
+
+  .f-branch-vline { width: 1px; height: 8px; background: rgba(126,232,224,0.15); }
+
+  .f-branch-node {
+    border-radius: 5px;
+    padding: 4px 6px;
+    font-family: monospace;
+    font-size: 7.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+    white-space: nowrap;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(197,198,199,0.45);
+    line-height: 1.4;
+  }
+
+  /* Adversarial branch — key differentiator */
+  .f-branch-node.adv {
+    border-color: rgba(244,211,94,0.45);
+    color: rgba(244,211,94,0.85);
+    background: rgba(244,211,94,0.07);
+    font-weight: 600;
+    font-size: 7px;
+    animation: adv-pulse 2.8s ease-in-out infinite;
+  }
+
+  @keyframes adv-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(244,211,94,0); }
+    45%  { box-shadow: 0 0 0 3px rgba(244,211,94,0.1); }
+    55%  { box-shadow: 0 0 5px 2px rgba(244,211,94,0.14); }
+  }
+
+  /* Staggered branch reveal animations */
+  .f-branch:nth-child(1) .f-branch-node { animation: branch-appear 3.6s ease-in-out infinite; animation-delay: 0.3s; }
+  .f-branch:nth-child(2) .f-branch-node.adv { animation: adv-pulse 2.8s ease-in-out infinite, branch-appear 3.6s ease-in-out infinite; animation-delay: 0s, 0.5s; }
+  .f-branch:nth-child(3) .f-branch-node { animation: branch-appear 3.6s ease-in-out infinite; animation-delay: 0.7s; }
+
+  @keyframes branch-appear {
+    0%, 25% { opacity: 0.2; }
+    40%, 80% { opacity: 1; }
+    95%, 100% { opacity: 0.2; }
+  }
+
+  .f-collapse-hbar {
+    width: 180px; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(126,232,224,0.18) 20%, rgba(126,232,224,0.18) 80%, transparent);
+    margin-top: 4px;
+  }
+
+  .f-collapse-vline { width: 1px; height: 9px; background: rgba(126,232,224,0.18); }
+
+  .f-sealed {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(126,232,224,0.09);
+    border: 1px solid rgba(126,232,224,0.38);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-family: monospace;
+    font-size: 8.5px;
+    color: rgba(126,232,224,0.88);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    animation: seal-snap 3.6s ease-in-out infinite;
+  }
+
+  @keyframes seal-snap {
+    0%, 60% { box-shadow: 0 0 0 0 rgba(126,232,224,0); opacity: 0.4; }
+    72%  { box-shadow: 0 0 0 4px rgba(126,232,224,0.12); opacity: 1; transform: scale(1.02); }
+    80%  { box-shadow: 0 0 8px 2px rgba(126,232,224,0.16); opacity: 1; transform: scale(1); }
+    95%, 100% { box-shadow: 0 0 0 0 rgba(126,232,224,0); opacity: 0.8; }
+  }
+
+  .f-sealed-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #7EE8E0;
+    animation: dot-snap 3.6s ease-in-out infinite;
+  }
+
+  @keyframes dot-snap {
+    0%, 65% { opacity: 0.3; transform: scale(0.7); }
+    73%  { opacity: 1; transform: scale(1.3); }
+    80%, 100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* CTA */
+  .cta-learn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #7EE8E0;
+    border: 1px solid rgba(126,232,224,0.28);
+    border-radius: 6px;
+    padding: 8px 16px;
+    background: rgba(126,232,224,0.05);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    text-decoration: none;
+  }
+
+  .cta-learn:hover {
+    background: rgba(126,232,224,0.11);
+    border-color: rgba(126,232,224,0.48);
+  }
+
+  /* Divider */
+  .card-divider {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 6px;
+    padding: 0 16px;
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: rgba(197,198,199,0.2);
+    text-transform: uppercase;
+  }
+
+  .divider-line { width: 1px; flex: 1; background: rgba(197,198,199,0.08); }
+
+  /* Footer */
+  .footer {
+    display: flex; align-items: center; gap: 14px; padding-top: 4px;
+  }
+
+  .btn-continue {
+    display: inline-flex; align-items: center;
+    height: 44px; padding: 0 28px;
+    border-radius: 8px;
+    background: #F3F5F7;
+    color: #070d14;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; border: none;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-continue:hover { background: #fff; }
+
+  .footer-hint {
+    font-family: monospace;
+    font-size: 11px;
+    color: rgba(197,198,199,0.32);
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="eyebrow">Step 3 of 5</div>
+  <h1 class="step-title">How do you want governed decisions to happen?</h1>
+  <p class="step-desc">
+    This is not a vendor choice. It determines how Keon evaluates, challenges, and seals every decision.
+  </p>
+
+  <!-- Super-labels -->
+  <div class="cards-super-labels">
+    <span class="super-label">Governance Layer</span>
+    <span></span>
+    <span class="super-label">Decision System</span>
+  </div>
+
+  <div class="cards-with-divider">
+
+    <!-- BYO AI -->
+    <div class="card card-byo">
+      <div class="card-tag">
+        <span class="tag-dot tag-dot-byo"></span>
+        <span class="tag-byo">BYO AI</span>
+      </div>
+      <div class="card-title">Govern the AI you already use</div>
+      <div class="card-anchor">Best for existing AI stacks</div>
+      <div class="card-body">
+        Route your existing models and providers through Keon's governance layer via MCP Gateway.
+        Every action is intercepted, policy-evaluated, and receipted — without replacing your stack.
+      </div>
+      <div class="features">
+        <div class="feature">
+          <span class="feature-dot"></span>
+          Connect existing providers via MCP Gateway
+        </div>
+        <div class="feature">
+          <span class="feature-dot"></span>
+          Fastest path to governed execution
+        </div>
+        <div class="feature">
+          <span class="feature-dot"></span>
+          No changes to your model setup
+        </div>
+        <div class="feature">
+          <span class="feature-dot"></span>
+          Policy-bound, receipt-verified output
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="card-divider">
+      <div class="divider-line"></div>
+      <span>or</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- Collective -->
+    <div class="card card-collective">
+      <div class="card-tag">
+        <span class="tag-dot tag-dot-collective"></span>
+        <span class="tag-collective">Keon Collective</span>
+      </div>
+      <div class="card-title">Deliberation, not generation</div>
+      <div class="card-anchor-collective">For high-stakes decisions that demand more than one output</div>
+      <div class="card-body">
+        Replace single-model output with a governed deliberation process. Proposals branch,
+        face adversarial challenge, converge through voting, and collapse into a
+        cryptographically sealed outcome.
+      </div>
+      <div class="features">
+        <div class="feature">
+          <span class="feature-dot feature-dot-teal"></span>
+          Branching analysis across multiple agents
+        </div>
+        <div class="feature">
+          <span class="feature-dot feature-dot-teal"></span>
+          Built-in adversarial challenge phase
+        </div>
+        <div class="feature">
+          <span class="feature-dot feature-dot-teal"></span>
+          Convergence via weighted vote
+        </div>
+        <div class="feature">
+          <span class="feature-dot feature-dot-teal"></span>
+          Cryptographically sealed, append-only outcome
+        </div>
+      </div>
+
+      <!-- Micro-preview -->
+      <div class="micro-preview">
+        <div class="micro-label">Deliberation lifecycle</div>
+        <div class="flow">
+          <div class="f-intent">Intent submitted</div>
+          <div class="f-vline"></div>
+          <div class="f-travel"></div>
+          <div class="f-hbar"></div>
+
+          <div class="f-branches">
+            <div class="f-branch">
+              <div class="f-branch-vline"></div>
+              <div class="f-branch-node">Branch A<br>Proceed</div>
+            </div>
+            <div class="f-branch">
+              <div class="f-branch-vline"></div>
+              <div class="f-branch-node adv">Adversarial<br>Challenge</div>
+            </div>
+            <div class="f-branch">
+              <div class="f-branch-vline"></div>
+              <div class="f-branch-node">Branch C<br>Synthesize</div>
+            </div>
+          </div>
+
+          <div class="f-collapse-hbar"></div>
+          <div class="f-collapse-vline"></div>
+          <div class="f-sealed">
+            <div class="f-sealed-dot"></div>
+            Sealed · Receipt issued
+          </div>
+        </div>
+      </div>
+
+      <a class="cta-learn" href="#" onclick="return false;">
+        Watch a decision unfold <span style="font-size:11px">↗</span>
+      </a>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <button class="btn-continue">Continue</button>
+    <span class="footer-hint">You can start with BYO AI and upgrade later.</span>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<h2>What does "Learn More" do?</h2>
+<p class="subtitle">The user clicks "Learn More" on the Keon Collective option during integration selection.</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Full-page navigation within the wizard</h3>
+      <p>The wizard navigates to a showcase page (e.g., <code>/setup?step=collective-showcase</code>). The showcase renders inside the same onboarding shell with a ← Back button that returns them to the split screen. No context is lost.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Modal / slide-over on top of the split screen</h3>
+      <p>The showcase content slides in as an overlay or modal on top of the integration selection step. The user closes it and is back exactly where they were — split screen intact, selection state preserved.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Opens in a new tab</h3>
+      <p>The showcase opens in a new browser tab so the wizard stays exactly where it is. Good for users who want to read without losing their place, but adds friction to return and continue.</p>
+    </div>
+  </div>
+</div>

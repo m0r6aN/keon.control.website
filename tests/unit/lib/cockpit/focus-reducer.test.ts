@@ -344,7 +344,7 @@ describe("focusReducer — RESET", () => {
 // ============================================================
 describe("focusReducer — Unknown event", () => {
   it("returns state unchanged for unknown event type", () => {
-    const s = focusReducer(INITIAL_FOCUS_STATE, { type: "UNKNOWN" } as any);
+    const s = focusReducer(INITIAL_FOCUS_STATE, { type: "UNKNOWN" } as FocusAction);
     expect(s).toBe(INITIAL_FOCUS_STATE);
   });
 });

@@ -1,0 +1,50 @@
+<h2>Where do the showcase pages live?</h2>
+<p class="subtitle">The Collective and Cortex showcase pages — where do they appear in the user's journey?</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Inside the setup wizard</h3>
+      <p>After the user selects Collective/Cortex as goals in Step 1, the wizard shows a dedicated showcase step for each selected product — full hero, lifecycle diagram, feature tags — before continuing to workspace confirmation and guardrails.</p>
+      <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.04);border-radius:6px;font-family:monospace;font-size:11px;color:#aaa;line-height:1.8">
+        /setup?step=goals → pick Collective + Cortex<br>
+        → /setup?step=collective-intro<br>
+        → /setup?step=cortex-intro<br>
+        → /setup?step=access<br>
+        → /setup?step=guardrails<br>
+        → /setup?step=ready
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>First-visit gate at /collective and /cortex</h3>
+      <p>After setup is complete, when the user navigates to /collective or /cortex for the first time, they see the showcase page with an "Activate →" CTA. Once activated, future visits go straight to the dashboard.</p>
+      <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.04);border-radius:6px;font-family:monospace;font-size:11px;color:#aaa;line-height:1.8">
+        setup completes → /control<br>
+        user clicks Collective in sidebar<br>
+        → /collective (showcase — first visit)<br>
+        → clicks "Activate Collective →"<br>
+        → /collective (dashboard — all future visits)
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Dedicated intro routes, always accessible</h3>
+      <p>The showcase pages live at permanent routes like /collective/intro and /cortex/intro. They're linked from the sidebar and from the control overview. The dashboard is at /collective (unchanged). Users can always return to the intro.</p>
+      <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.04);border-radius:6px;font-family:monospace;font-size:11px;color:#aaa;line-height:1.8">
+        sidebar: Collective → /collective/intro (first) or /collective<br>
+        /collective/intro — showcase, always accessible<br>
+        /collective — dashboard (unchanged)<br>
+        /cortex/intro — showcase<br>
+        /cortex — dashboard (new)
+      </div>
+    </div>
+  </div>
+</div>
