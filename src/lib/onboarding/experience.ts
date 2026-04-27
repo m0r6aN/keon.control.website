@@ -146,7 +146,7 @@ export function getCurrentBlocker(state: OnboardingState) {
  * Canonical first-run routing.
  *
  * Priority order:
- *   1. fully ready (onboarding complete)     → /control
+ *   1. fully ready (onboarding complete)     → /integrations
  *   2. provisioning not yet complete         → /activate  (magic-link gate)
  *   3. provisioning done, at welcome step    → /welcome
  *   4. provisioning done, mid-setup          → /setup?step=...
@@ -163,7 +163,7 @@ export function getEntryRoute(
   options?: { activationCompleted?: boolean }
 ) {
   if (state.completed) {
-    return "/control";
+    return "/integrations";
   }
 
   // If activation has explicitly not completed, gate here before onboarding.

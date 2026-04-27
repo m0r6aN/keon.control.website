@@ -69,7 +69,7 @@ describe("first-run state", () => {
       provisioningComplete: true,
       onboardingComplete: true,
       readyState: true,
-      nextRoute: "/control",
+      nextRoute: "/integrations",
       stage: "app",
     });
   });
@@ -110,5 +110,22 @@ describe("first-run state", () => {
     expect(
       canAccessFirstRunStage("activate", { provisioningComplete: true, stage: "setup" })
     ).toBe(false);
+  });
+
+  it("routes completed setup users to /integrations, not /control", () => {
+    const result = deriveFirstRunStatus({
+      provisioningComplete: true,
+      onboardingState: {
+        ...defaultOnboardingState,
+        currentStep: "READY",
+        selectedGoals: ["govern-ai-actions"],
+        workspaceId: "tenant_123",
+        integrationStepCompleted: true,
+        guardrailPreset: "balanced",
+        completed: true,
+      },
+    });
+    expect(result.nextRoute).toBe("/integrations");
+    expect(result.stage).toBe("app");
   });
 });
