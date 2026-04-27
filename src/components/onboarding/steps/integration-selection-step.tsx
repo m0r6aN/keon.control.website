@@ -20,10 +20,8 @@ export function IntegrationSelectionStep() {
   };
 
   const handleContinue = () => {
-    dispatch({
-      type: "ADVANCE_INTEGRATION",
-      ...(selected ? { payload: { selectedMode: selected } } : {}),
-    });
+    if (!selected) return;
+    dispatch({ type: "ADVANCE_INTEGRATION", payload: { selectedMode: selected } });
     router.replace("/setup?step=guardrails");
   };
 
