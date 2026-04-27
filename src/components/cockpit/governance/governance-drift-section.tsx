@@ -12,7 +12,7 @@
  * differs from the governance context that exists now.
  */
 
-import type { GovernanceDrift } from "@/lib/cockpit/types";
+import type { GovernanceDrift, Selection } from "@/lib/cockpit/types";
 import { useSelectionActions } from "@/lib/cockpit/use-focus";
 import { useSelectionGovernance } from "@/lib/cockpit/use-selection-governance";
 
