@@ -18,13 +18,12 @@ describe("SetupChecklist — upcoming items", () => {
     });
   });
 
-  it("renders the current item (first step) as a link", () => {
+  it("renders the current required item as a navigable link", () => {
     render(<SetupChecklist />);
-    // With defaultOnboardingState (no goals set), the first item is "current"
-    // and should be rendered as a link
-    const links = screen.getAllByRole("link");
-    // At least the current step is a link (optional items are also links)
-    expect(links.length).toBeGreaterThan(0);
+    // With defaultOnboardingState (no goals set), the first required item is "current"
+    const goalsLink = screen.getByRole("link", { name: /define your goal/i });
+    expect(goalsLink).toBeInTheDocument();
+    expect(goalsLink).toHaveAttribute("href", "/setup?step=goals");
   });
 
   it("does not render any upcoming items as anchor elements", () => {
